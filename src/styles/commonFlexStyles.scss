@@ -6,3 +6,9 @@
     @include flex-center-y();
     justify-content: center;
 }
+
+// 一般flex盒子的样式
+@mixin flex-box{
+    @include flex-center();
+    flex-wrap: wrap;
+}
