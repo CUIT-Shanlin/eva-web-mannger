@@ -23,5 +23,15 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/devApi/, "")
       }
     }
+  },
+
+  css: {
+    // css预处理器
+    preprocessorOptions: {
+      scss: {
+        // additionalData: '@import "@/assets/style/mixin.scss";'
+      }
+    }
   }
+
 })
