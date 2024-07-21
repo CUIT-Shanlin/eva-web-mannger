@@ -34,6 +34,8 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { login } from "@/api/login"
+import { useSuccessTip } from "@/utils/msgTip"
+
 
 // 存输入的登录信息
 const userMsg = reactive({
