@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { getToken } from './auth';
+import { useSuccessTip,useFailedTip } from './msgTip';
 /**
  * 封装axios
  */
@@ -25,6 +26,7 @@ request.interceptors.request.use(
         return config
     },
     error=>{
+        useFailedTip('请求错误：' + error.message)
         return Promise.reject(error)
     }
 )
@@ -34,12 +36,15 @@ request.interceptors.response.use(
     response=>{
         let {data} = response
         if(data.code === 200){
-            return Promise.resolve(data)
+            useSuccessTip(data.msg)
+            return Promise.resolve(data.data)
         }else{
-            return Promise.reject(data)
+            useSuccessTip(data.msg)
+            return Promise.reject(data.data)
         }
     },
     error=>{
+        useFailedTip('请求错误：' + error.message)
         return Promise.reject(error)
     }
 )
