@@ -36,6 +36,8 @@ import { reactive, ref } from "vue";
 import { login } from "@/api/login"
 import { useFailedTip} from "@/utils/msgTip"
 import { isSpace } from '@/utils/stringUtil'
+import { setToken } from '@/utils/auth'
+
 
 // 存输入的登录信息
 const userMsg = reactive({
@@ -46,14 +48,20 @@ const userMsg = reactive({
         autoLogin: true
     }
 })
+// 登录
 const useLogin = async()=>{
     if(isSpace(userMsg.username)){
         useFailedTip('用户名不能为空')
         return
     }
+    if(isSpace(userMsg.password)){
+        useFailedTip('密码不能为空或纯空格')
+        return
+    }
 
     let res = await login(userMsg);
-    console.log(res)
+    // 登录成功,存token
+    setToken(res.token)
 }
 </script>
 
