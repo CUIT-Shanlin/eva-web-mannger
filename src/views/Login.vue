@@ -36,7 +36,7 @@ import { reactive, ref } from "vue";
 import { login } from "@/api/login"
 import { useFailedTip} from "@/utils/msgTip"
 import { isSpace } from '@/utils/stringUtil'
-import { setMyToken,getMyToken,getUsername,setUsername } from '@/utils/auth'
+import { setMyToken,getUsername,setUsername } from '@/utils/auth'
 
 
 // 存输入的登录信息
