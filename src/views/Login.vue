@@ -37,7 +37,9 @@ import { login } from "@/api/login"
 import { useFailedTip} from "@/utils/msgTip"
 import { isSpace } from '@/utils/stringUtil'
 import { setMyToken,getUsername,setUsername } from '@/utils/auth'
+import { useRouter } from "vue-router";
 
+const router = useRouter()
 
 // 存输入的登录信息
 const userMsg = reactive({
@@ -67,7 +69,7 @@ const useLogin = async()=>{
     if(userMsg.fun.rememberUsername){
         setUsername(userMsg.username)
     }
-
+    router.push('/home')
 }
 </script>
 

@@ -6,7 +6,7 @@ import request from '@/utils/request.js'
 export function getInfo(){
     return request(
         {
-            url: '/user/info',
+            url: '/user/info?semId=1',
             method: 'GET',
         }
     )

@@ -11,13 +11,17 @@ export const useUserStore = defineStore(
     state :()=>{
       return {
         token: getMyToken(),
-        name: '',
-        avatar: '',
-        id: -1,
+        info: {
+          name: '',
+          avatar: '',
+          id: -1,
+        },
+        
     
         // 权限信息
         perms: [],
-        menus: []
+        menus: [],
+        roles: [],
       }
     }
   }
