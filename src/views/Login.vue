@@ -34,7 +34,7 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { login } from "@/api/login"
-import { useFailedTip} from "@/utils/msgTip"
+import { useFailedTip,useSuccessTip } from "@/utils/msgTip"
 import { isSpace } from '@/utils/stringUtil'
 import { setMyToken,getUsername,setUsername } from '@/utils/auth'
 import { useRouter } from "vue-router";
@@ -69,6 +69,7 @@ const useLogin = async()=>{
     if(userMsg.fun.rememberUsername){
         setUsername(userMsg.username)
     }
+    useSuccessTip('登录成功')
     router.push('/home')
 }
 </script>

@@ -36,7 +36,7 @@ request.interceptors.response.use(
     response=>{
         let {data} = response
         if(data.code === 200){
-            useSuccessTip(data.msg)
+            // useSuccessTip(data.msg)
             return Promise.resolve(data.data)
         }else{
             useSuccessTip(data.msg)

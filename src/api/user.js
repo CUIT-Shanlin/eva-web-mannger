@@ -1,4 +1,7 @@
 import request from '@/utils/request.js'
+import axios from 'axios'
+
+
 
 /**
  * 获取用户自己的信息
@@ -10,4 +13,5 @@ export function getInfo(){
             method: 'GET',
         }
     )
+    // return axios.get('/user/info?semId=1')
 }

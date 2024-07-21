@@ -30,7 +30,7 @@ router.beforeEach(async(to,from,next) => {
             menus.forEach(menu=>{
                 router.addRoute(menu)
             })
-            let lastRou = { 
+            let lastRou = {
                 path: '/:catchAll(.*)', // 使用参数匹配和正则表达式来捕获所有路径  
                 component: ()=>import('@/views/404.vue')
             }
@@ -61,7 +61,6 @@ const userInit = async()=>{
 
     let user = useUserStore()
     user.info = data.info
-    user.info.id = data.info.id
     user.perms = data.buttonList
     user.menus = data.routerList
     user.roles = data.roleList
