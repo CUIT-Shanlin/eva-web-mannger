@@ -6,24 +6,24 @@
             <div class="iptBar">
                 <div class="iconfont ico">&#xe65e;</div>
                 <div class="iptBox">
-                    <input class="ipt" placeholder="请输入账号"/>
+                    <input class="ipt" placeholder="请输入账号" v-model="userMsg.username"/>
                 </div>
             </div>
             <div class="iptBar">
                 <div class="iconfont ico">&#xe635;</div>
                 <div class="iptBox">
-                    <input class="ipt" placeholder="请输入密码" type="password"/>
+                    <input class="ipt" placeholder="请输入密码" type="password" v-model="userMsg.password"/>
                 </div>
             </div>
             <div class="checkboxLine">
-                <input type="checkbox" id="box1"/>
+                <input type="checkbox" id="box1" v-model="userMsg.fun.rememberUsername"/>
                 <label for="box1">记住账号</label>
 
-                <input type="checkbox" id="box2"/>
+                <input type="checkbox" id="box2" v-model="userMsg.fun.autoLogin"/>
                 <label for="box2">自动登录</label>
             </div>
             
-            <button class="btn">立即登录</button>
+            <button class="btn" @click="useLogin()">立即登录</button>
 
         </div>
     </div>
@@ -32,9 +32,22 @@
 </template>
 
 <script setup>
+import { reactive, ref } from "vue";
+import { login } from "@/api/login"
 
-
-
+// 存输入的登录信息
+const userMsg = reactive({
+    username: '',
+    password: '',
+    fun:{
+        rememberUsername: true,
+        autoLogin: true
+    }
+})
+const useLogin = async()=>{
+    let res = await login(userMsg);
+    console.log(res)
+}
 </script>
 
 <style lang="scss" scoped>

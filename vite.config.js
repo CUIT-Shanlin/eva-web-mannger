@@ -18,7 +18,8 @@ export default defineConfig({
     port: 5666,
     proxy: {
       "/devApi": {
-        target: "http://localhost:8800", // 后端地址
+        // target: "http://localhost:4523", // 后端地址
+        target: "https://apifoxmock.com/m1/4684209-4335706-default", // 后端地址
         changeOrigin: true,            // 是否换源
         rewrite: (path) => path.replace(/^\/devApi/, "")
       }
