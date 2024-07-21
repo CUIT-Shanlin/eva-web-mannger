@@ -3,8 +3,6 @@
  */
 
 import Cookies from 'js-cookie'
-import {useUserStore} from '@/stores/userStore'
-import pinia from '@/utils/pinia'
 
 
 const TOKEN_KEY = 'eva_token'
@@ -24,14 +22,14 @@ export function removeToken(){
 }
 
 
-// 实现自动登录
+// 实现自动登录: 自动登录=>token存Cookie 临时登录=>token存session
 export function setMyToken(token = '',isAutoLogin = true){
     if(isAutoLogin){
         setToken(token)
     }else{
         removeToken()
+        sessionStorage.setItem(TOKEN_KEY,token)
     }
-    useUserStore(pinia).token = token
 }
 
 // 获取临时token或cookie中的token
@@ -39,7 +37,7 @@ export function getMyToken(){
     if(getToken()){
         return getToken()
     }
-    return useUserStore(pinia).token
+    return sessionStorage.getItem(TOKEN_KEY)
 }
 
 // 确定是否让浏览器记住用户名

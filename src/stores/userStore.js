@@ -2,14 +2,14 @@
   存储用户信息的pinia 
 */
 import { defineStore } from "pinia";
-import { getToken } from "@/utils/auth";
+import { getMyToken } from "@/utils/auth";
 
 export const useUserStore = defineStore(
   'user',
   {
     state :()=>{
       return {
-        token: '',
+        token: getMyToken(),
         name: '',
         avatar: '',
         id: 0,
