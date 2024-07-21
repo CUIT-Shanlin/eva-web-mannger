@@ -34,8 +34,8 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { login } from "@/api/login"
-import { useSuccessTip } from "@/utils/msgTip"
-
+import { useFailedTip} from "@/utils/msgTip"
+import { isSpace } from '@/utils/stringUtil'
 
 // 存输入的登录信息
 const userMsg = reactive({
@@ -47,6 +47,11 @@ const userMsg = reactive({
     }
 })
 const useLogin = async()=>{
+    if(isSpace(userMsg.username)){
+        useFailedTip('用户名不能为空')
+        return
+    }
+
     let res = await login(userMsg);
     console.log(res)
 }
