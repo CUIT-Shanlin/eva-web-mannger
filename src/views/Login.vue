@@ -36,7 +36,7 @@ import { reactive, ref } from "vue";
 import { login } from "@/api/login"
 import { useFailedTip} from "@/utils/msgTip"
 import { isSpace } from '@/utils/stringUtil'
-import { setToken } from '@/utils/auth'
+import { setMyToken,getMyToken } from '@/utils/auth'
 
 
 // 存输入的登录信息
@@ -61,7 +61,10 @@ const useLogin = async()=>{
 
     let res = await login(userMsg);
     // 登录成功,存token
-    setToken(res.token)
+    setMyToken(res.token,userMsg.fun.autoLogin)
+    
+    useFailedTip(getMyToken())
+
 }
 </script>
 

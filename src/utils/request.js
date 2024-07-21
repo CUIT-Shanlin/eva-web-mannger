@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getToken } from './auth';
+import { getMyToken } from './auth';
 import { useSuccessTip,useFailedTip } from './msgTip';
 /**
  * 封装axios
@@ -21,7 +21,7 @@ request.interceptors.request.use(
 
         // 其他请求在请求头设置token
         // config.headers.set('token',localStorage.getItem('token'))
-        config.headers.set('token',getToken())
+        config.headers.set('token',getMyToken())
 
         return config
     },
