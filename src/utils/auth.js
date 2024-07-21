@@ -41,3 +41,14 @@ export function getMyToken(){
     }
     return useUserStore(pinia).token
 }
+
+// 确定是否让浏览器记住用户名
+const USERNAME_KEY = 'eva_is_remember_username'
+
+export function setUsername(username = ''){
+    return localStorage.setItem(USERNAME_KEY,username)
+}
+
+export function getUsername(){
+    return localStorage.getItem(USERNAME_KEY)
+}

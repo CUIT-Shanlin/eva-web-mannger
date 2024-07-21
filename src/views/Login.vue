@@ -36,12 +36,12 @@ import { reactive, ref } from "vue";
 import { login } from "@/api/login"
 import { useFailedTip} from "@/utils/msgTip"
 import { isSpace } from '@/utils/stringUtil'
-import { setMyToken,getMyToken } from '@/utils/auth'
+import { setMyToken,getMyToken,getUsername,setUsername } from '@/utils/auth'
 
 
 // 存输入的登录信息
 const userMsg = reactive({
-    username: '',
+    username: getUsername(),
     password: '',
     fun:{
         rememberUsername: true,
@@ -63,7 +63,10 @@ const useLogin = async()=>{
     // 登录成功,存token
     setMyToken(res.token,userMsg.fun.autoLogin)
     
-    useFailedTip(getMyToken())
+    // 浏览器存用户名
+    if(userMsg.fun.rememberUsername){
+        setUsername(userMsg.username)
+    }
 
 }
 </script>
