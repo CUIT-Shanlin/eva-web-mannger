@@ -1,19 +1,13 @@
 <template>
+    <Header></Header>
     <div>
         首页
-        <button @click="show()">点我</button>
     </div>
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
+import Header from '@/components/Header.vue';
 
-const router = useRouter()
-function show(){
-    console.log('========================================>>>>>')
-    console.log(router.options.routes);
-    console.log('========================================>>>>>')
-}
 
 </script>
 

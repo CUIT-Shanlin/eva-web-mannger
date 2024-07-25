@@ -27,7 +27,7 @@
 
         </div>
     </div>
-    <img src="../assets/loginBack2.png" class="imgShow"/>
+    <img src="../assets/img/loginBack2.png" class="imgShow"/>
   </div>
 </template>
 
@@ -79,7 +79,7 @@ const useLogin = async()=>{
 @import '../styles/commonFlexStyles.scss';
 
 .loginAll{
-    background-image: url("../assets/loginBack1.png");
+    background-image: url("../assets/img/loginBack1.png");
     height: 100%;
     width: 100%;
     display: flex;

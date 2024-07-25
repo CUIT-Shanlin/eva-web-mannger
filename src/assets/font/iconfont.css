@@ -1,8 +1,8 @@
 @font-face {
-  font-family: "iconfont"; /* Project id 4627509 */
-  src: url('iconfont.woff2?t=1721461018055') format('woff2'),
-       url('iconfont.woff?t=1721461018055') format('woff'),
-       url('iconfont.ttf?t=1721461018055') format('truetype');
+  font-family: 'iconfont';  /* Project id 4627509 */
+  src: url('//at.alicdn.com/t/c/font_4627509_bfgks80chh.woff2?t=1721870189025') format('woff2'),
+       url('//at.alicdn.com/t/c/font_4627509_bfgks80chh.woff?t=1721870189025') format('woff'),
+       url('//at.alicdn.com/t/c/font_4627509_bfgks80chh.ttf?t=1721870189025') format('truetype');
 }
 
 .iconfont {
