@@ -1,5 +1,4 @@
 import request from '@/utils/request.js'
-import axios from 'axios'
 
 
 
@@ -13,5 +12,4 @@ export function getInfo(){
             method: 'GET',
         }
     )
-    // return axios.get('/user/info?semId=1')
 }

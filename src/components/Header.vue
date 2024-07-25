@@ -2,9 +2,9 @@
 <template>
     <div class="topAll">
         <!-- <myInputBar v-model="iptValue" @on-enter="handleEnter"></myInputBar> -->
-         <div></div>
+         <ChooseSem />
         <span class="user">
-            <img class="avatar" :src="avatarPath"/>
+            <img class="avatar" :src="userMsg.avatar"/>
             <span class="name">{{userMsg.name}}</span>
             <span :class="{open,iconfont:true, openNotAct:!isChoose }"
              @click="isChoose = !isChoose">&#xe656;</span>
@@ -15,30 +15,27 @@
 </template>
 
 <script setup>
-import { onMounted,ref } from "vue"
-// import myInputBar from "./MyInputBar.vue"
+import { onMounted,ref,reactive } from "vue"
 // import UserUse from "./UserUse.vue"
-// import {useUserStore} from '@/store/userStore'
-// import {getOneUser} from '@/api/user'
+import {useUserStore} from '@/stores/userStore'
+import { isSpace } from "@/utils/stringUtil";
+import {getInfo} from '@/api/user'
+import ChooseSem from "./ChooseSem.vue";
 
 let isChoose = ref(false)
-let iptValue = ref('')
-function handleEnter() {
-  // 按下回车键时执行的逻辑
-  console.log('===============================================')
-  console.log('你按下了回车键，输入的值是:', iptValue.value);
-  console.log('===============================================')
-  // 逻辑完成清除输入值
-  iptValue.value = ''
-}
-// 头像地址
-let avatarPath = ref('/src/assets/img/default_avatar.png')
-let userMsg = ref({id: 0,name:'admin'})
+// 默认头像地址
+let defaultAvatarUrl = '/src/assets/img/default_avatar.png'
+let userMsg = ref({id: 0,avatar:''})
+// 初始化用户信息
 const initMsg = async()=>{
+    let {info} = await getInfo()
+    userMsg.value = info
+    console.log(userMsg.value)
+    if(isSpace(userMsg.value.avatar)){
+        userMsg.value.avatar = defaultAvatarUrl
+    }
+    userMsg.value.avatar = defaultAvatarUrl
 
-    // if(data.avatarUrl !== null && data.avatarUrl != ''){
-    //     avatarPath.value = data.avatarUrl
-    // }
 }
 onMounted(()=>{
     initMsg()
