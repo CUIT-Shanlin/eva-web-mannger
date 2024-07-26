@@ -1,8 +1,7 @@
 <!-- 顶部菜单栏 -->
 <template>
     <div class="topAll">
-        <!-- <myInputBar v-model="iptValue" @on-enter="handleEnter"></myInputBar> -->
-         <ChooseSem />
+        <ChooseSem />
         <span class="user">
             <img class="avatar" :src="userMsg.avatar"/>
             <span class="name">{{userMsg.name}}</span>
