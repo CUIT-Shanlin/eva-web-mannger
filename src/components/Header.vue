@@ -73,7 +73,7 @@ onMounted(()=>{
         }
         .name{
             padding: 0 1.8rem;
-            font-size: 2vh;
+            font-size: 18px;
             font-weight: bold;
             color: rgb(52,62,99);
         }
