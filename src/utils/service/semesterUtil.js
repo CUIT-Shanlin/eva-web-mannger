@@ -3,7 +3,24 @@
  * 处理学期模块业务相关的工具js
  */
 
+const SEMESTER_KEY =  'eva_semester_id_key'
 
+/**
+ * 全局session存当前的学期id
+ * @param {*} semId 当前的学期id
+ * @returns 
+ */
+export function setSemesterId(semId){
+    return sessionStorage.setItem(SEMESTER_KEY,semId);
+}
+
+/**
+ * 获取全局session存的学期id
+ * @returns 当前的学期id
+ */
+export function getSemesterId(){
+    return sessionStorage.getItem(SEMESTER_KEY);
+}
 
 /**
  * 仅看学期年份，获取去重后学期数组

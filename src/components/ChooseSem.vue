@@ -17,43 +17,57 @@
                 <div class="myPopper">
                     <div class="showAll">
                         <span :class="{oneSem: true, nowSty:isCommonYear(checkedSemester,semester)}"
-                        v-for="semester in semesters" :key="semester.id">
+                        v-for="semester in getDistinctSemsters(semesters)" :key="semester.id"
+                        @click="changeSem(semester)">
                             {{semester.startYear}}-{{semester.endYear}}
                         </span>
                     </div>
                     <div class="semPeriod">
-                        <div :class="{periodOne: true, nowSty: checkedSemester.period === 0}">上学期</div>
-                        <div :class="{periodOne: true, nowSty: checkedSemester.period === 1}">下学期</div>
+                        <div :class="{periodOne: true, nowSty: checkedSemester.period === 0}"
+                        @click="checkedSemester.period = 0">上学期</div>
+                        <div :class="{periodOne: true, nowSty: checkedSemester.period === 1}"
+                        @click="checkedSemester.period = 1">下学期</div>
                     </div>
                 </div>
             </el-popover>
         </div>
         <div class="show">
             {{checkedSemester.startYear}}
-            <span style="margin: 0 10px;">———</span>
+            <span style="margin: 0 10px;">——</span>
             {{checkedSemester.endYear}}
+            &nbsp;
+            <span v-text="checkedSemester.period === 0 ? '上学期' : '下学期'"></span>
         </div>
     </div>
 </template>
  
 <script setup>
 import { getAllSemester,getNowSemester } from '@/api/semester'
-import { getDistinctSemsters,isCommonYear } from '@/utils/service/semesterUtil.js'
+import { getDistinctSemsters,isCommonYear,setSemesterId } from '@/utils/service/semesterUtil.js'
 import { onMounted, ref } from 'vue'
 
 // 存当前显示的学期信息
 const checkedSemester = ref({})
 const isChoose = ref(false)
 
-// 存所有的学期信息
+// 存所有的的学期信息
 const semesters = ref([])
 
 // 初始化学期信息
 const initSemesters = async()=>{
     let res = await getNowSemester()
     checkedSemester.value = res
+    setSemesterId(res.id)
     let {dataArr} = await getAllSemester()
-    semesters.value = getDistinctSemsters(dataArr)
+    semesters.value = dataArr
+}
+
+// 切换学期
+function changeSem(newSem){
+    checkedSemester.value = semesters.value.find(sem => {
+        return isCommonYear(sem,newSem) && sem.period === checkedSemester.value.period
+    })
+    setSemesterId(checkedSemester.value.id)
 }
 onMounted(()=>{
     initSemesters()
