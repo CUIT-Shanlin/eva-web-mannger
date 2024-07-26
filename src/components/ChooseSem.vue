@@ -16,13 +16,14 @@
                 </template>
                 <div class="myPopper">
                     <div class="showAll">
-                        <span class="oneSem" v-for="semester in semesters" :key="semester.id">
-                            2023-2024
+                        <span :class="{oneSem: true, nowSty:isCommonYear(checkedSemester,semester)}"
+                        v-for="semester in semesters" :key="semester.id">
+                            {{semester.startYear}}-{{semester.endYear}}
                         </span>
                     </div>
                     <div class="semPeriod">
-                        <div class="periodOne">上学期</div>
-                        <div class="periodOne">下学期</div>
+                        <div :class="{periodOne: true, nowSty: checkedSemester.period === 0}">上学期</div>
+                        <div :class="{periodOne: true, nowSty: checkedSemester.period === 1}">下学期</div>
                     </div>
                 </div>
             </el-popover>
@@ -37,6 +38,7 @@
  
 <script setup>
 import { getAllSemester,getNowSemester } from '@/api/semester'
+import { getDistinctSemsters,isCommonYear } from '@/utils/service/semesterUtil.js'
 import { onMounted, ref } from 'vue'
 
 // 存当前显示的学期信息
@@ -45,15 +47,13 @@ const isChoose = ref(false)
 
 // 存所有的学期信息
 const semesters = ref([])
+
+// 初始化学期信息
 const initSemesters = async()=>{
     let res = await getNowSemester()
     checkedSemester.value = res
     let {dataArr} = await getAllSemester()
-    semesters.value = dataArr
-    console.log('===================>>>>>')
-    console.log(res)
-    console.log(dataArr)
-    console.log('===================>>>>>')
+    semesters.value = getDistinctSemsters(dataArr)
 }
 onMounted(()=>{
     initSemesters()
@@ -63,7 +63,7 @@ onMounted(()=>{
 <style lang="scss" scoped>
 @import url('../assets/font/iconfont.css');
 @import '../styles/commonFlexStyles.scss';
-
+@import '../styles/globalPage.scss';
 
 $sem-back-color: rgb(250,252,254);
 $sem-border-color: rgb(210,213,225);
@@ -106,7 +106,6 @@ $sem-line-color: #C4C4C4;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         padding-right: 10px;
-    
     }
     .semPeriod{
         width: 100px;
@@ -131,8 +130,12 @@ $sem-line-color: #C4C4C4;
     color: $sem-font-color;
 }
 
-.periodOne:hover,.oneSem:hover{
+.nowSty,.periodOne:hover,.oneSem:hover{
     border-color: $sem-border-color;
     background-color: $sem-back-color;
+}
+
+.nowSty{
+    color: rgb(155, 160, 179);
 }
 </style>
