@@ -1,16 +1,36 @@
 <!-- 左侧菜单栏显示 -->
 <template>
     <div class="leftAll">
-        1
+        <div class="topFill">
+            <el-button @click="show()">点我</el-button>
+        </div>
+        <div class="libOne" v-for="(menu,index) in menus" :key="index">
+            <span class="box">
+                <span class="iconfont ico" v-html="menu.meta.icon"></span>
+                <span>{{menu.meta.name}}</span>
+            </span>
+            <span class="tip">&nbsp;</span>
+        </div>
     </div>
 </template>
 
 <script setup>
+import { useUserStore } from '@/stores/userStore';
+import pinia from '@/utils/pinia';
+import { ref } from 'vue';
 
+const menus = ref(useUserStore(pinia).menus);
+function show(){
+    console.log('======================>>>>>>')
+    console.log(menus.value)
+    console.log('======================>>>>>>')
+}
 </script>
 
 <style lang="scss" scoped>
+@import url('../assets/font/iconfont.css');
 @import '../styles/globalPage.scss';
+@import '../styles/commonFlexStyles.scss';
 
 .leftAll{
     position: fixed;
@@ -22,5 +42,42 @@
     background-color: #FFF;
     border-radius: 2px;
     box-shadow: 0px 0px 3px #928c8c64;
+    user-select: none;
+    .topFill{
+        height: 65px;
+        border-bottom: 2px rgb(239,243,248) solid;
+    }
+    .libOne{
+        @include flex-center-y;
+        justify-content: space-between;
+        color: rgb(136,136,136);
+        font-size: 16.42px;
+        padding: 10px 0;
+        padding-left: 24px;
+        font-weight: 550;
+        .box{
+            @include flex-center-y;
+            .ico{
+                width: 25px;
+                font-size: 25px;
+                margin-right: 18px;
+            }
+        }
+        
+        .tip{
+            height: 60%;
+            width: 5px;
+        }
+        .tip:active{
+            background: rgb(60,118,244);
+        }
+    }
+    .libOne:hover{
+        background: $main-back-color;
+    }
+    .libOne:active{
+        background: $main-back-color;
+        color: rgb(60,118,244);
+    }
 }
 </style>
