@@ -4,12 +4,15 @@
         <div class="topFill">
             <el-button @click="show()">点我</el-button>
         </div>
-        <div class="libOne" v-for="(menu,index) in menus" :key="index">
-            <span class="box">
-                <span class="iconfont ico" v-html="menu.meta.icon"></span>
-                <span>{{menu.meta.name}}</span>
-            </span>
-            <span class="tip">&nbsp;</span>
+        <div ref="menusDiv">
+            <div :class="{libOne: true, actLib: index === chooseIndex}"
+            v-for="(menu,index) in menus" :key="index" @click="chooseIndex = index">
+                <span class="box">
+                    <span class="iconfont ico" v-html="menu.meta.icon"></span>
+                    <span>{{menu.meta.name}}</span>
+                </span>
+                <span :class="{tip: true, actTip: chooseIndex === index}">&nbsp;</span>
+            </div>
         </div>
     </div>
 </template>
@@ -17,14 +20,43 @@
 <script setup>
 import { useUserStore } from '@/stores/userStore';
 import pinia from '@/utils/pinia';
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
+// 从pinia中拿到菜单数据
 const menus = ref(useUserStore(pinia).menus);
+
+// 记录顶级菜单中选中的索引
+const chooseIndex = ref(-1)
 function show(){
     console.log('======================>>>>>>')
     console.log(menus.value)
     console.log('======================>>>>>>')
 }
+
+
+// 引用目标 div
+const menusDiv = ref(null);
+
+
+// TODO 点击菜单以外的地方 就将选中样式取消
+// 监听全局点击事件
+function handleClickOutside(event) {
+  // 检查点击事件是否发生在目标 div 上或其子元素上
+  if (!menusDiv.value || !menusDiv.value.contains(event.target)) {
+    // 如果没有，则是点击了菜单以外的地方，将选中索引 赋值-1
+    chooseIndex.value = -1
+  }
+}
+// 组件挂载时添加事件监听
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+});
+  
+// 组件卸载时移除事件监听
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
 </script>
 
 <style lang="scss" scoped>
@@ -68,16 +100,17 @@ function show(){
             height: 60%;
             width: 5px;
         }
-        .tip:active{
+        .actTip{
             background: rgb(60,118,244);
         }
     }
     .libOne:hover{
         background: $main-back-color;
     }
-    .libOne:active{
+    .actLib{
         background: $main-back-color;
         color: rgb(60,118,244);
     }
 }
+.special-div{}
 </style>

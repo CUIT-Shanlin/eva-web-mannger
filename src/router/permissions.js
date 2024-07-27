@@ -25,7 +25,7 @@ router.beforeEach(async(to,from,next) => {
             await userInit()
         }
         let {menus} = useUserStore(pinia)
-        if(menus.length < 1 || router.getRoutes().length <= 4){
+        if(menus.length < 1 || router.getRoutes().length <= 3){
             changeMenusToRouters(menus)
             menus.forEach(menu=>{
                 router.addRoute(menu)
@@ -59,7 +59,7 @@ const userInit = async()=>{
     let data = await getInfo()
     // 将权限信息存入pinia
 
-    let user = useUserStore()
+    let user = useUserStore(pinia)
     user.info = data.info
     user.perms = data.buttonList
     user.menus = data.routerList
