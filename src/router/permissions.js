@@ -74,7 +74,7 @@ const userInit = async()=>{
  */
 async function loadModule(modulePath){
     try{
-        const module = await import(`@/views/${modulePath}.vue`)
+        const module = await import(`/src/views${modulePath}.vue`)
         return module.default;
     } catch (error) {
         // 返回默认组件404
