@@ -25,7 +25,7 @@ router.beforeEach(async(to,from,next) => {
             await userInit()
         }
         let {menus} = useUserStore(pinia)
-        if(menus.length < 1 || router.getRoutes().length <= 3){
+        if(menus.length < 1 || router.getRoutes().length <= 4){
             changeMenusToRouters(menus)
             menus.forEach(menu=>{
                 router.addRoute(menu)

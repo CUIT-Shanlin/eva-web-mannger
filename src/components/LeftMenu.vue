@@ -4,15 +4,16 @@
         <div class="topFill">
             <el-button @click="show()">点我</el-button>
         </div>
-        <div ref="menusDiv">
-            <div :class="{libOne: true, actLib: index === chooseIndex}"
-            v-for="(menu,index) in menus" :key="index" @click="chooseIndex = index">
+        <div v-for="(menu,index) in menus" :key="index">
+            <div :class="{libOne: true, actLib: menu.isChoose}"
+            @click="menu.isChoose = !menu.isChoose">
                 <span class="box">
                     <span class="iconfont ico" v-html="menu.meta.icon"></span>
                     <span>{{menu.meta.name}}</span>
                 </span>
-                <span :class="{tip: true, actTip: chooseIndex === index}">&nbsp;</span>
+                <span :class="{tip: true, actTip: menu.isChoose}">&nbsp;</span>
             </div>
+            <TreeMenu v-if="menu.isChoose && menu.alwaysShow && !menu.hidden" :menu-list="menu.children"/>
         </div>
     </div>
 </template>
@@ -20,43 +21,19 @@
 <script setup>
 import { useUserStore } from '@/stores/userStore';
 import pinia from '@/utils/pinia';
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref } from 'vue';
+import TreeMenu from '@/components/TreeMenu.vue'
+
 
 // 从pinia中拿到菜单数据
 const menus = ref(useUserStore(pinia).menus);
 
-// 记录顶级菜单中选中的索引
-const chooseIndex = ref(-1)
+
 function show(){
     console.log('======================>>>>>>')
-    console.log(menus.value)
+    console.log(useUserStore(pinia).menus)
     console.log('======================>>>>>>')
 }
-
-
-// 引用目标 div
-const menusDiv = ref(null);
-
-
-// TODO 点击菜单以外的地方 就将选中样式取消
-// 监听全局点击事件
-function handleClickOutside(event) {
-  // 检查点击事件是否发生在目标 div 上或其子元素上
-  if (!menusDiv.value || !menusDiv.value.contains(event.target)) {
-    // 如果没有，则是点击了菜单以外的地方，将选中索引 赋值-1
-    chooseIndex.value = -1
-  }
-}
-// 组件挂载时添加事件监听
-onMounted(() => {
-    document.addEventListener('click', handleClickOutside);
-});
-  
-// 组件卸载时移除事件监听
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
-
 </script>
 
 <style lang="scss" scoped>
@@ -84,7 +61,7 @@ onUnmounted(() => {
         justify-content: space-between;
         color: rgb(136,136,136);
         font-size: 16.42px;
-        padding: 10px 0;
+        padding: 15px 0;
         padding-left: 24px;
         font-weight: 550;
         .box{

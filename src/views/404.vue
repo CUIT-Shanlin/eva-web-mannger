@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>TMD,怎么404了</h1>
+        <h1 style="font-size: 100px;">TMD,怎么404了</h1>
     </div>
 </template>
 
