@@ -2,7 +2,7 @@
 <template>
     <div class="leftAll">
         <div class="topFill">
-            <el-button @click="show()">点我</el-button>
+            <!-- <el-button @click="show()">点我</el-button> -->
         </div>
         <div v-for="(menu,index) in menus" :key="index">
             <div :class="{libOne: true, actLib: menu.isChoose}"
