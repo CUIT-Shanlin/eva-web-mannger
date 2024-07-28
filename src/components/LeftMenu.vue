@@ -89,5 +89,4 @@ function show(){
         color: rgb(60,118,244);
     }
 }
-.special-div{}
 </style>
