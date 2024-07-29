@@ -1,0 +1,14 @@
+@import './globalPage.scss';
+@import './commonFlexStyles.scss';
+
+// 页面最上方的页面名的样式
+@mixin funTitle{
+    width: 100%;
+    @include flex-center-y;
+    margin-top: 2vh;
+    margin-bottom: 4vh;
+    font-size: 20px;
+    font-weight: 550;
+    user-select: none;
+    color: $title-font-color;
+}

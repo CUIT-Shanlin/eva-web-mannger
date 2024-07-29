@@ -1,19 +1,19 @@
 <template>
-    <div class="sty">
-        cuit
+    <div class="userAllSty">
+        <PageTitle content="用户列表"/>
     </div>
 </template>
 
 <script setup>
+import PageTitle from '@/components/PageTitle.vue';
 
 </script>
 
 <style lang="scss" scoped>
 
 @import '../../../styles/globalPage.scss';
-.sty{
+.userAllSty{
     width: 100%;
-    font-size: 100px;
-    border: 1px solid;
+    
 }
 </style>
