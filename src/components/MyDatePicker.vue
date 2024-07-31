@@ -2,32 +2,20 @@
     <div class="diy-calendar-wrapper">
       <div class="calendar-header">
         <!-- 左箭头 -->
-        <div class="left-arrow" @click="jumpMonth(-1)">
-          <svg width="30" height="30">
-            <path
-              d="M 19,9 L 11,15 18,21"
-              stroke="rgba(95,147,238,0.3)"
-              fill="none"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+        <div class="box">
+          <div class="left-arrow" @click="jumpMonth(-12)">
+            <span class="iconfont ico">&#xe714;</span>
+          </div>
+          <span class="iconfont ico left-ico" @click="jumpMonth(-1)">&#xe600;</span>
         </div>
         <!-- 年月标题 -->
         <div class="center-title">{{ targetDateFormat }}</div>
         <!-- 右箭头 -->
-        <div class="right-arrow" @click="jumpMonth(1)">
-          <svg width="30" height="30">
-            <path
-              d="M 11,9 L 18,15 11,21"
-              stroke="rgba(95,147,238,0.3)"
-              fill="none"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+        <div class="box">
+          <span class="iconfont ico" @click="jumpMonth(1)">&#xe600;</span>
+          <div class="right-arrow" @click="jumpMonth(12)">
+            <span class="iconfont ico right-ico">&#xe714;</span>
+          </div>
         </div>
       </div>
       <!-- 日历主体 -->
@@ -86,7 +74,13 @@
   import { reactive, ref, computed, watch } from "vue";
   
   const props = defineProps({
-    modelValue: Date,
+    // modelValue: Date,
+    modelValue: {
+      type: Date,
+      default(){
+        return null
+      }
+    },
   });
   
   const emits = defineEmits(["update:modelValue"]);
@@ -387,6 +381,9 @@
    * @param col 日期数据
    */
   function isSelectedDate(col) {
+    if(targetDate.value == null){
+      return false
+    }
     const colDateObj = col.dateObj;
     const colYear = colDateObj.getFullYear();
     const colMonth = colDateObj.getMonth();
@@ -477,6 +474,7 @@
   </script>
   
   <style scoped lang="scss">
+  @import url('../assets/font/iconfont.css');
   .diy-calendar-wrapper {
     width: auto;
     height: 100%;
@@ -508,7 +506,12 @@
           border: 1px solid rgba(95, 147, 238, 0.5);
         }
       }
-  
+      .ico{
+        font-size: 20px;
+      }
+      .left-ico{
+
+      }
       .center-title {
         display: flex;
         justify-content: center;
@@ -682,6 +685,22 @@
     75% {
       clip-path: inset(0 0 0 95%);
     }
+  }
+  .box{
+    display: flex;
+    align-items: center;
+    .left-ico{
+      transform: rotate(180deg);
+    }
+    .right-ico{
+      transform: rotate(180deg);
+    }
+  }
+  .ico{
+    color: rgb(153,163,182);
+  }
+  .ico:hover{
+    color: rgba(95,147,238,0.3);
   }
   </style>
   

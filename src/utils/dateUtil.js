@@ -20,6 +20,9 @@ export function choreDateStr(dateString){
  * @returns 格式之后的date字符串
  */
 export function formatDate(date) {
+    if(date == null){
+        return '';
+    }
     let year = date.getFullYear();
     let month = String(date.getMonth() + 1).padStart(2, '0');
     // 获取日期
