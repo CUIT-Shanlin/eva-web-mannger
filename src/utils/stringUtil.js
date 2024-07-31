@@ -20,14 +20,3 @@ export function removeWhiteSpaces(str) {
     // 使用正则表达式匹配所有空白字符，并用空字符串替换它们
     return str.replace(/\s/g, '');
 }
-/**
- * 处理日期字符串 将完整日期字符串转成MM.DD格式
- * @param {string} dateString 日期字符串
- * @returns 处理完之后的日期字符串
- */
-export function choreDateStr(dateString){
-    let parts = dateString.split(' ')[0].split('-');
-    let month = parts[1];
-    let day = parts[2].trim(); // 去除字符串两端的空格
-    return `${month}.${day}`;
-}
