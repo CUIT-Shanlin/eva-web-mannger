@@ -14,12 +14,18 @@ import ParentView from "@/components/ParentView.vue";
 */
 
 router.beforeEach(async(to,from,next) => {
+    const myToken = useUserStore().token
     // 转到登录的路由直接放行
     if(to.path === '/login'){
-        if(useUserStore().token){
+        // 没有token => 跳转登录页
+        if(myToken){
             next('/home')
         }else next()
     }else{
+        // 非登录页 + 无token => 转到登录页
+        if(!myToken && from.path !== '/login'){
+            next('/login')
+        }
         // 未获取权限信息就发请求去拿
         if(!hasInfo()){
             await userInit()

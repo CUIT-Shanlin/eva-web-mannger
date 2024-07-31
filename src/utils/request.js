@@ -19,9 +19,14 @@ request.interceptors.request.use(
             return config
         }
 
-        // 其他请求在请求头设置token
-        // config.headers.set('token',localStorage.getItem('token'))
-        config.headers.set('token',getMyToken())
+        const token = getMyToken()
+        // TODO 没有token就取消请求，并提示
+        if(!token){
+            console.log('Token 未找到，取消请求');
+            return Promise.reject(new Error('登录异常，Token 未找到，请求被取消'));
+        }
+        // 在请求头设置token
+        config.headers.set('token',token)
 
         return config
     },

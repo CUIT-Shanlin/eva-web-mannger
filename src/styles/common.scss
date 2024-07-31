@@ -12,3 +12,8 @@
     user-select: none;
     color: $title-font-color;
 }
+
+@mixin ipt-focus{
+    outline: none;
+    border: none;
+}

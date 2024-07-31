@@ -7,6 +7,8 @@ import Cookies from 'js-cookie'
 
 const TOKEN_KEY = 'eva_token'
 
+// 存Cookie的tokend的过期时间 =》 1周
+const TOKEN_EXPIRATION_DAY = 7
 // 拿Cookie中的token
 export function getToken(){
     return Cookies.get(TOKEN_KEY)
@@ -14,7 +16,7 @@ export function getToken(){
 
 // 存Cookie中的token
 export function setToken(token){
-    return Cookies.set(TOKEN_KEY,token)
+    return Cookies.set(TOKEN_KEY, token, { expires: TOKEN_EXPIRATION_DAY })
 }
 
 export function removeToken(){
