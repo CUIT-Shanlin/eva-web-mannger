@@ -4,6 +4,7 @@ import { getInfo } from '@/api/user'
 import { deepCopy } from '@/utils/objUtil'
 import { isSpace } from '@/utils/stringUtil'
 import pinia from '@/utils/pinia'
+import { getMyToken } from "@/utils/auth"; 
 
 import Home from '@/views/Home.vue'
 import ParentView from "@/components/ParentView.vue";
@@ -23,7 +24,7 @@ router.beforeEach(async(to,from,next) => {
         }else next()
     }else{
         // 非登录页 + 无token => 转到登录页
-        if(!myToken && from.path !== '/login'){
+        if(!getMyToken()){
             next('/login')
         }
         // 未获取权限信息就发请求去拿

@@ -27,7 +27,7 @@
                     </div>
                 </template>
                 <div class="calendarBox">
-                    <MyDatePicker v-model="iptDate[0]" @change="alert('666666666666')" />
+                    <MyDatePicker v-model="iptDate[0]"/>
                     <div class="tip">&nbsp;</div>
                     <MyDatePicker v-model="iptDate[1]"/>
                 </div>
@@ -79,9 +79,22 @@ const pageData = ref({
     records: []
 })
 
+// 存分页请求数据
+const pageReqData = ref({
+    size: 0,
+    page: 1,
+    queryObj: {
+        keyword: '',
+        startCreateTime: null,
+        endCreateTime: null
+    }
+})
 // 发请求获取分页数据
 const getMyPageData = async()=>{
-    let data = await getPageData()
+    pageReqData.value.size = pageData.value.size
+    pageReqData.value.page = pageData.value.current
+
+    let data = await getPageData(pageReqData.value)
     console.log(data)
     pageData.value = data
 }
@@ -109,8 +122,18 @@ function getChooseDateText(){
     return `${formatDate(iptDate.value[0])}&nbsp&nbsp&nbsp到&nbsp&nbsp&nbsp ${formatDate(iptDate.value[1])}`
 }
 
-watch(iptDate, (newValue, oldValue) => {  
-  show()
+/**
+ * 监听输入日期的变化，更新显示数据
+ */
+watch(iptDate, (newValue, oldValue) => {
+    if(newValue[0] != null && newValue[1] != null){
+        if(newValue[0] > newValue[1]){
+            newValue[1] = newValue[0]
+        }
+        pageReqData.value.startCreateTime = newValue[0]
+        pageReqData.value.endCreateTime = newValue[1]
+        getMyPageData()
+    }
 }, { deep: true });
 function show(){
     console.log()

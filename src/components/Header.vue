@@ -32,8 +32,6 @@ const initMsg = async()=>{
     if(isSpace(userMsg.value.avatar)){
         userMsg.value.avatar = defaultAvatarUrl
     }
-    userMsg.value.avatar = defaultAvatarUrl
-
 }
 onMounted(()=>{
     initMsg()
