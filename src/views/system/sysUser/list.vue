@@ -6,32 +6,34 @@
                 <input v-model="keyword" placeholder="请输入姓名或用户名" />
                 <button class="iconfont btnIco" >&#xe602;</button>
             </form>
-
-            <el-popover
-            placement="bottom"
-            trigger="click"
-            :visible=isChooseDate
-            :width="650"
-            >
-                <template #reference>
-                    <div class="calendarBar" @click="isChooseDate = !isChooseDate">
-                        <span class="txt">
-                            <i class="iconfont ico">&#xe61c;</i>
-                            <span v-html="getChooseDateText()"></span>
-                        </span>
-                        <i class="clear iconfont" v-if="iptDate[0] != null && iptDate[1] != null"
-                        @click="iptDate[0] = null;iptDate[0] = null;isChooseDate = !isChooseDate">
-                            &#xe68b;
-                        </i>
-                        <i :class="{iconfont: true,ico2: true,act:isChooseDate}">&#xe6a8;</i>
+            <div class="myBox">
+                <el-popover
+                placement="bottom"
+                trigger="click"
+                :visible=isChooseDate
+                :width="650"
+                >
+                    <template #reference>
+                        <div class="calendarBar" @click="isChooseDate = !isChooseDate">
+                            <span class="txt">
+                                <i class="iconfont ico">&#xe61c;</i>
+                                <span v-html="getChooseDateText()"></span>
+                            </span>
+                            <i class="clear iconfont" v-if="iptDate[0] != null && iptDate[1] != null"
+                            @click="iptDate[0] = null;iptDate[0] = null;isChooseDate = !isChooseDate">
+                                &#xe68b;
+                            </i>
+                            <i :class="{iconfont: true,ico2: true,act:isChooseDate}">&#xe6a8;</i>
+                        </div>
+                    </template>
+                    <div class="calendarBox">
+                        <MyDatePicker v-model="iptDate[0]"/>
+                        <div class="tip">&nbsp;</div>
+                        <MyDatePicker v-model="iptDate[1]"/>
                     </div>
-                </template>
-                <div class="calendarBox">
-                    <MyDatePicker v-model="iptDate[0]"/>
-                    <div class="tip">&nbsp;</div>
-                    <MyDatePicker v-model="iptDate[1]"/>
-                </div>
-            </el-popover>
+                </el-popover>
+                <my-common-btn class="addIco" txt="新建用户" :is-large="true"  default-color="rgb(255,97,117)" ico="&#xe712;" />
+            </div>
         </div>
         <el-table :data="pageData.records" style="width: 100%">
             <!-- <el-table-column type="selection" width="50" /> -->
@@ -72,7 +74,27 @@
             </el-table-column>
             <el-table-column label="操作">
                 <template #default="scope">
-                    <my-common-btn txt="修改" default-color="rgb(57,25,149)" :is-large="true"/>
+                    <div class="operationBox">
+                        <my-common-btn txt="查看" :default-color="getRandColor()" :is-large="true"/>
+                        <my-common-btn txt="修改" :default-color="getRandColor()" :is-large="true"/>
+                        <el-popover
+                        placement="left"
+                        :width="200"
+                        trigger="hover"
+                        >
+                            <template #reference>
+                                <i class="iconfont more">&#xe612;</i>
+                            </template>
+                                <div class="moreBox">
+                                    <div>
+                                        <el-link type="primary">查看评语/评分</el-link>
+                                    </div>
+                                    <div>
+                                        <el-link type="primary">删除用户</el-link>
+                                    </div>
+                                </div>
+                            </el-popover>
+                    </div>
                 </template>
             </el-table-column>
 
@@ -98,6 +120,7 @@ import { ref, watch, onMounted } from 'vue';
 import { formatDate } from '@/utils/dateUtil';
 import { getPageData } from '@/api/user';
 import { getMyAvatar } from '@/utils/service/userUtil';
+import { getRandomNumber } from '@/utils/randomUtil';
 import MyDatePicker from '@/components/MyDatePicker.vue';
 import MyCommonBtn from '@/components/MyCommonBtn.vue';
 
@@ -132,6 +155,15 @@ const getMyPageData = async()=>{
     let data = await getPageData(pageReqData.value)
     console.log(data)
     pageData.value = data
+}
+
+/**
+ * 获取随机颜色字符串
+ * 随机颜色字符串
+ */
+function getRandColor(){
+    const colorArr = ['rgb(57,25,149)','rgb(255,170,43)','rgb(30,174,122)','rgb(230,162,60)']
+    return colorArr[getRandomNumber(0,colorArr.length - 1)]
 }
 
 /**
@@ -170,10 +202,7 @@ watch(iptDate, (newValue, oldValue) => {
         getMyPageData()
     }
 }, { deep: true });
-function show(){
-    console.log()
-    alert(keyword.value + formatDate(iptDate.value[0]) + ' 到 ' + formatDate(iptDate.value[1]))
-}
+
 onMounted(()=>{
     getMyPageData()
 })
@@ -219,7 +248,8 @@ $ico-btn-color:rgb(255,97,117);
             border-radius: 10px;
             user-select: none;
             .txt{
-                min-width: 200px;
+                // min-width: 200px;
+                min-width: 150px;
                 // margin-right: 100px;
                 .ico{
                     font-size: 20px;
@@ -243,6 +273,11 @@ $ico-btn-color:rgb(255,97,117);
                 transform: rotate(-90deg);
             }
         }
+        .addIco{
+            font-size: 15px;
+            margin-left: 25px;
+
+        }
     }
 }
 
@@ -251,6 +286,10 @@ $ico-btn-color:rgb(255,97,117);
     // float: right;
     display: grid;
     grid-template-columns: 10fr 1fr 0.5fr 1fr 0.5fr 1fr;
+}
+.myBox{
+    display: flex;
+    flex-wrap: wrap;
 }
 .icoBox{
     @include flex-center-y;
@@ -268,6 +307,19 @@ $ico-btn-color:rgb(255,97,117);
     .linkIco:hover{
         background-color: rgb(221, 214, 215);
 
+    }
+}
+.moreBox{
+    // @include flex-center;
+    // flex-wrap: wrap;
+    text-align: center;
+}
+.operationBox{
+    @include flex-center-y;
+    justify-content: space-between;
+    .more{
+        cursor: pointer;
+        font-size: 22px;
     }
 }
 :deep(){
@@ -295,14 +347,5 @@ $ico-btn-color:rgb(255,97,117);
     .avatar{
         margin-right: 15px;
     }
-}
-.operation{
-    user-select: none;
-    cursor: pointer;
-    color: $operation-color;
-    border-bottom: 1px transparent solid;
-}
-.operation:hover{
-    border-color: $operation-color;
 }
 </style>

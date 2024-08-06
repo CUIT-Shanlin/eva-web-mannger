@@ -1,6 +1,9 @@
 <!-- 自己封装的普通按钮，即自动生成 多种状态颜色的按钮 -->
 <template>
-    <button :class="{btn: true, largeBtn: isLarge}">{{txt}}</button>
+    <button :class="{btn: true, largeBtn: isLarge}">
+        <i class="iconfont ico" v-html="ico" v-if="ico != ''"></i>
+        {{txt}}
+    </button>
 </template>
 
 <script setup>
@@ -25,10 +28,22 @@ let props = defineProps({
         default(){
             return false
         }
+    },
+    ico: {
+        type: String,
+        default(){
+            return ''
+        }
+    },
+    icoSize: {
+        type: String,
+        default(){
+            return '22px'
+        }
     }
 })
 const defaultColor = ref(props.defaultColor)
-
+const icoSize = ref(props.icoSize)
 /**
  * 获取hover的颜色
  */
@@ -55,8 +70,12 @@ function getHoverColor(){
 </script>
 
 <style lang="scss" scoped>
-
+@import url('../assets/font/iconfont.css');
 .btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     $default-color: v-bind(defaultColor);
     background: $default-color;
     border: 0;
@@ -73,6 +92,10 @@ function getHoverColor(){
     &:disabled{
         background: v-bind(getDisabledColor());
         cursor: not-allowed;
+    }
+    .ico{
+        font-size: v-bind(icoSize);
+        margin-right: 5px;
     }
 }
 .largeBtn{
