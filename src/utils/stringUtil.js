@@ -20,3 +20,18 @@ export function removeWhiteSpaces(str) {
     // 使用正则表达式匹配所有空白字符，并用空字符串替换它们
     return str.replace(/\s/g, '');
 }
+
+/**
+ * 将一个rgb颜色字符串转成对应的数字的数组，eg: rgb(0,0,0) => [0,0,0]
+ * @param {string} colorStr rgb颜色字符串
+ * @returns 对应的数字的数组
+ */
+export function colorStrToArr(colorStr=''){
+    if(isSpace(colorStr)){
+        return ['','',''].map(Number);
+    }
+    // 去除字符串两端的'rgb('和')'，然后使用逗号分割字符串
+    const colorArrValue = colorStr.replace(/^rgb\(|\)$/g, '').split(',');
+    // 将分割后的字符串数组转换为数字数组
+    return colorArrValue.map(Number);
+}

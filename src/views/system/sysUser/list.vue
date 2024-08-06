@@ -58,12 +58,21 @@
                     {{ getRolesNameStr(scope.row) }}
                 </template>
             </el-table-column>
-            <el-table-column>
-                
+            <el-table-column label="联系" width="150">
+                <template #default="scope">
+                    <div class="icoBox">
+                        <el-tooltip :content="scope.row.info.phone" placement="top" effect="light">
+                            <div class="iconfont linkIco">&#xe862;</div>
+                        </el-tooltip>
+                        <el-tooltip :content="scope.row.info.email" placement="top" effect="light">
+                            <div class="iconfont linkIco">&#xe697;</div>
+                        </el-tooltip>
+                    </div>
+                </template>
             </el-table-column>
             <el-table-column label="操作">
                 <template #default="scope">
-                    <el-button>修改</el-button>
+                    <my-common-btn txt="修改" default-color="rgb(57,25,149)"/>
                 </template>
             </el-table-column>
 
@@ -90,6 +99,7 @@ import { formatDate } from '@/utils/dateUtil';
 import { getPageData } from '@/api/user';
 import { getMyAvatar } from '@/utils/service/userUtil';
 import MyDatePicker from '@/components/MyDatePicker.vue';
+import MyCommonBtn from '@/components/MyCommonBtn.vue';
 
 const keyword = ref('');
 
@@ -175,6 +185,8 @@ onMounted(()=>{
 @import '../../../styles/commonFlexStyles.scss';
 @import '../../../styles/common.scss';
 
+$ico-btn-color:rgb(255,97,117);
+
 .userAllSty{
     .funBar{
         @include flex-center-y;
@@ -212,12 +224,12 @@ onMounted(()=>{
                 .ico{
                     font-size: 20px;
                     margin-right: 10px;
-                    color: rgb(255,97,117);
+                    color: $ico-btn-color;
                 }
             }
             .clear{
                 margin-left: 15px;
-                color: rgb(255,97,117);
+                color: $ico-btn-color;
                 font-size: 18px;
                 &:hover{
                     color: #C4C4C4;
@@ -240,7 +252,24 @@ onMounted(()=>{
     display: grid;
     grid-template-columns: 10fr 1fr 0.5fr 1fr 0.5fr 1fr;
 }
+.icoBox{
+    @include flex-center-y;
+    // justify-content: space-between;
+    user-select: none;
+    .linkIco{
+        cursor: pointer;
+        font-size: 22px;
+        color: $ico-btn-color;
+        padding: 8px;
+        background-color: rgb(255,231,234);
+        border-radius: 10px;
+        margin-right: 20px;
+    }
+    .linkIco:hover{
+        background-color: rgb(221, 214, 215);
 
+    }
+}
 :deep(){
     .el-table__cell{
         color: black;
