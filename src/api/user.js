@@ -22,14 +22,15 @@ export function getInfo(){
  * @param {Object} queryObj 条件查询的对象
  * @returns 分页信息
  */
-export function getPageData(page = 0,size = 0,queryObj = {}){
+export function getPageData(reqData = {page: 0,size: 0,queryObj: {}}){
+// export function getPageData(page = 0,size = 0,queryObj = {}){
     return request({
         url: '/users',
         method: 'POST',
         data: {
-            page,
-            size,
-            queryObj,
+            page: reqData.page,
+            size: reqData.size,
+            queryObj: reqData.queryObj,
         }
     })
 }

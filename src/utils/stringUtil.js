@@ -16,7 +16,7 @@ export function isSpace(str){
  * @param {string} str 传入字符串
  * @returns 去除空白字符之后的字符串
  */ 
-export function removeWhiteSpaces(str) {
+export function removeSpace(str) {
     // 使用正则表达式匹配所有空白字符，并用空字符串替换它们
     return str.replace(/\s/g, '');
 }

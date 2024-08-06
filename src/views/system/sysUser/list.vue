@@ -3,7 +3,7 @@
         <PageTitle content="用户列表"/>
         <div class="funBar">
             <form class="iptBar" @submit.prevent="getMyPageData">
-                <input v-model="keyword" placeholder="请输入姓名或用户名" />
+                <input v-model="pageReqData.queryObj.keyword" placeholder="请输入姓名或用户名" />
                 <button class="iconfont btnIco" >&#xe602;</button>
             </form>
             <div class="myBox">
@@ -126,10 +126,10 @@ import { getPageData, removeOne } from '@/api/user';
 import { getMyAvatar } from '@/utils/service/userUtil';
 import { getRandomNumber } from '@/utils/randomUtil';
 import { useSimpleConfirm, useSuccessTip } from '@/utils/msgTip.js';
+import { removeSpace } from '@/utils/stringUtil';
 import MyDatePicker from '@/components/MyDatePicker.vue';
 import MyCommonBtn from '@/components/MyCommonBtn.vue';
 
-const keyword = ref('');
 
 const iptDate = ref([null, null]);
 const isChooseDate = ref(false)
@@ -160,6 +160,7 @@ const pageReqData = ref({
  */
 const getMyPageData = async()=>{
     isLoadingTable.value = true
+    pageReqData.value.queryObj.keyword = removeSpace(pageReqData.value.queryObj.keyword)
     pageReqData.value.size = pageData.value.size
     pageReqData.value.page = pageData.value.current
 
