@@ -4,6 +4,7 @@ import request from '@/utils/request.js'
 
 /**
  * 获取用户自己的信息
+ * @returns 用户自己的信息
  */
 export function getInfo(){
     return request(
@@ -30,5 +31,17 @@ export function getPageData(page = 0,size = 0,queryObj = {}){
             size,
             queryObj,
         }
+    })
+}
+
+/**
+ * 删除一个用户
+ * @param {*} userId 待删除用户的id 
+ * @returns 响应信息
+ */
+export function removeOne(userId = -1){
+    return request({
+        url: `user?userId=${userId}`,
+        method: 'DELETE'
     })
 }

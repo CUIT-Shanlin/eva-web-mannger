@@ -90,7 +90,7 @@
                                         <el-link type="primary">查看评语/评分</el-link>
                                     </div>
                                     <div>
-                                        <el-link type="primary">删除用户</el-link>
+                                        <el-link type="danger" @click="deleteOneUser(scope.row.info)">删除用户</el-link>
                                     </div>
                                 </div>
                             </el-popover>
@@ -118,9 +118,10 @@
 import PageTitle from '@/components/PageTitle.vue';
 import { ref, watch, onMounted } from 'vue';
 import { formatDate } from '@/utils/dateUtil';
-import { getPageData } from '@/api/user';
+import { getPageData, removeOne } from '@/api/user';
 import { getMyAvatar } from '@/utils/service/userUtil';
 import { getRandomNumber } from '@/utils/randomUtil';
+import { useSimpleConfirm, useSuccessTip } from '@/utils/msgTip.js';
 import MyDatePicker from '@/components/MyDatePicker.vue';
 import MyCommonBtn from '@/components/MyCommonBtn.vue';
 
@@ -147,7 +148,9 @@ const pageReqData = ref({
         endCreateTime: null
     }
 })
-// 发请求获取分页数据
+/**
+ * 发请求获取分页数据
+ */
 const getMyPageData = async()=>{
     pageReqData.value.size = pageData.value.size
     pageReqData.value.page = pageData.value.current
@@ -155,6 +158,17 @@ const getMyPageData = async()=>{
     let data = await getPageData(pageReqData.value)
     console.log(data)
     pageData.value = data
+}
+
+/**
+ * 发请求删除一个用户
+ */
+function deleteOneUser (user){
+    useSimpleConfirm(`你确定要删除用户 “${user.name}” 吗？`).then(async()=>{
+        let data = await removeOne(user.id)
+        getMyPageData()// 刷新数据
+        useSuccessTip(`删除用户 “${user.name}” 成功`)
+    })
 }
 
 /**
@@ -235,12 +249,14 @@ $ico-btn-color:rgb(255,97,117);
                 }
             }
             .btnIco{
+                cursor: pointer;
                 border: 0;
                 background-color: transparent;
                 font-size: 25px;
             }
         }
         .calendarBar{
+            cursor: pointer;
             @include flex-center-y;
             padding: 10px 20px;
             background-color: #FFF;
@@ -282,6 +298,7 @@ $ico-btn-color:rgb(255,97,117);
 }
 
 .myPage{
+    margin-top: 15px;
     padding: 10px 0;
     // float: right;
     display: grid;
