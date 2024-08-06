@@ -44,7 +44,8 @@ request.interceptors.response.use(
             // useSuccessTip(data.msg)
             return Promise.resolve(data.data)
         }else{
-            useSuccessTip(data.msg)
+            // useSuccessTip(data.msg)
+            useFailedTip(data.msg)
             return Promise.reject(data.data)
         }
     },
