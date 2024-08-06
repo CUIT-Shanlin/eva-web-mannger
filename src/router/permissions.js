@@ -76,7 +76,7 @@ const userInit = async()=>{
 
 /**
  * 将路径转成组件，路径不存在就是默认组件
- * @param {*} modulePath 传入路径
+ * @param {string} modulePath 传入路径
  * @returns 
  */
 async function loadModule(modulePath){
@@ -84,8 +84,8 @@ async function loadModule(modulePath){
         const module = await import(`/src/views${modulePath}.vue`)
         return module.default;
     } catch (error) {
-        // 返回默认组件404
-        return import('@/views/404.vue').then(m => m.default);
+        // 返回默认组件Empty
+        return import('@/views/Empty.vue').then(m => m.default);
     }
 }
 

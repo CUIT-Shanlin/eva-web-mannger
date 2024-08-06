@@ -52,7 +52,8 @@
                 <template #default="scope">
                     <el-switch v-model="scope.row.info.status"
                     :active-value="0"
-                    :inactive-value="1"/>
+                    :inactive-value="1"
+                    style="--el-switch-on-color: rgb(255,97,117);"/>
                 </template>
             </el-table-column>
             <el-table-column label="所属角色" >
@@ -88,6 +89,9 @@
                                 <div class="moreBox">
                                     <div>
                                         <el-link type="primary">查看评语/评分</el-link>
+                                    </div>
+                                    <div>
+                                        <el-link type="info">分配角色</el-link>
                                     </div>
                                     <div>
                                         <el-link type="danger" @click="deleteOneUser(scope.row.info)">删除用户</el-link>
@@ -181,7 +185,7 @@ function deleteOneUser (user){
  * 随机颜色字符串
  */
 function getRandColor(){
-    const colorArr = ['rgb(57,25,149)','rgb(255,170,43)','rgb(30,174,122)','rgb(230,162,60)']
+    const colorArr = ['rgb(57,25,149)','rgb(255,170,43)','rgb(30,174,122)','rgb(57,25,149)']
     return colorArr[getRandomNumber(0,colorArr.length - 1)]
 }
 
