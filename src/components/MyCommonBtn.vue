@@ -1,6 +1,6 @@
 <!-- 自己封装的普通按钮，即自动生成 多种状态颜色的按钮 -->
 <template>
-    <button class="btn">{{txt}}</button>
+    <button :class="{btn: true, largeBtn: isLarge}">{{txt}}</button>
 </template>
 
 <script setup>
@@ -18,6 +18,12 @@ let props = defineProps({
         type: String,
         default(){
             return ''
+        }
+    },
+    isLarge: {
+        type: Boolean,
+        default(){
+            return false
         }
     }
 })
@@ -59,18 +65,19 @@ function getHoverColor(){
     padding: 5px 15px;
     border-radius: 5px;
     &:hover{
-        // background: rgb(121,187,255);
         background: v-bind(getHoverColor());
     }
     &:active{
         background: v-bind(getActiveColor());
     }
     &:disabled{
-        // color: $default-color;
         background: v-bind(getDisabledColor());
         cursor: not-allowed;
     }
 }
-
+.largeBtn{
+    padding: 10px 35px;
+    border-radius: 12px;
+}
 
 </style>
