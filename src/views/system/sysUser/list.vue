@@ -35,7 +35,7 @@
                 <my-common-btn class="addIco" txt="新建用户" :is-large="true"  default-color="rgb(255,97,117)" ico="&#xe712;" />
             </div>
         </div>
-        <el-table :data="pageData.records" style="width: 100%">
+        <el-table :data="pageData.records" style="width: 100%" v-loading="isLoadingTable">
             <!-- <el-table-column type="selection" width="50" /> -->
             <el-table-column prop="info.createTime" label="创建日期" width="180" />
             <el-table-column label="名称" width="180">
@@ -130,6 +130,9 @@ const keyword = ref('');
 const iptDate = ref([null, null]);
 const isChooseDate = ref(false)
 
+// 是否正在加载表格
+const isLoadingTable = ref(false)
+
 // 存分页获取的数据
 const pageData = ref({
     total: 0,
@@ -152,12 +155,14 @@ const pageReqData = ref({
  * 发请求获取分页数据
  */
 const getMyPageData = async()=>{
+    isLoadingTable.value = true
     pageReqData.value.size = pageData.value.size
     pageReqData.value.page = pageData.value.current
 
     let data = await getPageData(pageReqData.value)
-    console.log(data)
+    // console.log(data)
     pageData.value = data
+    isLoadingTable.value = false
 }
 
 /**
