@@ -2,7 +2,7 @@
     <div class="userAllSty">
         <PageTitle content="用户列表"/>
         <div class="funBar">
-            <form class="iptBar" @submit.prevent="show">
+            <form class="iptBar" @submit.prevent="getMyPageData">
                 <input v-model="keyword" placeholder="请输入姓名或用户名" />
                 <button class="iconfont btnIco" >&#xe602;</button>
             </form>
@@ -33,16 +33,40 @@
                 </div>
             </el-popover>
         </div>
-        <el-table :data="pageData.records" border style="width: 100%">
-            <el-table-column type="selection" width="55" />
+        <el-table :data="pageData.records" style="width: 100%">
+            <!-- <el-table-column type="selection" width="50" /> -->
             <el-table-column prop="info.createTime" label="创建日期" width="180" />
-            <el-table-column prop="info.name" label="名称" width="180" />
-            <el-table-column prop="info.department" label="学院" />
+            <el-table-column label="名称" width="180">
+                <template #default="scope">
+                    <div class="nameBar">
+                        <el-avatar class="avatar" shape="square" :size="40" fit="cover"
+                        :src="getMyAvatar(scope.row.info.avatar)"/>
+                        {{scope.row.info.name}}
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column prop="info.department" label="学院" width="200"/>
+            <el-table-column label="状态" width="100">
+                <template #default="scope">
+                    <el-switch v-model="scope.row.info.status"
+                    :active-value="0"
+                    :inactive-value="1"/>
+                </template>
+            </el-table-column>
             <el-table-column label="所属角色" >
                 <template #default="scope">
                     {{ getRolesNameStr(scope.row) }}
                 </template>
             </el-table-column>
+            <el-table-column>
+                
+            </el-table-column>
+            <el-table-column label="操作">
+                <template #default="scope">
+                    <el-button>修改</el-button>
+                </template>
+            </el-table-column>
+
         </el-table>
         <el-pagination
         v-model:current-page="pageData.current"
@@ -50,11 +74,11 @@
         :page-sizes="[5, 10, 20, 40]"
         :size="pageData.size"
         :disabled="disabled"
-        :background="background"
         layout="total, sizes, prev, pager, next, jumper"
         :total="pageData.total"
         @size-change="getMyPageData"
         @current-change="getMyPageData"
+        class="myPage"
         />
     </div>
 </template>
@@ -64,6 +88,7 @@ import PageTitle from '@/components/PageTitle.vue';
 import { ref, watch, onMounted } from 'vue';
 import { formatDate } from '@/utils/dateUtil';
 import { getPageData } from '@/api/user';
+import { getMyAvatar } from '@/utils/service/userUtil';
 import MyDatePicker from '@/components/MyDatePicker.vue';
 
 const keyword = ref('');
@@ -154,6 +179,7 @@ onMounted(()=>{
     .funBar{
         @include flex-center-y;
         justify-content: space-between;
+        padding-bottom: 20px;
         .iptBar{
             @include flex-center-y;
             padding: 10px 10px;
@@ -208,6 +234,23 @@ onMounted(()=>{
     }
 }
 
+.myPage{
+    padding: 10px 0;
+    // float: right;
+    display: grid;
+    grid-template-columns: 10fr 1fr 0.5fr 1fr 0.5fr 1fr;
+}
+
+:deep(){
+    .el-table__cell{
+        color: black;
+    }
+    // .el-pagination__total,.el-pagination__sizes{
+    //     flex: 0 0 50%;
+    //     order: -1;
+    //     // color: #C4C4C4;
+    // }
+}
 .calendarBox{
     display: flex;
     justify-content: space-between;
@@ -217,5 +260,20 @@ onMounted(()=>{
         border-radius: 100px;
         background-color: rgba(2, 63, 153, 0.5);
     }
+}
+.nameBar{
+    @include flex-center-y;
+    .avatar{
+        margin-right: 15px;
+    }
+}
+.operation{
+    user-select: none;
+    cursor: pointer;
+    color: $operation-color;
+    border-bottom: 1px transparent solid;
+}
+.operation:hover{
+    border-color: $operation-color;
 }
 </style>

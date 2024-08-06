@@ -17,21 +17,18 @@ import { onMounted,ref,reactive } from "vue"
 // import UserUse from "./UserUse.vue"
 import {useUserStore} from '@/stores/userStore'
 import { isSpace } from "@/utils/stringUtil";
-import {getInfo} from '@/api/user'
+import { getInfo } from '@/api/user'
+import { getMyAvatar } from '@/utils/service/userUtil';
 import ChooseSem from "./ChooseSem.vue";
 
 let isChoose = ref(false)
-// 默认头像地址
-let defaultAvatarUrl = '/src/assets/img/default_avatar.png'
 let userMsg = ref({id: 0,avatar:''})
 // 初始化用户信息
 const initMsg = async()=>{
     let {info} = await getInfo()
     userMsg.value = info
     console.log(userMsg.value)
-    if(isSpace(userMsg.value.avatar)){
-        userMsg.value.avatar = defaultAvatarUrl
-    }
+    userMsg.value.avatar = getMyAvatar(userMsg.value.avatar)
 }
 onMounted(()=>{
     initMsg()
