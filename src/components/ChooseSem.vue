@@ -1,7 +1,7 @@
 <!-- 选择学期的组件 -->
 <template>
     <div class="semAll">
-        <div class="changeFun">
+        <div class="changeFun" @click="isChoose = !isChoose">
             切换学期
             <el-popover
             placement="bottom"
@@ -11,22 +11,21 @@
             :width="300"
             >
                 <template #reference>
-                    <span :class="{iconfont: true, ico: true, act: isChoose}"
-                    @click="isChoose = !isChoose">&#xe6a8;</span>
+                    <span :class="{iconfont: true, ico: true, act: isChoose}">&#xe6a8;</span>
                 </template>
                 <div class="myPopper">
                     <div class="showAll">
                         <span :class="{oneSem: true, nowSty:isCommonYear(checkedSemester,semester)}"
                         v-for="semester in getDistinctSemsters(semesters)" :key="semester.id"
-                        @click="changeSem(semester)">
+                        @click="changeSemYear(semester)">
                             {{semester.startYear}}-{{semester.endYear}}
                         </span>
                     </div>
                     <div class="semPeriod">
                         <div :class="{periodOne: true, nowSty: checkedSemester.period === 0}"
-                        @click="checkedSemester.period = 0">上学期</div>
+                        @click="changePeriod(0)">上学期</div>
                         <div :class="{periodOne: true, nowSty: checkedSemester.period === 1}"
-                        @click="checkedSemester.period = 1">下学期</div>
+                        @click="changePeriod(1)">下学期</div>
                     </div>
                 </div>
             </el-popover>
@@ -43,7 +42,7 @@
  
 <script setup>
 import { getAllSemester,getNowSemester } from '@/api/semester'
-import { getDistinctSemsters,isCommonYear,setSemesterId } from '@/utils/service/semesterUtil.js'
+import { getDistinctSemsters,getSemesterId,isCommonYear,setSemesterId } from '@/utils/service/semesterUtil.js'
 import { onMounted, ref } from 'vue'
 
 // 存当前显示的学期信息
@@ -53,21 +52,58 @@ const isChoose = ref(false)
 // 存所有的的学期信息
 const semesters = ref([])
 
-// 初始化学期信息
+/**
+ * 初始化学期信息
+ */
 const initSemesters = async()=>{
-    let res = await getNowSemester()
-    checkedSemester.value = res
-    setSemesterId(res.id)
+    // 获取所有的学期信息
     let {dataArr} = await getAllSemester()
     semesters.value = dataArr
+
+    // TODO 加载当前显示的学期，如果sessionStorage中存有学期id，就使用sessionStorage中的学期，没有就获取当前学期
+    let semId = getSemesterId()
+    if(semId){
+        checkedSemester.value = dataArr.find(sem => sem.id + '' === semId + '')
+    }else{
+        let res = await getNowSemester()
+        checkedSemester.value = res
+        setSemesterId(res.id)
+    }
 }
 
-// 切换学期
-function changeSem(newSem){
+/**
+ * 切换学期
+ * @param {Object} newSem 待切换成的学期 
+ */
+function changeSemYear(newSem){
+    // 一样的值就不用切换了
+    if(isCommonYear(checkedSemester.value, newSem)){
+        return
+    }
     checkedSemester.value = semesters.value.find(sem => {
         return isCommonYear(sem,newSem) && sem.period === checkedSemester.value.period
     })
     setSemesterId(checkedSemester.value.id)
+    // 刷新整个窗口页面
+    window.location.reload()
+}
+
+/**
+ * 切换学期时段，eg:上学期 => 下学期
+ * @param {Number} period 
+ */
+function changePeriod(period = 0){
+    // 一样的值就不用切换了
+    if(checkedSemester.value.period + '' == period){
+        return
+    }
+    // 更新显示的学期
+    checkedSemester.value = semesters.value.find(sem => {
+        return isCommonYear(checkedSemester.value, sem) && sem.period + '' === period + ''
+    })
+    setSemesterId(checkedSemester.value.id)
+    // 刷新整个窗口页面
+    window.location.reload()
 }
 onMounted(()=>{
     initSemesters()
@@ -96,7 +132,9 @@ $sem-line-color: #C4C4C4;
     font-weight: 550;
     @include flex-center;
     padding: 0 30px;
+    max-height: 45px;
     .changeFun{
+        cursor: pointer;
         .ico{
             margin: 0 15px;
             color: $sem-line-color;
