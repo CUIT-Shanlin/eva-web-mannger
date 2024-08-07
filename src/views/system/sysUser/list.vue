@@ -88,7 +88,7 @@
                             </template>
                             <div class="moreBox">
                                 <div>
-                                    <el-link type="primary">查看评语/评分</el-link>
+                                    <el-link type="primary">评分查询</el-link>
                                 </div>
                                 <div>
                                     <el-link type="info" @click="showAssignRole(scope.row)">分配角色</el-link>
@@ -104,29 +104,31 @@
         </el-table>
         
         <!-- 分配角色的提示框 -->
-        <el-dialog title="分配角色" v-model="assignDialogOpen" width="500">
-        <el-form label-width="80px">
-            <el-form-item label="姓名">
-            <el-input disabled :value="checkedUser.info.name"></el-input>
-          </el-form-item>
-          <el-form-item label="用户名">
-            <el-input disabled :value="checkedUser.info.username"></el-input>
-          </el-form-item>
-  
-          <el-form-item label="角色列表">
-            <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange()">全选</el-checkbox>
-            <br />
-            <el-checkbox-group v-model="userRoleIds">
-              <el-checkbox v-for="role in allRoles" :key="role.id" :value="role.id" :title="'描述：' + role.description">{{role.roleName}}</el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <el-button type="primary" @click="doMyAssign()">保存</el-button>
-          <el-button @click="assignDialogOpen = false" >取消</el-button>
-        </template>
-      </el-dialog>
-
+        <teleport to="body">
+            <el-dialog title="分配角色" v-model="assignDialogOpen" width="500">
+                <el-form label-width="80px">
+                    <el-form-item label="姓名">
+                    <el-input disabled :value="checkedUser.info.name"></el-input>
+                </el-form-item>
+                <el-form-item label="用户名">
+                    <el-input disabled :value="checkedUser.info.username"></el-input>
+                </el-form-item>
+                <el-form-item label="角色列表">
+                    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll"
+                    @change="handleCheckAllChange()">全选</el-checkbox>
+                    <br />
+                    <el-checkbox-group v-model="userRoleIds">
+                    <el-checkbox v-for="role in allRoles" :key="role.id" :value="role.id"
+                    :title="'描述：' + role.description">{{role.roleName}}</el-checkbox>
+                    </el-checkbox-group>
+                </el-form-item>
+                </el-form>
+                <template #footer>
+                    <el-button type="primary" @click="doMyAssign()">保存</el-button>
+                    <el-button @click="assignDialogOpen = false" >取消</el-button>
+                </template>
+            </el-dialog>
+        </teleport>
 
         <el-pagination
         v-model:current-page="pageData.current"
@@ -205,6 +207,7 @@ const doMyAssign = async()=>{
     let res =  await doAssign(assighVo)
     assignDialogOpen.value = false
     useSuccessTip('分配角色成功')
+    getMyPageData()
 }
 
 /**
@@ -431,11 +434,7 @@ $ico-btn-color:rgb(255,97,117);
     .el-table__cell{
         color: black;
     }
-    // .el-pagination__total,.el-pagination__sizes{
-    //     flex: 0 0 50%;
-    //     order: -1;
-    //     // color: #C4C4C4;
-    // }
+
 }
 .calendarBox{
     display: flex;
