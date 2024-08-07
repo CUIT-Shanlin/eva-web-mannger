@@ -86,23 +86,48 @@
                             <template #reference>
                                 <i class="iconfont more">&#xe612;</i>
                             </template>
-                                <div class="moreBox">
-                                    <div>
-                                        <el-link type="primary">查看评语/评分</el-link>
-                                    </div>
-                                    <div>
-                                        <el-link type="info">分配角色</el-link>
-                                    </div>
-                                    <div>
-                                        <el-link type="danger" @click="deleteOneUser(scope.row.info)">删除用户</el-link>
-                                    </div>
+                            <div class="moreBox">
+                                <div>
+                                    <el-link type="primary">查看评语/评分</el-link>
                                 </div>
-                            </el-popover>
+                                <div>
+                                    <el-link type="info" @click="showAssignRole(scope.row)">分配角色</el-link>
+                                </div>
+                                <div>
+                                    <el-link type="danger" @click="deleteOneUser(scope.row.info)">删除用户</el-link>
+                                </div>
+                            </div>
+                        </el-popover>
                     </div>
                 </template>
             </el-table-column>
-
         </el-table>
+        
+        <!-- 分配角色的提示框 -->
+        <el-dialog title="分配角色" v-model="assignDialogOpen" width="500">
+        <el-form label-width="80px">
+            <el-form-item label="姓名">
+            <el-input disabled :value="checkedUser.info.name"></el-input>
+          </el-form-item>
+          <el-form-item label="用户名">
+            <el-input disabled :value="checkedUser.info.username"></el-input>
+          </el-form-item>
+  
+          <el-form-item label="角色列表">
+            <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange()">全选</el-checkbox>
+            <br />
+            <el-checkbox-group v-model="userRoleIds">
+              <el-checkbox v-for="role in allRoles" :key="role.id" :value="role.id" :title="'描述：' + role.description">{{role.roleName}}</el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button type="primary" @click="console.log(userRoleIds)">保存</el-button>
+          <el-button @click="assignDialogOpen = false" >取消</el-button>
+        </template>
+      </el-dialog>
+
+
         <el-pagination
         v-model:current-page="pageData.current"
         v-model:page-size="pageData.size"
@@ -123,6 +148,7 @@ import PageTitle from '@/components/PageTitle.vue';
 import { ref, watch, onMounted } from 'vue';
 import { formatDate } from '@/utils/dateUtil';
 import { getPageData, removeOne } from '@/api/user';
+import { getAllRoles } from '@/api/role';
 import { getMyAvatar } from '@/utils/service/userUtil';
 import { getRandomNumber } from '@/utils/randomUtil';
 import { useSimpleConfirm, useSuccessTip } from '@/utils/msgTip.js';
@@ -136,6 +162,18 @@ const isChooseDate = ref(false)
 
 // 是否正在加载表格
 const isLoadingTable = ref(false)
+// 确定是否打开 分配角色的弹窗
+const assignDialogOpen = ref(false)
+// 存所有的角色
+const allRoles = ref([])
+// 当前正在操作的用户
+const checkedUser = ref({})
+// 是否是不确定的
+const isIndeterminate = ref(true)
+// 当前被分配角色的用户的角色id集合
+const userRoleIds = ref([])
+// 确认是否全选
+const checkAll = ref(false)
 
 // 存分页获取的数据
 const pageData = ref({
@@ -155,6 +193,32 @@ const pageReqData = ref({
         endCreateTime: null
     }
 })
+
+/**‘
+ * 展示分配的角色，以及弹窗的初始化
+ */
+function showAssignRole(user){
+    isIndeterminate.value = true
+    userRoleIds.value = user.roleList.map(role => role.id)
+    assignDialogOpen.value = true
+    checkedUser.value = user
+}
+
+/**
+ * 实现角色的全选以及全不选
+ */
+function handleCheckAllChange(){
+    userRoleIds.value = checkAll.value ? allRoles.value.map(role => role.id) : [];
+    isIndeterminate.value = false
+}
+/**
+ * 初始化 角色信息
+ */
+const initRoles = async()=>{
+    let {dataArr} = await getAllRoles()
+    allRoles.value = dataArr
+}
+
 /**
  * 发请求获取分页数据
  */
@@ -183,7 +247,7 @@ function deleteOneUser (user){
 
 /**
  * 获取随机颜色字符串
- * 随机颜色字符串
+ * @returns 随机颜色字符串
  */
 function getRandColor(){
     const colorArr = ['rgb(57,25,149)','rgb(255,170,43)','rgb(30,174,122)','rgb(57,25,149)']
@@ -229,6 +293,7 @@ watch(iptDate, (newValue, oldValue) => {
 
 onMounted(()=>{
     getMyPageData()
+    initRoles()
 })
 </script>
 
