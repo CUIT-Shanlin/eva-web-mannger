@@ -1,5 +1,5 @@
 import request from '@/utils/request.js'
-
+import { getSemesterId } from '@/utils/service/semesterUtil';
 
 
 /**
@@ -9,7 +9,7 @@ import request from '@/utils/request.js'
 export function getInfo(){
     return request(
         {
-            url: '/user/info?semId=1',
+            url: '/user/info?semId=' + getSemesterId(),
             method: 'GET',
         }
     )
@@ -23,15 +23,10 @@ export function getInfo(){
  * @returns 分页信息
  */
 export function getPageData(reqData = {page: 0,size: 0,queryObj: {}}){
-// export function getPageData(page = 0,size = 0,queryObj = {}){
     return request({
         url: '/users',
         method: 'POST',
-        data: {
-            page: reqData.page,
-            size: reqData.size,
-            queryObj: reqData.queryObj,
-        }
+        data: reqData
     })
 }
 
@@ -44,5 +39,18 @@ export function removeOne(userId = -1){
     return request({
         url: `user?userId=${userId}`,
         method: 'DELETE'
+    })
+}
+
+/**
+ * 为一个角色分配
+ * @param {Object} assignVo 
+ * @returns 
+ */
+export function doAssign(assignVo = {}){
+    return request({
+        url: '/user/roles',
+        method: 'PUT',
+        data: assignVo
     })
 }

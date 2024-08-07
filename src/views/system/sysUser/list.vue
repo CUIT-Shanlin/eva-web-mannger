@@ -122,7 +122,7 @@
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button type="primary" @click="console.log(userRoleIds)">保存</el-button>
+          <el-button type="primary" @click="doMyAssign()">保存</el-button>
           <el-button @click="assignDialogOpen = false" >取消</el-button>
         </template>
       </el-dialog>
@@ -147,7 +147,7 @@
 import PageTitle from '@/components/PageTitle.vue';
 import { ref, watch, onMounted } from 'vue';
 import { formatDate } from '@/utils/dateUtil';
-import { getPageData, removeOne } from '@/api/user';
+import { getPageData, removeOne, doAssign } from '@/api/user';
 import { getAllRoles } from '@/api/role';
 import { getMyAvatar } from '@/utils/service/userUtil';
 import { getRandomNumber } from '@/utils/randomUtil';
@@ -194,7 +194,20 @@ const pageReqData = ref({
     }
 })
 
-/**‘
+/**
+ * 为对应用户分配角色
+ */
+const doMyAssign = async()=>{
+    const assighVo = {
+        userId: checkedUser.value.id,
+        roleIdList: userRoleIds
+    }
+    let res =  await doAssign(assighVo)
+    assignDialogOpen.value = false
+    useSuccessTip('分配角色成功')
+}
+
+/**
  * 展示分配的角色，以及弹窗的初始化
  */
 function showAssignRole(user){
