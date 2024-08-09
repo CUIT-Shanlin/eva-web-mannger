@@ -119,6 +119,7 @@
               txt="查看"
               :default-color="getRandColor()"
               :is-large="true"
+              @click="showFunDialog(scope.row, 2)"
             />
             <my-common-btn
               txt="修改"
@@ -214,11 +215,13 @@
       <el-dialog v-model="updateOrAddDialogVisible" :title="getFunTitle(checkedUser, updateOrAddProp.fun)" width="500">
         <el-form label-width="80px">
           <el-form-item label="姓名">
-            <el-input v-model="checkedUser.info.name" placeholder="请输入姓名"></el-input>
+            <el-input v-model="checkedUser.info.name" placeholder="请输入姓名"
+            :disabled="updateOrAddProp.fun === 2"></el-input>
           </el-form-item>
           <el-form-item label="用户名">
             <el-input v-model="checkedUser.info.username" placeholder="请输入用户名"
-            @change="checkUsername(checkedUser.info.username)"></el-input>
+            @change="checkUsername(checkedUser.info.username)"
+            :disabled="updateOrAddProp.fun === 2"></el-input>
             <div class="tipMsg">{{updateOrAddProp.usernameMsg}}</div>
           </el-form-item>
           <el-form-item label="密码" v-if="!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0">
@@ -226,12 +229,13 @@
             @click="updateOrAddProp.isUpdatePwd = !updateOrAddProp.isUpdatePwd">修改密码</el-link>
           </el-form-item>
           <el-form-item :label="updateOrAddProp.fun === 0 ? '新密码' : '密码'" 
-          v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0)">
+          v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0) && updateOrAddProp.fun !== 2">
             <el-input v-model="checkedUser.info.password" placeholder="请输入密码"
             @change="checkNewPwd(checkedUser.info.password)" type="password"></el-input>
             <div class="tipMsg">{{updateOrAddProp.pwdMsg}}</div>
           </el-form-item>
-          <el-form-item label="重复密码" v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0)">
+          <el-form-item label="重复密码" v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0)
+          && updateOrAddProp.fun !== 2">
             <el-input v-model="updateOrAddProp.againPwd" placeholder="请再次输入相同密码"
             @change="checkAgainPwd(updateOrAddProp.againPwd)" type="password"></el-input>
             <div class="tipMsg">{{updateOrAddProp.againPwdMsg}}</div>
@@ -241,6 +245,7 @@
             v-model="checkedUser.info.department"
             filterable
             placeholder="请输入学院名称"
+            :disabled="updateOrAddProp.fun === 2"
             >
             <el-option
             v-for="department in departments"
@@ -251,25 +256,30 @@
             </el-select>
           </el-form-item>
           <el-form-item label="性别">
-            <el-radio-group v-model="checkedUser.info.sex">
+            <el-radio-group v-model="checkedUser.info.sex" :disabled="updateOrAddProp.fun === 2">
               <el-radio :value="1" >男</el-radio>
               <el-radio :value="0">女</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="电话号码">
-            <el-input v-model="checkedUser.info.phone" placeholder="请输入电话号码"></el-input>
-            <div class="tipMsg" v-text="isPhone(checkedUser.info.phone) ? '✔️ 电话格式正确' : '* 非法电话号码'"></div>
+            <el-input v-model="checkedUser.info.phone" placeholder="请输入电话号码"
+            :disabled="updateOrAddProp.fun === 2"></el-input>
+            <div class="tipMsg" v-if="updateOrAddProp.fun !== 2"
+            v-text="isPhone(checkedUser.info.phone) ? '✔️ 电话格式正确' : '* 非法电话号码'"></div>
           </el-form-item>
           <el-form-item label="邮箱地址">
-            <el-input v-model="checkedUser.info.email" placeholder="请输入邮箱地址"></el-input>
-            <div class="tipMsg" v-text="isEmail(checkedUser.info.email) ? '✔️ 邮箱格式正确' : '* 非法邮箱地址'"></div>
+            <el-input v-model="checkedUser.info.email" placeholder="请输入邮箱地址"
+            :disabled="updateOrAddProp.fun === 2"></el-input>
+            <div class="tipMsg" v-if="updateOrAddProp.fun !== 2"
+            v-text="isEmail(checkedUser.info.email) ? '✔️ 邮箱格式正确' : '* 非法邮箱地址'"></div>
           </el-form-item>
           <el-form-item label="职称">
             <el-input v-model="checkedUser.info.profTitle"
-            placeholder="请输入职称，例如：教授等（非必填）"></el-input>
+            placeholder="请输入职称，例如：教授等（非必填）"
+            :disabled="updateOrAddProp.fun === 2"></el-input>
           </el-form-item>
         </el-form>
-        <template #footer>
+        <template #footer v-if="updateOrAddProp.fun !== 2">
           <el-button type="primary" :disabled="!totalCheck()" @click="updateOrAddThisUser()">保存</el-button>
           <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
         </template>
