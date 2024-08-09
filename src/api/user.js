@@ -103,3 +103,16 @@ export function updateUserStatus(userId = -1, status = 0){
         method: 'PUT'
     })
 }
+
+/**
+ * 新建一个用户
+ * @param {Object} user 新用户
+ * @returns
+ */
+export function addUser(user = {}){
+    return request({
+        url: '/user',
+        method: 'POST',
+        data: user
+    })
+}

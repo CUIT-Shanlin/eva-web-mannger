@@ -49,6 +49,7 @@
           txt="新建用户"
           :is-large="true"
           default-color="rgb(255,97,117)"
+          @click="showFunDialog({info:{}}, 1)"
           ico="&#xe712;"
         />
       </div>
@@ -208,27 +209,28 @@
       </el-dialog>
     </teleport>
 
-    <!--  修改/新建用户的弹窗-->
+    <!--  修改/新建/查看用户的弹窗-->
     <teleport to="body">
-      <el-dialog v-model="updateOrAddDialogVisible" :title="updateOrAddTitle" width="500">
+      <el-dialog v-model="updateOrAddDialogVisible" :title="getFunTitle(checkedUser, updateOrAddProp.fun)" width="500">
         <el-form label-width="80px">
           <el-form-item label="姓名">
             <el-input v-model="checkedUser.info.name"></el-input>
           </el-form-item>
           <el-form-item label="用户名">
-            <el-input v-model="checkedUser.info.username" @change="isThisExist(checkedUser.info.username)"></el-input>
-            <div class="tipMsg" v-if="updateOrAddProp.isExistThisUsername">* 该用户名已被使用，请重新输入新用户名</div>
+            <el-input v-model="checkedUser.info.username" @change="checkUsername(checkedUser.info.username)"></el-input>
+            <div class="tipMsg">{{updateOrAddProp.usernameMsg}}</div>
           </el-form-item>
-          <el-form-item label="密码" v-if="!updateOrAddProp.isUpdatePwd">
+          <el-form-item label="密码" v-if="!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0">
             <el-link type="primary"
             @click="updateOrAddProp.isUpdatePwd = !updateOrAddProp.isUpdatePwd">修改密码</el-link>
           </el-form-item>
-          <el-form-item label="新密码" v-if="updateOrAddProp.isUpdatePwd">
+          <el-form-item :label="updateOrAddProp.fun === 0 ? '新密码' : '密码'" 
+          v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0)">
             <el-input v-model="checkedUser.info.password"
             @change="checkNewPwd(checkedUser.info.password)"></el-input>
             <div class="tipMsg">{{updateOrAddProp.pwdMsg}}</div>
           </el-form-item>
-          <el-form-item label="重复密码" v-if="updateOrAddProp.isUpdatePwd">
+          <el-form-item label="重复密码" v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0)">
             <el-input v-model="updateOrAddProp.againPwd"
             @change="checkAgainPwd(updateOrAddProp.againPwd)"></el-input>
             <div class="tipMsg">{{updateOrAddProp.againPwdMsg}}</div>
@@ -267,7 +269,7 @@
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button type="primary" :disabled="!totalCheck()" @click="updateThisUser()">保存</el-button>
+          <el-button type="primary" :disabled="!totalCheck()" @click="updateOrAddThisUser()">保存</el-button>
           <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
         </template>
       </el-dialog>
@@ -292,7 +294,7 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { ref, watch, onMounted } from "vue";
 import { formatDate } from "@/utils/dateUtil";
-import { getPageData, removeOne, doAssign, getScoreMsg, isExistUsername, updateUser, updateUserStatus } from "@/api/user";
+import { getPageData, removeOne, doAssign, getScoreMsg, isExistUsername, updateUser, updateUserStatus, addUser } from "@/api/user";
 import { getAllRoles } from "@/api/role";
 import { getAllDepartments } from '@/api/other';
 import { getMyAvatar } from "@/utils/service/userUtil";
@@ -312,17 +314,16 @@ const isLoadingTable = ref(false);
 // 用于确定弹窗格式
 const updateOrAddProp = ref({
   fun: 0,// 确定弹窗的功能，0：修改 1：增加 2：查看
-  isExistThisUsername: false,
+  isUsername: true,// 用户名是否合法
   isUpdatePwd: 0,
   againPwd: '',
   pwdMsg: '',
   againPwdMsg: '',
   phoneMsg: '',
   emailMsg: '',
+  usernameMsg: ''
 })
 let tmpOriginUsername = '';// 存临时的 用户原本的用户名
-// 新建/修改弹窗的title
-const updateOrAddTitle = ref('')
 // 是否开启查看或修改或新建的弹窗
 const updateOrAddDialogVisible = ref(false)
 
@@ -337,7 +338,7 @@ const allRoles = ref([]);
 // 存所有的学院名
 const departments = ref([]);
 // 当前正在操作的用户
-const checkedUser = ref({});
+const checkedUser = ref({info: {}});
 // 是否是不确定的
 const isIndeterminate = ref(true);
 // 当前被分配角色的用户的角色id集合
@@ -374,15 +375,23 @@ const updateThisUserStatus = async(info)=>{
 }
 
 /**
- * 真正修改当前操作的用户
+ * 修改/新建一名用户
  */
-const updateThisUser = async()=>{
+const updateOrAddThisUser = async()=>{
   if(!totalCheck()){
     return
   }
-  let res = await updateUser(checkedUser.value, updateOrAddProp.value.isUpdatePwd)
+  const fun = updateOrAddProp.value.fun
+  let tipMsg = ''
+  if(fun === 0){
+    await updateUser(checkedUser.value.info, updateOrAddProp.value.isUpdatePwd)
+    tipMsg = `修改用户 “${checkedUser.value.info.name}” 成功`
+  }else if(fun === 1){
+    await addUser(checkedUser.value.info)
+    tipMsg = '成功新建用户'
+  }
   updateOrAddDialogVisible.value = false
-  useSuccessTip(`修改用户 “${checkedUser.value.info.name}” 成功`)
+  useSuccessTip(tipMsg)
 }
 
 /**
@@ -392,8 +401,9 @@ const updateThisUser = async()=>{
 function totalCheck(){
   const info = checkedUser.value.info
   const prop = updateOrAddProp.value
+  checkUsername(info.username)
   return (!prop.isUpdatePwd || (checkNewPwd(info.password) && checkAgainPwd(prop.againPwd)))
-  && isExistUsername(info.username) && isPhone(info.phone) && isEmail(info.email)
+  && prop.isUsername && isPhone(info.phone) && isEmail(info.email)
 }
 
 /**
@@ -429,16 +439,37 @@ function checkNewPwd(pwd = ''){
 }
 
 /**
+ * 检查用户名是否合法
+ * @param username 用户名
+ */
+const checkUsername = async(username ='')=>{
+  const prop = updateOrAddProp.value
+  const fun = prop.fun
+  // 用户名为空直接认定非法
+  prop.usernameMsg = '✔️ 用户名格式正确'
+  if(isSpace(username)){
+    prop.isUsername = false
+    prop.usernameMsg = '* 用户名不能为空或纯空格'
+    return
+  }
+  if(fun === 0 && username === tmpOriginUsername){// 修改功能时的弹窗
+    prop.isUsername = true// 用户名是否和旧用户名一致
+    return
+  }
+  await isThisExist(username)
+  if(!prop.isUsername){
+    prop.usernameMsg =  '* 该用户名已被使用，请重新输入新用户名'
+  }
+}
+
+/**
  * 确定输入用户名是否已经被注册或者是否为 非旧用户名
  * @param {string} username 
  */
 const isThisExist = async(username)=>{
-  if(username === tmpOriginUsername){
-    updateOrAddProp.value.isExistThisUsername = false
-    return
-  }
+  // 检测用户名是否已经抢注
   let { isExist } = await isExistUsername(username)
-  updateOrAddProp.value.isExistThisUsername = isExist
+  updateOrAddProp.value.isUsername = !isExist// 用户名
 }
 
 /**
@@ -447,11 +478,10 @@ const isThisExist = async(username)=>{
  */
 function showFunDialog(user, fun = 0){
   checkedUser.value = deepCopy(user)
-  updateOrAddTitle.value = getFunTitle(fun)
   tmpOriginUsername = user.info.username
   updateOrAddProp.value = {
     fun,
-    isExistThisUsername: false,
+    isUsername: false,// 用户名是否合法
     isUpdatePwd: 0,
     againPwd: '',
     pwdMsg: '',
@@ -466,12 +496,12 @@ function showFunDialog(user, fun = 0){
  * 获取功能弹窗的title
  * @param fun 弹窗功能
  */
-function getFunTitle(fun = 0){
+function getFunTitle(user = {info: {}}, fun = 0){
   if(fun === 0){
     return `修改用户 “${user.info.name}” `
   }else if(fun === 1){
     return '新建用户'
-  } else{
+  } else if(fun === 2){
     return '查看详情'
   }
 }
