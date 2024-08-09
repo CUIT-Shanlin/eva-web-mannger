@@ -90,3 +90,16 @@ export function updateUser(user = {}, isUpdatePwd = 0){
         data: user
     })
 }
+
+/**
+ * 修改用户的状态
+ * @param {Number} userId 用户id 
+ * @param {Number} status 状态，1为禁止，0为正常
+ * @returns 
+ */
+export function updateUserStatus(userId = -1, status = 0){
+    return request({
+        url: `/user/status/${userId}/${status}`,
+        method: 'PUT'
+    })
+}

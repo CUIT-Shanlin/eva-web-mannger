@@ -81,6 +81,7 @@
             v-model="scope.row.info.status"
             :active-value="0"
             :inactive-value="1"
+            @change="updateThisUserStatus(scope.row.info)"
             style="--el-switch-on-color: rgb(255, 97, 117)"
           />
         </template>
@@ -122,7 +123,7 @@
               txt="修改"
               :default-color="getRandColor()"
               :is-large="true"
-              @click="showUpdateDialog(scope.row)"
+              @click="showFunDialog(scope.row, 0)"
             />
             <el-popover placement="left" :width="200" trigger="hover">
               <template #reference>
@@ -291,7 +292,7 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { ref, watch, onMounted } from "vue";
 import { formatDate } from "@/utils/dateUtil";
-import { getPageData, removeOne, doAssign, getScoreMsg, isExistUsername, updateUser } from "@/api/user";
+import { getPageData, removeOne, doAssign, getScoreMsg, isExistUsername, updateUser, updateUserStatus } from "@/api/user";
 import { getAllRoles } from "@/api/role";
 import { getAllDepartments } from '@/api/other';
 import { getMyAvatar } from "@/utils/service/userUtil";
@@ -310,6 +311,7 @@ const isLoadingTable = ref(false);
 
 // 用于确定弹窗格式
 const updateOrAddProp = ref({
+  fun: 0,// 确定弹窗的功能，0：修改 1：增加 2：查看
   isExistThisUsername: false,
   isUpdatePwd: 0,
   againPwd: '',
@@ -361,6 +363,15 @@ const pageReqData = ref({
     endCreateTime: null,
   },
 });
+
+/**
+ * 修改用户的状态
+ * @param info 用户信息
+ */
+const updateThisUserStatus = async(info)=>{
+  let res = updateUserStatus(info.id, info.status)
+  useSuccessTip(`成功${info.status ? '禁用' : '启用'}用户 “${info.name}”`)
+}
 
 /**
  * 真正修改当前操作的用户
@@ -434,11 +445,12 @@ const isThisExist = async(username)=>{
  * 初始化修改弹窗
  * @param {Object} user 待修改的用户 
  */
-function showUpdateDialog(user){
+function showFunDialog(user, fun = 0){
   checkedUser.value = deepCopy(user)
-  updateOrAddTitle.value = `修改用户 “${user.info.name}” `
+  updateOrAddTitle.value = getFunTitle(fun)
   tmpOriginUsername = user.info.username
   updateOrAddProp.value = {
+    fun,
     isExistThisUsername: false,
     isUpdatePwd: 0,
     againPwd: '',
@@ -448,6 +460,20 @@ function showUpdateDialog(user){
     emailMsg: '',
   }
   updateOrAddDialogVisible.value = true
+}
+
+/**
+ * 获取功能弹窗的title
+ * @param fun 弹窗功能
+ */
+function getFunTitle(fun = 0){
+  if(fun === 0){
+    return `修改用户 “${user.info.name}” `
+  }else if(fun === 1){
+    return '新建用户'
+  } else{
+    return '查看详情'
+  }
 }
 
 /**
