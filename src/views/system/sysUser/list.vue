@@ -122,6 +122,7 @@
               txt="修改"
               :default-color="getRandColor()"
               :is-large="true"
+              @click="showUpdateDialog(scope.row)"
             />
             <el-popover placement="left" :width="200" trigger="hover">
               <template #reference>
@@ -186,7 +187,7 @@
     </teleport>
 
     <!-- 评分查询的弹窗 -->
-    <teleport to="body" class="scoreShow">
+    <teleport to="body">
       <el-dialog v-model="scoreDialogVisible" width="800">
         <template #header="{ titleId, titleClass }">
           <div class="my-header">
@@ -202,6 +203,71 @@
         </el-table>
         <template #footer>
           <el-button @click="scoreDialogVisible = false">关闭</el-button>
+        </template>
+      </el-dialog>
+    </teleport>
+
+    <!--  修改/新建用户的弹窗-->
+    <teleport to="body">
+      <el-dialog v-model="updateOrAddDialogVisible" :title="updateOrAddTitle" width="500">
+        <el-form label-width="80px">
+          <el-form-item label="姓名">
+            <el-input v-model="checkedUser.info.name"></el-input>
+          </el-form-item>
+          <el-form-item label="用户名">
+            <el-input v-model="checkedUser.info.username" @change="isThisExist(checkedUser.info.username)"></el-input>
+            <div class="tipMsg" v-if="updateOrAddProp.isExistThisUsername">* 该用户名已被使用，请重新输入新用户名</div>
+          </el-form-item>
+          <el-form-item label="密码" v-if="!updateOrAddProp.isUpdatePwd">
+            <el-link type="primary"
+            @click="updateOrAddProp.isUpdatePwd = !updateOrAddProp.isUpdatePwd">修改密码</el-link>
+          </el-form-item>
+          <el-form-item label="新密码" v-if="updateOrAddProp.isUpdatePwd">
+            <el-input v-model="checkedUser.info.password"
+            @change="checkNewPwd(checkedUser.info.password)"></el-input>
+            <div class="tipMsg">{{updateOrAddProp.pwdMsg}}</div>
+          </el-form-item>
+          <el-form-item label="重复密码" v-if="updateOrAddProp.isUpdatePwd">
+            <el-input v-model="updateOrAddProp.againPwd"
+            @change="checkAgainPwd(updateOrAddProp.againPwd)"></el-input>
+            <div class="tipMsg">{{updateOrAddProp.againPwdMsg}}</div>
+          </el-form-item>
+          <el-form-item label="学院">
+            <el-select
+            v-model="checkedUser.info.department"
+            filterable
+            placeholder="请输入学院名称"
+            >
+            <el-option
+            v-for="department in departments"
+            :key="department"
+            :label="department"
+            :value="department"
+            />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="性别">
+            <el-radio-group v-model="checkedUser.info.sex">
+              <el-radio :value="1" >男</el-radio>
+              <el-radio :value="0">女</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="电话号码">
+            <el-input v-model="checkedUser.info.phone" placeholder="请输入电话号码"></el-input>
+            <div class="tipMsg" v-text="isPhone(checkedUser.info.phone) ? '✔️ 电话格式正确' : '* 非法电话号码'"></div>
+          </el-form-item>
+          <el-form-item label="邮箱地址">
+            <el-input v-model="checkedUser.info.email" placeholder="请输入邮箱地址"></el-input>
+            <div class="tipMsg" v-text="isEmail(checkedUser.info.email) ? '✔️ 邮箱格式正确' : '* 非法邮箱地址'"></div>
+          </el-form-item>
+          <el-form-item label="职称">
+            <el-input v-model="checkedUser.info.profTitle"
+            placeholder="请输入职称，例如：教授等（非必填）"></el-input>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button type="primary" :disabled="!totalCheck()" @click="updateThisUser()">保存</el-button>
+          <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
         </template>
       </el-dialog>
     </teleport>
@@ -225,12 +291,14 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { ref, watch, onMounted } from "vue";
 import { formatDate } from "@/utils/dateUtil";
-import { getPageData, removeOne, doAssign, getScoreMsg } from "@/api/user";
+import { getPageData, removeOne, doAssign, getScoreMsg, isExistUsername, updateUser } from "@/api/user";
 import { getAllRoles } from "@/api/role";
+import { getAllDepartments } from '@/api/other';
 import { getMyAvatar } from "@/utils/service/userUtil";
 import { getRandomNumber } from "@/utils/randomUtil";
 import { useSimpleConfirm, useSuccessTip } from "@/utils/msgTip.js";
-import { removeSpace } from "@/utils/stringUtil";
+import { isSpace, removeSpace, isPhone, isEmail } from "@/utils/stringUtil";
+import { deepCopy } from '@/utils/objUtil';
 import MyDatePicker from "@/components/MyDatePicker.vue";
 import MyCommonBtn from "@/components/MyCommonBtn.vue";
 
@@ -240,6 +308,22 @@ const isChooseDate = ref(false);
 // 是否正在加载表格
 const isLoadingTable = ref(false);
 
+// 用于确定弹窗格式
+const updateOrAddProp = ref({
+  isExistThisUsername: false,
+  isUpdatePwd: 0,
+  againPwd: '',
+  pwdMsg: '',
+  againPwdMsg: '',
+  phoneMsg: '',
+  emailMsg: '',
+})
+let tmpOriginUsername = '';// 存临时的 用户原本的用户名
+// 新建/修改弹窗的title
+const updateOrAddTitle = ref('')
+// 是否开启查看或修改或新建的弹窗
+const updateOrAddDialogVisible = ref(false)
+
 // 确定是否开启评分查询的弹窗
 const scoreDialogVisible = ref(false);
 // 存当前查询的评分数据
@@ -248,6 +332,8 @@ const scoreMsg = ref([])
 const assignDialogOpen = ref(false);
 // 存所有的角色
 const allRoles = ref([]);
+// 存所有的学院名
+const departments = ref([]);
 // 当前正在操作的用户
 const checkedUser = ref({});
 // 是否是不确定的
@@ -275,6 +361,94 @@ const pageReqData = ref({
     endCreateTime: null,
   },
 });
+
+/**
+ * 真正修改当前操作的用户
+ */
+const updateThisUser = async()=>{
+  if(!totalCheck()){
+    return
+  }
+  let res = await updateUser(checkedUser.value, updateOrAddProp.value.isUpdatePwd)
+  updateOrAddDialogVisible.value = false
+  useSuccessTip(`修改用户 “${checkedUser.value.info.name}” 成功`)
+}
+
+/**
+ * 判断全部信息是否都符合要求
+ * @returns 是否符合
+ */
+function totalCheck(){
+  const info = checkedUser.value.info
+  const prop = updateOrAddProp.value
+  return (!prop.isUpdatePwd || (checkNewPwd(info.password) && checkAgainPwd(prop.againPwd)))
+  && isExistUsername(info.username) && isPhone(info.phone) && isEmail(info.email)
+}
+
+/**
+ * 检查重复密码格式
+ * @param {string} pwd 重复密码
+ * @returns 是否合规 
+ */
+ function checkAgainPwd(pwd = ''){
+  updateOrAddProp.value.againPwdMsg = '✔️ 密码格式正确'
+  if(isSpace(pwd)){
+    updateOrAddProp.value.againPwdMsg = '* 密码不能为空或纯空格'
+    return false
+  } else if(pwd !== checkedUser.value.info.password){
+    updateOrAddProp.value.againPwdMsg = '* 输入密码不一致!'
+    return false
+  }
+  return true
+}
+
+/**
+ * 检查新密码格式
+ * @param {string} pwd 新密码
+ * @returns 是否合规 
+ */
+function checkNewPwd(pwd = ''){
+  updateOrAddProp.value.pwdMsg = '✔️ 密码格式正确'
+  checkAgainPwd(updateOrAddProp.value.againPwd)
+  if(isSpace(pwd)){
+    updateOrAddProp.value.pwdMsg = '* 密码不能为空或纯空格'
+    return false
+  }
+  return true
+}
+
+/**
+ * 确定输入用户名是否已经被注册或者是否为 非旧用户名
+ * @param {string} username 
+ */
+const isThisExist = async(username)=>{
+  if(username === tmpOriginUsername){
+    updateOrAddProp.value.isExistThisUsername = false
+    return
+  }
+  let { isExist } = await isExistUsername(username)
+  updateOrAddProp.value.isExistThisUsername = isExist
+}
+
+/**
+ * 初始化修改弹窗
+ * @param {Object} user 待修改的用户 
+ */
+function showUpdateDialog(user){
+  checkedUser.value = deepCopy(user)
+  updateOrAddTitle.value = `修改用户 “${user.info.name}” `
+  tmpOriginUsername = user.info.username
+  updateOrAddProp.value = {
+    isExistThisUsername: false,
+    isUpdatePwd: 0,
+    againPwd: '',
+    pwdMsg: '',
+    againPwdMsg: '',
+    phoneMsg: '',
+    emailMsg: '',
+  }
+  updateOrAddDialogVisible.value = true
+}
 
 /**
  * 展示查询的评分数据，以及弹窗的初始化
@@ -320,6 +494,15 @@ function handleCheckAllChange() {
     : [];
   isIndeterminate.value = false;
 }
+
+/**
+ * 初始化学院信息
+ */
+const initDepartments = async()=>{
+  let {dataArr} = await getAllDepartments()
+  departments.value = dataArr
+}
+
 /**
  * 初始化 角色信息
  */
@@ -416,6 +599,7 @@ watch(
 onMounted(() => {
   getMyPageData();
   initRoles();
+  initDepartments();
 });
 </script>
 
@@ -492,12 +676,10 @@ $ico-btn-color: rgb(255, 97, 117);
     }
   }
 }
-.scoreShow{
-    .el-dialog__header{
-        border-bottom: 12px black solid;
-    }
-    
+.tipMsg{
+  color: rgb(245,114,114);
 }
+  
 
 .my-header{
   @include flex-center-y;
@@ -532,8 +714,6 @@ $ico-btn-color: rgb(255, 97, 117);
   }
 }
 .moreBox {
-  // @include flex-center;
-  // flex-wrap: wrap;
   text-align: center;
 }
 .operationBox {

@@ -35,3 +35,23 @@ export function colorStrToArr(colorStr=''){
     // 将分割后的字符串数组转换为数字数组
     return colorArrValue.map(Number);
 }
+
+/**
+ * 检测一个字符串是否符合基本的邮箱格式
+ * @param {string} str 传入字符串
+ * @returns 是否符合
+ */
+export function isEmail(str = ''){
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(str);
+}
+
+/**
+ * 检测一个字符串是不是符合移动电话的基本格式
+ * @param {string} str 传入字符串
+ * @returns 是否符合
+ */
+export function isPhone(str = ''){
+    const regex = /^1(3|4|5|6|7|8|9)\d{9}$/;
+    return regex.test(str);
+}

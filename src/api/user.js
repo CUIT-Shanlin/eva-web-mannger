@@ -65,3 +65,28 @@ export function getScoreMsg(userId = -1){
         url: `/user/score/${userId}`
     })
 }
+
+/**
+ * 查询一个用户名是否已经存在
+ * @param {string} username 待查询用户名
+ * @returns true: 已经存在，false: 未存在
+ */
+export function isExistUsername(username = ''){
+    return request({
+        url: `/user/username/exist?username=${username}`
+    })
+}
+
+/**
+ * 修改一个用户的信息
+ * @param {Object} user 用户的新信息
+ * @param {Number} isUpdatePwd 是否需要修改密码，0： 不需要，1： 需要
+ * @returns 
+ */
+export function updateUser(user = {}, isUpdatePwd = 0){
+    return request({
+        url: `/user/${isUpdatePwd}`,
+        method: 'PUT',
+        data: user
+    })
+}
