@@ -65,6 +65,7 @@ const chooseIndex = ref(-1)
 
 .menuOne{
     @include flex-center-y;
+    cursor: pointer;
     justify-content: space-between;
     padding: 13px 0;
     padding-left: 40px;
@@ -86,7 +87,7 @@ const chooseIndex = ref(-1)
         transform: rotate(90deg);
     }
     .actMyIco{
-        transform: rotate(0deg);
+        transform: rotate(-90deg);
     }
 }
 .actMenu{

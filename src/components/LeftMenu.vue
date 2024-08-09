@@ -58,6 +58,7 @@ function show(){
     }
     .libOne{
         @include flex-center-y;
+        cursor: pointer;
         justify-content: space-between;
         color: rgb(136,136,136);
         font-size: 16.42px;
