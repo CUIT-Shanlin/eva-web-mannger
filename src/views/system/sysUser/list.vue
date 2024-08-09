@@ -214,10 +214,11 @@
       <el-dialog v-model="updateOrAddDialogVisible" :title="getFunTitle(checkedUser, updateOrAddProp.fun)" width="500">
         <el-form label-width="80px">
           <el-form-item label="姓名">
-            <el-input v-model="checkedUser.info.name"></el-input>
+            <el-input v-model="checkedUser.info.name" placeholder="请输入姓名"></el-input>
           </el-form-item>
           <el-form-item label="用户名">
-            <el-input v-model="checkedUser.info.username" @change="checkUsername(checkedUser.info.username)"></el-input>
+            <el-input v-model="checkedUser.info.username" placeholder="请输入用户名"
+            @change="checkUsername(checkedUser.info.username)"></el-input>
             <div class="tipMsg">{{updateOrAddProp.usernameMsg}}</div>
           </el-form-item>
           <el-form-item label="密码" v-if="!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0">
@@ -226,13 +227,13 @@
           </el-form-item>
           <el-form-item :label="updateOrAddProp.fun === 0 ? '新密码' : '密码'" 
           v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0)">
-            <el-input v-model="checkedUser.info.password"
-            @change="checkNewPwd(checkedUser.info.password)"></el-input>
+            <el-input v-model="checkedUser.info.password" placeholder="请输入密码"
+            @change="checkNewPwd(checkedUser.info.password)" type="password"></el-input>
             <div class="tipMsg">{{updateOrAddProp.pwdMsg}}</div>
           </el-form-item>
           <el-form-item label="重复密码" v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0)">
-            <el-input v-model="updateOrAddProp.againPwd"
-            @change="checkAgainPwd(updateOrAddProp.againPwd)"></el-input>
+            <el-input v-model="updateOrAddProp.againPwd" placeholder="请再次输入相同密码"
+            @change="checkAgainPwd(updateOrAddProp.againPwd)" type="password"></el-input>
             <div class="tipMsg">{{updateOrAddProp.againPwdMsg}}</div>
           </el-form-item>
           <el-form-item label="学院">
@@ -401,8 +402,9 @@ const updateOrAddThisUser = async()=>{
 function totalCheck(){
   const info = checkedUser.value.info
   const prop = updateOrAddProp.value
+  const fun = prop.fun
   checkUsername(info.username)
-  return (!prop.isUpdatePwd || (checkNewPwd(info.password) && checkAgainPwd(prop.againPwd)))
+  return ( (checkNewPwd(info.password) && checkAgainPwd(prop.againPwd)) || (!prop.isUpdatePwd && fun === 0))
   && prop.isUsername && isPhone(info.phone) && isEmail(info.email)
 }
 
