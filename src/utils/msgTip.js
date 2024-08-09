@@ -36,6 +36,14 @@ export function useWarnTip(msg = '操作警告'){
 }
 
 /**
+ * 返回info的消息提示
+ * @param {string} msg 信息
+ */
+export function useInfoTip(msg = '操作完成'){
+    useTip(msg,'info')
+}
+
+/**
  * 全自定义的操作提示框
  * @param {string} message 提示信息
  * @param {string} title 提示标题

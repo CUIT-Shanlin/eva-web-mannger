@@ -310,7 +310,7 @@ import { getAllRoles } from "@/api/role";
 import { getAllDepartments } from '@/api/other';
 import { getMyAvatar } from "@/utils/service/userUtil";
 import { getRandomNumber } from "@/utils/randomUtil";
-import { useSimpleConfirm, useSuccessTip } from "@/utils/msgTip.js";
+import { useSimpleConfirm, useSuccessTip, useInfoTip } from "@/utils/msgTip.js";
 import { isSpace, removeSpace, isPhone, isEmail } from "@/utils/stringUtil";
 import { deepCopy } from '@/utils/objUtil';
 import MyDatePicker from "@/components/MyDatePicker.vue";
@@ -382,7 +382,11 @@ const pageReqData = ref({
  */
 const updateThisUserStatus = async(info)=>{
   let res = updateUserStatus(info.id, info.status)
-  useSuccessTip(`成功${info.status ? '禁用' : '启用'}用户 “${info.name}”`)
+  if(info.status === 0){
+    useSuccessTip(`成功启用用户 “${info.name}”`)
+  }else{
+    useInfoTip(`成功禁用用户 “${info.name}”`)
+  }
 }
 
 /**
