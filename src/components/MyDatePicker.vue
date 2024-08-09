@@ -298,7 +298,7 @@
     );
     calendarProps.previous.totalDays = previousMonth.getDate();
   
-    console.log('calendarProps:',calendarProps);
+    // console.log('calendarProps:',calendarProps);
   }
   
   /**

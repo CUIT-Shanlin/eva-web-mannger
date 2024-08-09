@@ -27,7 +27,7 @@ let userMsg = ref({id: 0,avatar:''})
 const initMsg = async()=>{
     let {info} = await getInfo()
     userMsg.value = info
-    console.log(userMsg.value)
+    // console.log(userMsg.value)
     userMsg.value.avatar = getMyAvatar(userMsg.value.avatar)
 }
 onMounted(()=>{

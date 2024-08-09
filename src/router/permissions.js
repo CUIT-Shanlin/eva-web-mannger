@@ -43,7 +43,7 @@ router.beforeEach(async(to,from,next) => {
             }
             router.addRoute(lastRou)
             useUserStore(pinia).menus = menus
-            console.log(menus)
+            // console.log(menus)
             // 保证添加路由的异步化操作完成后再转到目标路由
             next(to.fullPath);
         }else{
