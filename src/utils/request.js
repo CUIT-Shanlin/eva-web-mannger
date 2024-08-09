@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { getMyToken } from './auth';
-import { useSuccessTip,useFailedTip } from './msgTip';
+import { useWarningConfirm,useFailedTip } from './msgTip';
+import router from '@/router/permissions'
+
 /**
  * 封装axios
  */
@@ -50,7 +52,12 @@ request.interceptors.response.use(
         }
     },
     error=>{
-        useFailedTip('请求错误：' + error.message)
+        useFailedTip('响应错误：' + error.message)
+        if(!getMyToken()){
+            useWarningConfirm('登录失效，即将跳转登录页，重新登录').then(()=>{
+                router.push('/login')
+            })
+        }
         return Promise.reject(error)
     }
 )
