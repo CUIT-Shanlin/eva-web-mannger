@@ -131,22 +131,16 @@
                 <div>
                   <el-link
                     type="primary"
-                    @click="
-                      checkedUser = scope.row;
-                      scoreDialogVisible = true;
-                    "
-                    >评分查询</el-link
-                  >
+                    @click="showScoreMsg(scope.row)"
+                    >评分查询</el-link>
                 </div>
                 <div>
                   <el-link type="info" @click="showAssignRole(scope.row)"
-                    >分配角色</el-link
-                  >
+                    >分配角色</el-link>
                 </div>
                 <div>
                   <el-link type="danger" @click="deleteOneUser(scope.row.info)"
-                    >删除用户</el-link
-                  >
+                    >删除用户</el-link>
                 </div>
               </div>
             </el-popover>
@@ -192,8 +186,23 @@
     </teleport>
 
     <!-- 评分查询的弹窗 -->
-    <teleport to="body">
-      <el-dialog title="评分查询" v-model="scoreDialogVisible" width="500">
+    <teleport to="body" class="scoreShow">
+      <el-dialog v-model="scoreDialogVisible" width="800">
+        <template #header="{ titleId, titleClass }">
+          <div class="my-header">
+            <div :id="titleId" :class="titleClass">评分查询</div>
+          </div>
+        </template>
+        <el-table :data="scoreMsg" class="scoreTable"
+        :header-cell-style="{backgroundColor: 'rgb(250,250,250)', padding: '10px 0'}"
+        :cell-style="{padding: '10px 0'}">
+            <el-table-column prop="courseName" label="课程名称" width="300" />
+            <el-table-column prop="score" label="课程评分" width="232" />
+            <el-table-column prop="evaNum" label="评教人数" width="232"/>
+        </el-table>
+        <template #footer>
+          <el-button @click="scoreDialogVisible = false">关闭</el-button>
+        </template>
       </el-dialog>
     </teleport>
 
@@ -216,7 +225,7 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { ref, watch, onMounted } from "vue";
 import { formatDate } from "@/utils/dateUtil";
-import { getPageData, removeOne, doAssign } from "@/api/user";
+import { getPageData, removeOne, doAssign, getScoreMsg } from "@/api/user";
 import { getAllRoles } from "@/api/role";
 import { getMyAvatar } from "@/utils/service/userUtil";
 import { getRandomNumber } from "@/utils/randomUtil";
@@ -233,6 +242,8 @@ const isLoadingTable = ref(false);
 
 // 确定是否开启评分查询的弹窗
 const scoreDialogVisible = ref(false);
+// 存当前查询的评分数据
+const scoreMsg = ref([])
 // 确定是否打开 分配角色的弹窗
 const assignDialogOpen = ref(false);
 // 存所有的角色
@@ -264,6 +275,17 @@ const pageReqData = ref({
     endCreateTime: null,
   },
 });
+
+/**
+ * 展示查询的评分数据，以及弹窗的初始化
+ * @param {Object} user 对应的用户
+ */
+const showScoreMsg = async(user)=>{
+  checkedUser.value = user;
+  let {dataArr} = await getScoreMsg(user.info.id)
+  scoreMsg.value = dataArr
+  scoreDialogVisible.value = true;
+}
 
 /**
  * 为对应用户分配角色
@@ -470,7 +492,17 @@ $ico-btn-color: rgb(255, 97, 117);
     }
   }
 }
+.scoreShow{
+    .el-dialog__header{
+        border-bottom: 12px black solid;
+    }
+    
+}
 
+.my-header{
+  @include flex-center-y;
+  border-bottom: 1px solid;
+}
 .myPage {
   margin-top: 15px;
   padding: 10px 0;
@@ -513,8 +545,14 @@ $ico-btn-color: rgb(255, 97, 117);
   }
 }
 :deep() {
-  .el-table__cell {
+  th.el-table__cell {
+    font-size: 15px;
     color: black;
+  }
+  .el-table__body-wrapper{
+    td{
+       color: rgb(89,89,89); 
+    }
   }
 }
 .calendarBox {

@@ -43,14 +43,25 @@ export function removeOne(userId = -1){
 }
 
 /**
- * 为一个角色分配
+ * 为一个用户分配角色
  * @param {Object} assignVo 
- * @returns 
+ * @returns 响应信息
  */
 export function doAssign(assignVo = {}){
     return request({
         url: '/user/roles',
         method: 'PUT',
         data: assignVo
+    })
+}
+
+/**
+ * 获取一个用户的各个课程评分
+ * @param {Number} userId 用户id
+ * @returns 评分信息
+ */
+export function getScoreMsg(userId = -1){
+    return request({
+        url: `/user/score/${userId}`
     })
 }
