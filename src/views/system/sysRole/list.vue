@@ -179,6 +179,7 @@ const updateOrAddRole = async()=>{
     let res = await addRole(role)
     msg = '成功新建角色'
   }
+  getMyPageData()// 刷新页面
   updateOrAddDialogVisible.value = false
   useSuccessTip(msg)
 }

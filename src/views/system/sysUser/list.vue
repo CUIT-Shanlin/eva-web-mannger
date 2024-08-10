@@ -278,6 +278,12 @@
             placeholder="请输入职称，例如：教授等（非必填）"
             :disabled="updateOrAddProp.fun === 2"></el-input>
           </el-form-item>
+          <el-form-item label="创建时间" v-if="updateOrAddProp.fun !== 1">
+            <el-input v-model="checkedUser.info.createTime" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="修改时间" v-if="updateOrAddProp.fun !== 1">
+            <el-input v-model="checkedUser.info.updateTime" disabled></el-input>
+          </el-form-item>
         </el-form>
         <template #footer v-if="updateOrAddProp.fun !== 2">
           <el-button type="primary" :disabled="!totalCheck()" @click="updateOrAddThisUser()">保存</el-button>
