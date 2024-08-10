@@ -76,3 +76,29 @@ export function doAssignForRole(assignVo = {}){
         data: assignVo
     })
 }
+
+/**
+ * 修改一个角色的信息
+ * @param {Object} role 该角色的新信息
+ * @returns 
+ */
+export function updateRole(role = {}){
+    return request({
+        url: '/role',
+        method: 'PUT',
+        data: role
+    })
+}
+
+/**
+ * 新建一个角色
+ * @param {Object} role 新角色信息
+ * @returns 
+ */
+export function addRole(role = {}){
+    return request({
+        url: '/role',
+        method: 'POST',
+        data: role
+    })
+}

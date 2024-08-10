@@ -2,7 +2,7 @@
   <PageTitle content="角色列表" />
   <div class="roleAllSty">
     <div class="funBar">
-      <el-button type="primary">新建</el-button>
+      <el-button type="primary" @click="initDialog({}, 1)">新建</el-button>
       <span class="iptFuns">
         <el-input
         v-model="pageReqData.queryObj.keyword"
@@ -58,7 +58,7 @@
       <el-table-column prop="updateTime" label="修改日期" width="200" sortable/>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-link class="iconfont operation" type="primary">
+          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, 0)">
             <span class="ico">&#xe8cf;&nbsp;</span>
             修改
           </el-link>
@@ -76,6 +76,31 @@
       </el-table-column>
     </el-table>
     <el-button @click="batchRemoveMyRoles()">批量删除</el-button>
+
+    <!-- 新建/修改弹窗 -->
+    <teleport to="body">
+      <el-dialog width="500" v-model="updateOrAddDialogVisible" :title="funMode === 0 ? '修改角色' : '新建角色'">
+        <el-form label-width="80px">
+          <el-form-item label="姓名">
+            <el-input v-model="checkedRole.roleName" placeholder="请输入角色名称"></el-input>
+          </el-form-item>
+          <el-form-item label="描述">
+            <el-input v-model="checkedRole.description" placeholder="请输入该角色描述信息"></el-input>
+          </el-form-item>
+          <el-form-item label="创建时间" v-if="funMode === 0">
+            <el-input v-model="checkedRole.createTime" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="修改时间" v-if="funMode === 0">
+            <el-input v-model="checkedRole.updateTime" disabled></el-input>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button type="primary"  @click="updateOrAddRole()">保存</el-button>
+          <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
+        </template>
+      </el-dialog>
+    </teleport>
+
     <el-pagination
     v-model:current-page="pageData.current"
     v-model:page-size="pageData.size"
@@ -95,7 +120,7 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { Search } from '@element-plus/icons-vue'
 import { ref, onMounted } from 'vue'
-import { getPageData, updateRoleStatus, batchRemove, removeOne } from '@/api/role';
+import { getPageData, updateRoleStatus, batchRemove, removeOne, updateRole, addRole } from '@/api/role';
 import { useSimpleConfirm, useSuccessTip, useInfoTip, useFailedTip } from "@/utils/msgTip.js";
 import { isEmptyArr } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
@@ -103,6 +128,12 @@ import { useRouter } from "vue-router";
 
 const router = useRouter()
 
+// 当前正在操作的角色
+const checkedRole = ref({})
+// 控制弹窗功能 0: 修改，1：新建
+const funMode = ref(0)
+// 控制弹窗的开启
+const updateOrAddDialogVisible = ref(false)
 // 是否正在加载表格
 const isLoadingTable = ref(false);
 // 存勾选了的角色
@@ -130,6 +161,34 @@ const pageData = ref({
 const updateTimeArr = ref([])
 // 存创建日期对应数组
 const createTimeArr = ref([])
+
+/**
+ * 修改和新建的总方法
+ */
+const updateOrAddRole = async()=>{
+  const role = checkedRole.value
+  let msg = ''
+  if(funMode.value === 0){
+    let res = await updateRole(role)
+    msg = `成功修改角色 “${role.roleName}”`
+  }else{
+    let res = await addRole(role)
+    msg = '成功新建角色'
+  }
+  updateOrAddDialogVisible.value = false
+  useSuccessTip(msg)
+}
+
+/**
+ * 初始化弹窗
+ * @param {Object} role 操作的角色
+ * @param {Number} fun 弹窗功能 0：修改，1：新建
+ */
+function initDialog(role = {}, fun = 0){
+  funMode.value = fun
+  checkedRole.value = role
+  updateOrAddDialogVisible.value = true
+}
 
 /**
  * 删除单个角色
