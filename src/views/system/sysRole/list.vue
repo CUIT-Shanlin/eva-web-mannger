@@ -49,7 +49,7 @@
           v-model="scope.row.status"
           :active-value="0"
           :inactive-value="1"
-          @change="updateThisUserStatus(scope.row)"
+          @change="updateThisRoleStatus(scope.row)"
           />
         </template>
       </el-table-column>
@@ -78,25 +78,13 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { Search } from '@element-plus/icons-vue'
 import { ref, onMounted } from 'vue'
-import { getPageData } from '@/api/role';
+import { getPageData, updateRoleStatus } from '@/api/role';
+import { useSimpleConfirm, useSuccessTip, useInfoTip } from "@/utils/msgTip.js";
 
 
 // 是否正在加载表格
 const isLoadingTable = ref(false);
-/**
- * 获取分页角色信息
- */
-const getMyPageData = async()=>{
-  isLoadingTable.value = true
-  const queryObj = pageReqData.value.queryObj
-  queryObj.startCreateTime = createTimeArr[0]
-  queryObj.endCreateTime = createTimeArr[1]
-  queryObj.startUpdateTime = updateTimeArr[0]
-  queryObj.endUpdateTime = updateTimeArr[1]
-  let res = await getPageData(pageReqData.value)
-  pageData.value = res
-  isLoadingTable.value = false
-}
+
 // 存分页请求数据
 const pageReqData = ref({
   size: 0,
@@ -120,13 +108,18 @@ const pageData = ref({
 const updateTimeArr = ref([])
 // 存创建日期对应数组
 const createTimeArr = ref([])
-// 生成快速选择的value
-const createCutValue = (days = 1)=>{
+
+/**
+ * 生成快速选择的value
+ * @param {Number} days 天数 
+ */
+ const createCutValue = (days = 1)=>{
   const end = new Date()
   const start = new Date()
   start.setTime(start.getTime() - 3600 * 1000 * 24 * days)
   return [start, end]
 }
+
 // 实现日期选择器的快速选择
 const shortcuts = [
   {
@@ -142,6 +135,36 @@ const shortcuts = [
     value: createCutValue(90),
   },
 ]
+
+
+/**
+ * 修改角色的状态
+ * @param role 角色信息
+ */
+ const updateThisRoleStatus = async(role)=>{
+  let res = await updateRoleStatus(role.id, role.status)
+  if(role.status === 0){
+    useSuccessTip(`成功启用角色 “${role.roleName}”`)
+  }else{
+    useInfoTip(`成功禁用角色 “${role.roleName}”`)
+  }
+}
+
+/**
+ * 获取分页角色信息
+ */
+const getMyPageData = async()=>{
+  isLoadingTable.value = true
+  const queryObj = pageReqData.value.queryObj
+  queryObj.startCreateTime = createTimeArr[0]
+  queryObj.endCreateTime = createTimeArr[1]
+  queryObj.startUpdateTime = updateTimeArr[0]
+  queryObj.endUpdateTime = updateTimeArr[1]
+  let res = await getPageData(pageReqData.value)
+  pageData.value = res
+  isLoadingTable.value = false
+}
+
 
 onMounted(()=>{
   getMyPageData()

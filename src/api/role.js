@@ -25,3 +25,16 @@ export function getPageData(reqData = {page: 0,size: 0,queryObj: {}}){
         data: reqData
     })
 }
+
+/**
+ * 修改角色的状态
+ * @param {Number} roleId 角色id 
+ * @param {Number} status 状态，1为禁止，0为正常
+ * @returns 
+ */
+export function updateRoleStatus(roleId = -1, status = 0){
+    return request({
+        url: `/role/status/${roleId}/${status}`,
+        method: 'PUT'
+    })
+}
