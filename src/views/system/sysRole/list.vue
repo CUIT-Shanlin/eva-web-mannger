@@ -8,9 +8,11 @@
         v-model="pageReqData.queryObj.keyword"
         style="width: 260px"
         placeholder="请输入角色名称或描述"
+        clearable
+        @change="getMyPageData"
         >
           <template #append>
-            <el-button :icon="Search" />
+            <el-button :icon="Search" @click="getMyPageData()"/>
           </template>
         </el-input>
         <el-date-picker
@@ -20,6 +22,7 @@
         start-placeholder="开始创建时间"
         end-placeholder="结束创建时间"
         :shortcuts="shortcuts"
+        @change="getMyPageData()"
         style="width: 240px;"
         />
 
@@ -31,6 +34,7 @@
         end-placeholder="结束修改时间"
         style="width: 240px;"
         :shortcuts="shortcuts"
+        @change="getMyPageData()"
         />
       </span>
     </div>
@@ -95,7 +99,7 @@
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button type="primary"  @click="updateOrAddRole()">保存</el-button>
+          <el-button type="primary" @click="updateOrAddRole()">保存</el-button>
           <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
         </template>
       </el-dialog>
