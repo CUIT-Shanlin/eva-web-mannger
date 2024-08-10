@@ -38,3 +38,16 @@ export function updateRoleStatus(roleId = -1, status = 0){
         method: 'PUT'
     })
 }
+
+/**
+ * 批量删除角色
+ * @param {Number} idList 待删除的角色的id集合 
+ * @returns 
+ */
+export function batchRemove(idList){
+    return request({
+        url: '/roles',
+        method: 'dELETE',
+        data: idList
+    })
+}

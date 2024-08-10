@@ -30,3 +30,12 @@ export function deepCopy(source) {
   
     return target;  
 }
+
+/**
+ * 判断一个数组是不是空数组
+ * @param {Array} arr 
+ * @returns 
+ */
+export function isEmptyArr(arr = []){
+    return arr === undefined || (Array.isArray(arr) && arr.length === 0);
+}

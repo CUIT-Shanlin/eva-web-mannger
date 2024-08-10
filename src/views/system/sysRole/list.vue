@@ -39,6 +39,7 @@
     :data="pageData.records"
     v-loading="isLoadingTable"
     class="tableBox"
+    @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="50" />
       <el-table-column prop="roleName" label="角色名称" width="200" />
@@ -53,18 +54,32 @@
           />
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建日期" width="200" />
-      <el-table-column prop="updateTime" label="修改日期" width="200" />
+      <el-table-column prop="createTime" label="创建日期" width="200" sortable/>
+      <el-table-column prop="updateTime" label="修改日期" width="200" sortable/>
       <el-table-column label="操作">
-
+        <template #default="scope">
+          <el-link class="iconfont operation">
+            <span class="ico">&#xe8cf;&nbsp;</span>
+            修改
+          </el-link>
+          <el-link class="iconfont operation">
+            <span class="ico">&#xe610;&nbsp;</span>
+            删除
+          </el-link>
+          <el-link class="iconfont operation">
+            <span class="ico">&#xe603;&nbsp;</span>
+            分配权限
+          </el-link>
+        </template>
       </el-table-column>
     </el-table>
+    <el-button @click="batchRemoveMyRoles()">批量删除</el-button>
     <el-pagination
     v-model:current-page="pageData.current"
     v-model:page-size="pageData.size"
     :page-sizes="[5, 10, 20, 40]"
     :size="pageData.size"
-    layout="total, sizes, prev, pager, next, jumper"
+    layout="sizes, prev, pager, next, jumper"
     :total="pageData.total"
     @size-change="getMyPageData"
     @current-change="getMyPageData"
@@ -78,13 +93,14 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { Search } from '@element-plus/icons-vue'
 import { ref, onMounted } from 'vue'
-import { getPageData, updateRoleStatus } from '@/api/role';
-import { useSimpleConfirm, useSuccessTip, useInfoTip } from "@/utils/msgTip.js";
-
+import { getPageData, updateRoleStatus, batchRemove } from '@/api/role';
+import { useSimpleConfirm, useSuccessTip, useInfoTip, useFailedTip } from "@/utils/msgTip.js";
+import { isEmptyArr } from "@/utils/objUtil";
 
 // 是否正在加载表格
 const isLoadingTable = ref(false);
-
+// 存勾选了的角色
+const handleRoles = ref([])
 // 存分页请求数据
 const pageReqData = ref({
   size: 0,
@@ -110,10 +126,29 @@ const updateTimeArr = ref([])
 const createTimeArr = ref([])
 
 /**
+ * 批量删除角色
+ */
+function batchRemoveMyRoles(){
+  if(isEmptyArr(handleRoles.value)){
+    useFailedTip('未选中角色')
+    return
+  }
+  useSimpleConfirm('你确定要删除选中角色吗？').then(async()=>{
+    const idList = handleRoles.value.map(role => role.id)
+    console.log(idList)
+    let res = await batchRemove(idList)
+    useSuccessTip('成功删除选中角色')
+  })
+}
+
+function handleSelectionChange(roles){
+  handleRoles.value = roles
+}
+/**
  * 生成快速选择的value
  * @param {Number} days 天数 
  */
- const createCutValue = (days = 1)=>{
+const createCutValue = (days = 1)=>{
   const end = new Date()
   const start = new Date()
   start.setTime(start.getTime() - 3600 * 1000 * 24 * days)
@@ -141,7 +176,7 @@ const shortcuts = [
  * 修改角色的状态
  * @param role 角色信息
  */
- const updateThisRoleStatus = async(role)=>{
+const updateThisRoleStatus = async(role)=>{
   let res = await updateRoleStatus(role.id, role.status)
   if(role.status === 0){
     useSuccessTip(`成功启用角色 “${role.roleName}”`)
@@ -172,10 +207,12 @@ onMounted(()=>{
 </script>
 
 <style lang="scss" scoped>
+@import url("../../../assets/font/iconfont.css");
 @import "../../../styles/commonFlexStyles.scss";
 
 .roleAllSty{
   background-color: #FFF;
+  overflow: auto;
   padding: 15px;
   .funBar{
     @include flex-center-y;
@@ -189,14 +226,11 @@ onMounted(()=>{
   .tableBox{
     width: 100%;
     margin-top: 50px;
-    margin-bottom: 30px;
+    margin-bottom: 35px;
   }
 }
 .myPage {
-  margin-top: 15px;
-  padding: 10px 0;
-  display: grid;
-  grid-template-columns: 10fr 1fr 0.5fr 1fr 0.5fr 1fr;
+  float: right;
 }
 :deep() {
   th.el-table__cell {
@@ -209,6 +243,14 @@ onMounted(()=>{
     td{
        color: rgb(89,89,89); 
     }
+  }
+}
+.operation{
+  font-size: 14px;
+  margin-right: 15px;
+  color: rgb(64,158,255);
+  .ico{
+    font-size: 18px;
   }
 }
 </style>
