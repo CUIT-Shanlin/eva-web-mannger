@@ -231,13 +231,13 @@
           <el-form-item :label="updateOrAddProp.fun === 0 ? '新密码' : '密码'" 
           v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0) && updateOrAddProp.fun !== 2">
             <el-input v-model="checkedUser.info.password" placeholder="请输入密码"
-            @change="checkNewPwd(checkedUser.info.password)" type="password"></el-input>
+            @change="checkNewPwd(checkedUser.info.password)" type="password" show-password></el-input>
             <div class="tipMsg">{{updateOrAddProp.pwdMsg}}</div>
           </el-form-item>
           <el-form-item label="重复密码" v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0)
           && updateOrAddProp.fun !== 2">
             <el-input v-model="updateOrAddProp.againPwd" placeholder="请再次输入相同密码"
-            @change="checkAgainPwd(updateOrAddProp.againPwd)" type="password"></el-input>
+            @change="checkAgainPwd(updateOrAddProp.againPwd)" type="password" show-password></el-input>
             <div class="tipMsg">{{updateOrAddProp.againPwdMsg}}</div>
           </el-form-item>
           <el-form-item label="学院">
