@@ -58,15 +58,17 @@
       <el-table-column prop="updateTime" label="修改日期" width="200" sortable/>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-link class="iconfont operation">
+          <el-link class="iconfont operation" type="primary">
             <span class="ico">&#xe8cf;&nbsp;</span>
             修改
           </el-link>
-          <el-link class="iconfont operation" @click="removeOneRole(scope.row)">
+          <el-link class="iconfont operation" type="primary"
+          @click="removeOneRole(scope.row)">
             <span class="ico">&#xe610;&nbsp;</span>
             删除
           </el-link>
-          <el-link class="iconfont operation">
+          <el-link class="iconfont operation" type="primary"
+          @click="$router.push(`/assignPerm?id=${scope.row.id}&roleName=${scope.row.roleName}`)">
             <span class="ico">&#xe603;&nbsp;</span>
             分配权限
           </el-link>
@@ -265,7 +267,7 @@ onMounted(()=>{
 .operation{
   font-size: 14px;
   margin-right: 15px;
-  color: rgb(64,158,255);
+  // color: rgb(64,158,255);
   .ico{
     font-size: 18px;
   }

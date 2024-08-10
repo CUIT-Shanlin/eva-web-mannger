@@ -63,3 +63,16 @@ export function removeOne(roleId){
         method: 'DELETE'
     })
 }
+
+/**
+ * 为一个角色分配权限
+ * @param {Object} assignVo 
+ * @returns 响应信息
+ */
+export function doAssignForRole(assignVo = {}){
+    return request({
+        url: '/role/auth',
+        method: 'PUT',
+        data: assignVo
+    })
+}
