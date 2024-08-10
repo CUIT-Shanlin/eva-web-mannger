@@ -102,6 +102,9 @@ function changeMenusToRouters(routers = []){
                 route.path = `/${route.path}`
             }
         }
+        if(isSpace(route.path)){
+            continue
+        }
         // 处理组件
         if(route.component === 'Home'){
             route.component = Home

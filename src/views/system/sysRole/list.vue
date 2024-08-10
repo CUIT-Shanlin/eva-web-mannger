@@ -62,7 +62,7 @@
             <span class="ico">&#xe8cf;&nbsp;</span>
             修改
           </el-link>
-          <el-link class="iconfont operation">
+          <el-link class="iconfont operation" @click="removeOneRole(scope.row)">
             <span class="ico">&#xe610;&nbsp;</span>
             删除
           </el-link>
@@ -93,9 +93,13 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { Search } from '@element-plus/icons-vue'
 import { ref, onMounted } from 'vue'
-import { getPageData, updateRoleStatus, batchRemove } from '@/api/role';
+import { getPageData, updateRoleStatus, batchRemove, removeOne } from '@/api/role';
 import { useSimpleConfirm, useSuccessTip, useInfoTip, useFailedTip } from "@/utils/msgTip.js";
 import { isEmptyArr } from "@/utils/objUtil";
+import { removeSpace } from "@/utils/stringUtil";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 
 // 是否正在加载表格
 const isLoadingTable = ref(false);
@@ -126,6 +130,17 @@ const updateTimeArr = ref([])
 const createTimeArr = ref([])
 
 /**
+ * 删除单个角色
+ * @param {Number} roleId 待删除角色id
+ */
+function removeOneRole(role){
+  useSimpleConfirm(`你确定要删除角色 “${role.roleName}” 吗？`).then(async()=>{
+    let res = await removeOne(role)
+    useSuccessTip(`成功删除角色 “${role.roleName}”`)
+  })
+}
+
+/**
  * 批量删除角色
  */
 function batchRemoveMyRoles(){
@@ -138,6 +153,7 @@ function batchRemoveMyRoles(){
     console.log(idList)
     let res = await batchRemove(idList)
     useSuccessTip('成功删除选中角色')
+    getMyPageData()
   })
 }
 
@@ -191,6 +207,7 @@ const updateThisRoleStatus = async(role)=>{
 const getMyPageData = async()=>{
   isLoadingTable.value = true
   const queryObj = pageReqData.value.queryObj
+  queryObj.keyword = removeSpace(queryObj.keyword)
   queryObj.startCreateTime = createTimeArr[0]
   queryObj.endCreateTime = createTimeArr[1]
   queryObj.startUpdateTime = updateTimeArr[0]

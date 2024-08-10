@@ -51,3 +51,15 @@ export function batchRemove(idList){
         data: idList
     })
 }
+
+/**
+ * 删除单个角色
+ * @param {Number} roleId 待删除的角色的id 
+ * @returns 
+ */
+export function removeOne(roleId){
+    return request({
+        url: `/role?roleId=${roleId}`,
+        method: 'DELETE'
+    })
+}

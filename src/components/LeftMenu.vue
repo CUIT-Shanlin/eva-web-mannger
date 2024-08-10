@@ -6,6 +6,7 @@
         </div>
         <div v-for="(menu,index) in menus" :key="index">
             <div :class="{libOne: true, actLib: menu.isChoose}"
+            v-if="!menu.hidden"
             @click="menu.isChoose = !menu.isChoose">
                 <span class="box">
                     <span class="iconfont ico" v-html="menu.meta.icon"></span>

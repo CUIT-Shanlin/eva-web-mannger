@@ -2,6 +2,7 @@
 <template>
     <div v-for="(menu,index) in menuList" :key="index">
         <div :class="{menuOne: true, actMenu: isActSty(menu)}"
+        v-if="!menu.hidden"
         @click="chooseMenu(menu)">
             <span class="box">
                 <span class="iconfont ico" v-html="menu.meta.icon"></span>
