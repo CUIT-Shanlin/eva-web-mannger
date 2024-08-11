@@ -126,7 +126,7 @@ import { Search } from '@element-plus/icons-vue'
 import { ref, onMounted } from 'vue'
 import { getPageData, updateRoleStatus, batchRemove, removeOne, updateRole, addRole } from '@/api/role';
 import { useSimpleConfirm, useSuccessTip, useInfoTip, useFailedTip } from "@/utils/msgTip.js";
-import { isEmptyArr } from "@/utils/objUtil";
+import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
 import { useRouter } from "vue-router";
 
@@ -191,7 +191,7 @@ const updateOrAddRole = async()=>{
  */
 function initDialog(role = {}, fun = 0){
   funMode.value = fun
-  checkedRole.value = role
+  checkedRole.value = deepCopy(role)
   updateOrAddDialogVisible.value = true
 }
 
