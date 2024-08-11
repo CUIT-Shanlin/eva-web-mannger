@@ -2,12 +2,9 @@
 <template>
     <PageTitle :content="`正在为 “${role.roleName}” 分配权限`" />
     <div class="assignAllSty">
-        <!-- <div class="funTitle">{{`正在为 “${role.roleName}” 分配权限`}}</div> -->
         <div class="funMode">
-            <!-- <ActButton txt="退出" actColor="rgb(234,123,54)" backColor="rgb(252,245,237)" @click="goBackPage()" /> -->
-            <!-- <ActButton txt="保存并退出" @click="saveAndQuit()" /> -->
             <el-button @click="goBackPage()" >退出</el-button>
-            <el-button @click="saveAndQuit()" type="primary">保存并退出</el-button>
+            <el-button @click="save()" type="primary" :loading="isLoadingBtn">保存</el-button>
             <el-tree
             ref="tree"
             :data="menuTreeList"
@@ -23,29 +20,30 @@
 </template>
 
 <script setup>
-// import ActButton from '@/components/ActButton.vue';
 import PageTitle from "@/components/PageTitle.vue";
 import { useRoute,useRouter } from 'vue-router'
 import { ref, onMounted } from "vue";
-import{ useSuccessTip, useSimpleConfirm } from '@/utils/msgTip'
+import{ useSuccessTip } from '@/utils/msgTip'
 import { getAllTreeMenus, getMenuIdListByRoleId } from '@/api/menu'
 import { doAssignForRole } from '@/api/role'
 
+
+// 确定按钮是否是loading状态
+const isLoadingBtn = ref(false)
+
 // 保存并退出
-function saveAndQuit (){
-    useSimpleConfirm(`你确定要保存对角色 “${role.value.roleName}” 的权限修改吗`).then(async ()=>{
-        let res = await doAssignForRole({roleId: role.value.id,menuIdList: chooseIdList.value});
-        useSuccessTip(`你成功对角色 “${role.value.roleName}” 进行了权限修改`)
-        router.go(-1)
-    })
+const save = async()=>{
+    isLoadingBtn.value = true
+    console.log(chooseIdList.value)
+    let res = await doAssignForRole({roleId: role.value.id,menuIdList: chooseIdList.value});
+    useSuccessTip(`你成功对角色 “${role.value.roleName}” 进行了权限修改`)
+    isLoadingBtn.value = false
 }
 
 const router = useRouter()
 // 直接返回上一个路由
 function goBackPage(){
-    useSimpleConfirm('你确定要直接退出吗').then(()=>{
-        router.go(-1)
-    })
+    router.go(-1)
 }
 
 // 存选中的id列表
@@ -74,19 +72,16 @@ let oldMenuIdList = ref([])
 // 拿到原本就有的菜单id列表(无子节点)
 
 const getMyMenuIds = async()=>{
-    let {data} = await getMenuIdListByRoleId(role.value.id)
-    console.log('============================>>>>>>>>')
-    console.log(data)
-    console.log('============================>>>>>>>>')
+    let {dataArr} = await getMenuIdListByRoleId(role.value.id)
     // 将旧数据拿到默认选中里面
-    oldMenuIdList.value = data
+    oldMenuIdList.value = dataArr
 }
 
 // 获取到所有的树型菜单列表
 const getTreeMenusList = async()=>{
-    let {data} = await getAllTreeMenus()
-    menuTreeList.value = data
-    console.log(data)
+    let {menuTree} = await getAllTreeMenus()
+    menuTreeList.value = menuTree
+    // console.log(menuTree)
 }
 // 存所有的menu
 let menuTreeList = ref([])
@@ -99,9 +94,7 @@ onMounted(() => {
     role.value.roleName = route.query.roleName
     // 初始化菜单数据
     getTreeMenusList()
-    // 拿原来的数据
-    // getOldMenuList()
-
+    // 原本就有的菜单id
     getMyMenuIds()
 })
 </script>
@@ -109,16 +102,10 @@ onMounted(() => {
 <style lang="scss" scoped>
 @import url('/src/assets/font/iconfont.css');
 @import '/src/styles/globalPage.scss';
-// @import '/src/styles/listSize.scss';
-// @import '/src/styles/commonStyles.scss';
 .assignAllSty{
-    // margin-left: $left-distance;
-    // margin-top: $top-distance;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    // background: $page-back-color;
-    // padding: $page-padding;
     .funMode{
         background: #FFF;
         width: 100%;
