@@ -4,10 +4,11 @@ import request from '@/utils/request.js'
  * 获取所有树型菜单数据
  * @returns 所有树型菜单数据
  */
-export function getAllTreeMenus(){
+export function getTreeMenus(reqObj = {}){
     return request({
         url: '/menus/tree',
-        method: 'GET'
+        method: 'POST',
+        data: reqObj
     })
 }
 

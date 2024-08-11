@@ -24,7 +24,7 @@ import PageTitle from "@/components/PageTitle.vue";
 import { useRoute,useRouter } from 'vue-router'
 import { ref, onMounted } from "vue";
 import{ useSuccessTip } from '@/utils/msgTip'
-import { getAllTreeMenus, getMenuIdListByRoleId } from '@/api/menu'
+import { getTreeMenus, getMenuIdListByRoleId } from '@/api/menu'
 import { doAssignForRole } from '@/api/role'
 
 
@@ -79,7 +79,7 @@ const getMyMenuIds = async()=>{
 
 // 获取到所有的树型菜单列表
 const getTreeMenusList = async()=>{
-    let {menuTree} = await getAllTreeMenus()
+    let {menuTree} = await getTreeMenus()
     menuTreeList.value = menuTree
     // console.log(menuTree)
 }
