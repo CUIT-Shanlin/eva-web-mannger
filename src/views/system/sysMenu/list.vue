@@ -34,6 +34,7 @@
     class="tableBox"
     :tree-props="{children: 'children'}"
     row-key="id"
+    @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="50" />
       <el-table-column prop="name" label="菜单名称"></el-table-column>
@@ -50,7 +51,7 @@
           <div v-else class="wrongStatus">禁用</div>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间"></el-table-column>
+      <el-table-column prop="createTime" label="创建时间" sortable=""></el-table-column>
       <el-table-column label="操作" width="250">
         <template #default="scope">
           <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, 0)">
@@ -63,7 +64,7 @@
             新增
           </el-link>
           <el-link class="iconfont operation" type="primary"
-          @click="removeOneRole(scope.row)">
+          @click="removeOneMenu(scope.row)">
             <span class="ico">&#xe610;&nbsp;</span>
             删除
           </el-link>
@@ -72,40 +73,44 @@
       </el-table-column>
     </el-table>
     
-    <el-button @click="batchRemoveMyRoles()">批量删除</el-button>
+    <el-button @click="batchRemoveMyMenus()">批量删除</el-button>
 
     <!-- 新建/修改弹窗 -->
     <teleport to="body">
-      <!-- <el-dialog
-        width="500"
+      <el-dialog
+        width="800"
         v-model="updateOrAddDialogVisible"
-        :title="funMode === 0 ? '修改角色' : '新建角色'"
+        :title="funMode === 0 ? '修改菜单' : '新增菜单'"
       >
-        <el-form label-width="80px">
-          <el-form-item label="姓名">
-            <el-input
-              v-model="checkedRole.roleName"
-              placeholder="请输入角色名称"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="描述">
-            <el-input
-              v-model="checkedRole.description"
-              placeholder="请输入该角色描述信息"
-            ></el-input>
+        <el-form label-width="100px">
+          <el-form-item label="上级菜单">
+            <el-select v-model="checkedMenu.parentName" placeholder="请选择上级菜单" clearable>
+              <template #empty>
+                <el-tree
+                :data="rootTree"
+                :props="{
+                  children: 'children',
+                  label: 'name',
+                }"
+                node-key="id"
+                @node-click="handleNodeClick"
+                class="myTreeSelect"
+                />
+              </template>
+            </el-select>
           </el-form-item>
           <el-form-item label="创建时间" v-if="funMode === 0">
-            <el-input v-model="checkedRole.createTime" disabled></el-input>
+            <el-input v-model="checkedMenu.createTime" disabled></el-input>
           </el-form-item>
           <el-form-item label="修改时间" v-if="funMode === 0">
-            <el-input v-model="checkedRole.updateTime" disabled></el-input>
+            <el-input v-model="checkedMenu.updateTime" disabled></el-input>
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button type="primary" @click="updateOrAddRole()">保存</el-button>
+          <el-button type="primary" @click="updateOrAddMenu()">保存</el-button>
           <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
         </template>
-      </el-dialog> -->
+      </el-dialog>
     </teleport>
   </div>
 </template>
@@ -113,57 +118,77 @@
 <script setup>
 import PageTitle from "@/components/PageTitle.vue";
 import { Search } from "@element-plus/icons-vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import {
-  updateRoleStatus,
-  batchRemove,
-  removeOne,
   updateRole,
   addRole,
 } from "@/api/role";
-import { getTreeMenus } from "@/api/menu";
+import { getTreeMenus, removeOne, batchRemove } from "@/api/menu";
 import {
   useSimpleConfirm,
   useSuccessTip,
-  useInfoTip,
   useFailedTip,
 } from "@/utils/msgTip.js";
-import { isEmptyArr, deepCopy } from "@/utils/objUtil";
-import { removeSpace } from "@/utils/stringUtil";
+import { isEmptyArr, deepCopy, isEmptyObj } from "@/utils/objUtil";
+import { isSpace, removeSpace } from "@/utils/stringUtil";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-// 当前正在操作的角色
-const checkedRole = ref({});
+// 当前正在操作的菜单
+const checkedMenu = ref({
+  parentId: 0
+});
 // 控制弹窗功能 0: 修改，1：新建
 const funMode = ref(0);
 // 控制弹窗的开启
 const updateOrAddDialogVisible = ref(false);
 // 是否正在加载表格
 const isLoadingTable = ref(false);
-// 存勾选了的角色
-const handleRoles = ref([]);
+// 存勾选了的菜单
+const handleMenus = ref([]);
 // 存获取树型数据的请求
 const treeReqData = ref({
   keyword: "",
   status: null,
 });
-// 存获取的树型菜单数据
+// 存获取的树型菜单数据(条件查询)
 const treeData = ref([]);
+
+// 存所有的树型数据
+const allTreeData = ref([])
+
+// 使用计算属性来获取带根节点的树型数据
+const rootTree = computed(() => {
+  return [{
+    name: '根目录',
+    id: 0,  
+    children: [...allTreeData.value] // 使用展开运算符复制treeData.value，避免直接修改原始数据
+  }];
+})
+
+/**
+ * 选中上级节点后的操作
+ * @param {Object} data 
+ */
+function handleNodeClick(data){
+  checkedMenu.value.parentId = data.id
+  checkedMenu.value.parentName = data.name
+}
+
 
 /**
  * 修改和新建的总方法
  */
-const updateOrAddRole = async () => {
-  const role = checkedRole.value;
+const updateOrAddMenu = async () => {
+  const role = checkedMenu.value;
   let msg = "";
   if (funMode.value === 0) {
     let res = await updateRole(role);
-    msg = `成功修改角色 “${role.roleName}”`;
+    msg = `成功修改菜单 “${role.name}”`;
   } else {
     let res = await addRole(role);
-    msg = "成功新建角色";
+    msg = "成功新建菜单";
   }
   getMyTreeData(); // 刷新页面
   updateOrAddDialogVisible.value = false;
@@ -172,62 +197,58 @@ const updateOrAddRole = async () => {
 
 /**
  * 初始化弹窗
- * @param {Object} role 操作的角色
+ * @param {Object} menu 操作的菜单
  * @param {Number} fun 弹窗功能 0：修改，1：新建
  */
-function initDialog(role = {}, fun = 0) {
+function initDialog(menu = {}, fun = 0) {
+  const ROOT_NAME = '根目录'
+  // TODO 确定父菜单
+  if(fun === 1){
+    if(isEmptyObj(menu)){
+      menu.parentName = ROOT_NAME
+      menu.parentId = 0
+    }
+  }
+  menu.parentName = isSpace(menu.parentName) ? ROOT_NAME : menu.parentName
   funMode.value = fun;
-  checkedRole.value = deepCopy(role);
+  checkedMenu.value = deepCopy(menu);
+  console.log(checkedMenu.value)
   updateOrAddDialogVisible.value = true;
 }
 
 /**
- * 删除单个角色
- * @param {Number} roleId 待删除角色id
+ * 删除单个菜单
+ * @param {Object} menu 待删除菜单
  */
-function removeOneRole(role) {
-  useSimpleConfirm(`你确定要删除角色 “${role.roleName}” 吗？`).then(
+function removeOneMenu(menu) {
+  useSimpleConfirm(`你确定要删除菜单 “${menu.name}” 吗？`).then(
     async () => {
-      let res = await removeOne(role);
-      useSuccessTip(`成功删除角色 “${role.roleName}”`);
+      let res = await removeOne(menu);
+      useSuccessTip(`成功删除菜单 “${menu.name}”`);
     }
   );
 }
 
 /**
- * 批量删除角色
+ * 批量删除菜单
  */
-function batchRemoveMyRoles() {
-  if (isEmptyArr(handleRoles.value)) {
-    useFailedTip("未选中角色");
+function batchRemoveMyMenus() {
+  if (isEmptyArr(handleMenus.value)) {
+    useFailedTip("未选中菜单");
     return;
   }
-  useSimpleConfirm("你确定要删除选中角色吗？").then(async () => {
-    const idList = handleRoles.value.map((role) => role.id);
-    console.log(idList);
+  useSimpleConfirm("你确定要删除选中的所有菜单吗？").then(async () => {
+    const idList = handleMenus.value.map((menu) => menu.id);
+    // console.log(idList);
     let res = await batchRemove(idList);
-    useSuccessTip("成功删除选中角色");
+    useSuccessTip("成功删除选中的所有菜单");
     getMyTreeData();
   });
 }
 
-function handleSelectionChange(roles) {
-  handleRoles.value = roles;
+function handleSelectionChange(menus) {
+  handleMenus.value = menus;
 }
-
-
-/**
- * 修改角色的状态
- * @param role 角色信息
- */
-const updateThisRoleStatus = async (role) => {
-  let res = await updateRoleStatus(role.id, role.status);
-  if (role.status === 0) {
-    useSuccessTip(`成功启用角色 “${role.roleName}”`);
-  } else {
-    useInfoTip(`成功禁用角色 “${role.roleName}”`);
-  }
-};
 
 /**
  * 获取检索到的树型菜单数据
@@ -236,12 +257,14 @@ const getMyTreeData = async () => {
   isLoadingTable.value = true;
   let {menuTree} = await getTreeMenus(treeReqData.value);
   treeData.value = menuTree;
-  console.log(menuTree)
+  // console.log(menuTree)
   isLoadingTable.value = false;
 };
 
 onMounted(() => {
-  getMyTreeData();
+  getMyTreeData().then(res=>{
+    allTreeData.value = treeData.value
+  })
 });
 </script>
   
@@ -268,6 +291,26 @@ onMounted(() => {
     margin-bottom: 35px;
   }
 }
+.myTreeSelect{
+  overflow: auto;
+  max-height: 400px;
+  font-weight: 550;
+  // 滚动条样式
+  &::-webkit-scrollbar {
+      width: 7px;
+  }  
+  /* 滚动条滑块 */
+  &::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+  }  
+    
+  /* 滚动条轨道 */
+  &::-webkit-scrollbar-track {
+      background: #f1f1f1; 
+      border-radius: 10px;
+  }
+}
 
 .rightStatus,.wrongStatus{
     text-align: center;
@@ -276,9 +319,9 @@ onMounted(() => {
     border: 1px transparent solid;
 }
 .rightStatus{
-  background: rgb(240,249,235);
-  color: rgb(103,194,58);
-  border-color: rgb(179,225,157);
+  background: rgb(236,245,255);
+  color: rgb(64,158,255);
+  border-color: rgb(160,207,255);
 }
 .wrongStatus{
   background: rgb(254,240,240);
@@ -296,6 +339,9 @@ onMounted(() => {
     td {
       color: rgb(89, 89, 89);
     }
+  }
+  .el-form-item__label{
+    font-weight: 550;
   }
 }
 .operation {

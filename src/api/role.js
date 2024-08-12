@@ -47,7 +47,7 @@ export function updateRoleStatus(roleId = -1, status = 0){
 export function batchRemove(idList){
     return request({
         url: '/roles',
-        method: 'dELETE',
+        method: 'DELETE',
         data: idList
     })
 }

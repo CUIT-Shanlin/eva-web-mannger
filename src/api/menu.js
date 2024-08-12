@@ -23,3 +23,28 @@ export function getMenuIdListByRoleId(roleId = -1){
         method: 'GET'
     })
 }
+
+/**
+ * 删除一个菜单
+ * @param {Number} menuId 待删除的菜单的id
+ * @returns 
+ */
+export function removeOne(menuId){
+    return request({
+        url: `/menu/${menuId}`,
+        method: 'DELETE'
+    })
+}
+
+/**
+ * 批量删除菜单
+ * @param {Number} idList 待删除的菜单的id集合 
+ * @returns 
+ */
+export function batchRemove(idList){
+    return request({
+        url: '/menus',
+        method: 'DELETE',
+        data: idList
+    })
+}

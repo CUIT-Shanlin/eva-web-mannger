@@ -39,3 +39,12 @@ export function deepCopy(source) {
 export function isEmptyArr(arr = []){
     return arr === undefined || (Array.isArray(arr) && arr.length === 0);
 }
+
+/**
+ * 判断一个对象是不是空对象
+ * @param {Object} obj 
+ * @returns 
+ */
+export function isEmptyObj(obj) {
+    return Object.keys(obj).length === 0 && obj.constructor === Object;
+}
