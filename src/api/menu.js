@@ -48,3 +48,29 @@ export function batchRemove(idList){
         data: idList
     })
 }
+
+/**
+ * 修改一个菜单的信息
+ * @param {Object} menu 该菜单的新信息
+ * @returns 
+ */
+export function updateMenu(menu = {}){
+    return request({
+        url: '/menu',
+        method: 'PUT',
+        data: menu
+    })
+}
+
+/**
+ * 新建一个菜单
+ * @param {Object} menu 新菜单信息
+ * @returns 
+ */
+export function addMenu(menu = {}){
+    return request({
+        url: '/menu',
+        method: 'POST',
+        data: menu
+    })
+}

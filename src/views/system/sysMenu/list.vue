@@ -58,8 +58,7 @@
             <span class="ico">&#xe8cf;&nbsp;</span>
             修改
           </el-link>
-          <el-link class="iconfont operation" type="primary"
-          @click="$router.push(`/assignPerm?id=${scope.row.id}&roleName=${scope.row.roleName}`)">
+          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, 1)">
             <span class="ico">&#xe611;&nbsp;</span>
             新增
           </el-link>
@@ -78,7 +77,7 @@
     <!-- 新建/修改弹窗 -->
     <teleport to="body">
       <el-dialog
-        width="800"
+        width="700"
         v-model="updateOrAddDialogVisible"
         :title="funMode === 0 ? '修改菜单' : '新增菜单'"
       >
@@ -98,6 +97,13 @@
                 />
               </template>
             </el-select>
+          </el-form-item>
+          <el-form-item label="菜单类型">
+            <el-radio-group v-model="checkedMenu.type">
+              <el-radio :value="0">目录</el-radio>
+              <el-radio :value="1">菜单</el-radio>
+              <el-radio :value="2">按钮</el-radio>
+            </el-radio-group>
           </el-form-item>
           <el-form-item label="创建时间" v-if="funMode === 0">
             <el-input v-model="checkedMenu.createTime" disabled></el-input>
@@ -119,11 +125,7 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { Search } from "@element-plus/icons-vue";
 import { ref, onMounted, computed } from "vue";
-import {
-  updateRole,
-  addRole,
-} from "@/api/role";
-import { getTreeMenus, removeOne, batchRemove } from "@/api/menu";
+import { getTreeMenus, removeOne, batchRemove, updateMenu, addMenu } from "@/api/menu";
 import {
   useSimpleConfirm,
   useSuccessTip,
@@ -157,11 +159,13 @@ const treeData = ref([]);
 
 // 存所有的树型数据
 const allTreeData = ref([])
+// 确定根目录名称
+const ROOT_NAME = '根目录'
 
 // 使用计算属性来获取带根节点的树型数据
 const rootTree = computed(() => {
   return [{
-    name: '根目录',
+    name: ROOT_NAME,
     id: 0,  
     children: [...allTreeData.value] // 使用展开运算符复制treeData.value，避免直接修改原始数据
   }];
@@ -181,13 +185,13 @@ function handleNodeClick(data){
  * 修改和新建的总方法
  */
 const updateOrAddMenu = async () => {
-  const role = checkedMenu.value;
+  const menu = checkedMenu.value;
   let msg = "";
   if (funMode.value === 0) {
-    let res = await updateRole(role);
-    msg = `成功修改菜单 “${role.name}”`;
+    let res = await updateMenu(menu);
+    msg = `成功修改菜单 “${menu.name}”`;
   } else {
-    let res = await addRole(role);
+    let res = await addMenu(menu);
     msg = "成功新建菜单";
   }
   getMyTreeData(); // 刷新页面
@@ -201,17 +205,21 @@ const updateOrAddMenu = async () => {
  * @param {Number} fun 弹窗功能 0：修改，1：新建
  */
 function initDialog(menu = {}, fun = 0) {
-  const ROOT_NAME = '根目录'
+  const myMenu = checkedMenu.value
   // TODO 确定父菜单
   if(fun === 1){
     if(isEmptyObj(menu)){
-      menu.parentName = ROOT_NAME
-      menu.parentId = 0
+      myMenu.parentName = ROOT_NAME
+      myMenu.parentId = 0
+    }else{
+      myMenu.parentName = menu.name
+      myMenu.parentId = menu.id
     }
+  }else{
+    menu.parentName = isSpace(menu.parentName) ? ROOT_NAME : menu.parentName
+    checkedMenu.value = deepCopy(menu);
   }
-  menu.parentName = isSpace(menu.parentName) ? ROOT_NAME : menu.parentName
   funMode.value = fun;
-  checkedMenu.value = deepCopy(menu);
   console.log(checkedMenu.value)
   updateOrAddDialogVisible.value = true;
 }
