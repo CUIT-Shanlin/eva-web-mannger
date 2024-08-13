@@ -105,8 +105,8 @@
               <el-radio :value="2">按钮</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="图标">
-            <el-select placeholder="请选择图标" v-model="checkedMenu.icon">
+          <el-form-item label="图标" v-if="checkedMenu.type !== 2">
+            <el-select placeholder="请选择图标" v-model="checkedMenu.icon" clearable>
               <el-option
                 v-for="icon in allIcons"
                 :key="icon.ico"
@@ -304,6 +304,8 @@ function handleSelectionChange(menus) {
  */
 const getMyTreeData = async () => {
   isLoadingTable.value = true;
+  // 去除输入关键字中的空格
+  treeReqData.value.keyword = removeSpace(treeReqData.value.keyword)
   let {menuTree} = await getTreeMenus(treeReqData.value);
   treeData.value = menuTree;
   // console.log(menuTree)
