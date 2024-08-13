@@ -46,9 +46,9 @@
       class="tableBox"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="50" />
+      <el-table-column type="selection" width="50" :selectable="selectable"/>
       <el-table-column prop="name" label="模板名称" width="200" />
-      <el-table-column prop="description" label="描述" width="250" />
+      <el-table-column prop="description" label="描述" width="350" />
       <el-table-column
         prop="createTime"
         label="创建日期"
@@ -63,38 +63,39 @@
       />
       <el-table-column label="操作">
         <template #default="scope">
+
           <el-link
             class="iconfont operation"
             type="primary"
             @click="initDialog(scope.row, 0)"
           >
-            <span class="ico">&#xe8cf;&nbsp;</span>
-            修改
+            修改指标
           </el-link>
           <el-link
             class="iconfont operation"
             type="primary"
-            @click="removeOneRole(scope.row)"
+            @click="initDialog(scope.row, 0)"
           >
-            <span class="ico">&#xe610;&nbsp;</span>
+            预览表单
+          </el-link>
+          <el-link
+            class="iconfont operation"
+            type="primary"
+            @click="initDialog(scope.row, 0)"
+          >
+            编辑信息
+          </el-link>
+          <el-link
+            class="iconfont operation"
+            type="primary"
+            @click="removeOneTemplate(scope.row)"
+          >
             删除
-          </el-link>
-          <el-link
-            class="iconfont operation"
-            type="primary"
-            @click="
-              $router.push(
-                `/assignPerm?id=${scope.row.id}&roleName=${scope.row.roleName}`
-              )
-            "
-          >
-            <span class="ico">&#xe603;&nbsp;</span>
-            分配权限
           </el-link>
         </template>
       </el-table-column>
     </el-table>
-    <el-button @click="batchRemoveMyRoles()">批量删除</el-button>
+    <el-button @click="batchRemoveMyTemplates()">批量删除</el-button>
 
     <!-- 新建/修改弹窗 -->
     <teleport to="body">
@@ -150,24 +151,21 @@ import PageTitle from "@/components/PageTitle.vue";
 import { Search } from "@element-plus/icons-vue";
 import { ref, onMounted } from "vue";
 import {
-  batchRemove,
-  removeOne,
   updateRole,
   addRole,
 } from "@/api/role";
-import { getPageData } from "@/api/template";
+import { getPageData, removeOne, batchRemove } from "@/api/template";
 import {
   useSimpleConfirm,
+  useWarningConfirm,
   useSuccessTip,
-  useInfoTip,
   useFailedTip,
 } from "@/utils/msgTip.js";
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
-import { useRouter } from "vue-router";
 
-const router = useRouter();
-
+// 确定当前列是否允许被选中
+const selectable = (row) => !row.isPreventRemove
 // 当前正在操作的评教模板
 const checkedTemplate = ref({});
 // 控制弹窗功能 0: 修改，1：新建
@@ -176,8 +174,8 @@ const funMode = ref(0);
 const updateOrAddDialogVisible = ref(false);
 // 是否正在加载表格
 const isLoadingTable = ref(false);
-// 存勾选了的角色
-const handleRoles = ref([]);
+// 存勾选了的评教模板
+const handleTemplates = ref([]);
 // 存分页请求数据
 const pageReqData = ref({
   size: 0,
@@ -232,37 +230,42 @@ function initDialog(role = {}, fun = 0) {
 }
 
 /**
- * 删除单个角色
- * @param {Number} roleId 待删除角色id
+ * 删除单个模板
+ * @param {Object} template 待删除模板消息
  */
-function removeOneRole(role) {
-  useSimpleConfirm(`你确定要删除角色 “${role.roleName}” 吗？`).then(
-    async () => {
-      let res = await removeOne(role);
-      useSuccessTip(`成功删除角色 “${role.roleName}”`);
+function removeOneTemplate(template) {
+  // TODO 确定该模板是否允许被删除
+  if(template.isPreventRemove){
+    useWarningConfirm('该模板已被分配在课程中或已经有用户使用过该模板进行评教，不允许被删除！')
+    return
+  }
+  useSimpleConfirm(`你确定要删除评教模板 “${template.name}” 吗？`).then(
+    async() => {
+      let res = await removeOne(template);
+      useSuccessTip(`成功删除评教模板 “${template.name}”`);
     }
   );
 }
 
 /**
- * 批量删除角色
+ * 批量删除评教模板
  */
-function batchRemoveMyRoles() {
-  if (isEmptyArr(handleRoles.value)) {
-    useFailedTip("未选中角色");
+function batchRemoveMyTemplates() {
+  if (isEmptyArr(handleTemplates.value)) {
+    useFailedTip("未选中评教模板");
     return;
   }
-  useSimpleConfirm("你确定要删除选中角色吗？").then(async () => {
-    const idList = handleRoles.value.map((role) => role.id);
+  useSimpleConfirm("你确定要删除所有选中的评教模板吗？").then(async ()=> {
+    const idList = handleTemplates.value.map((template) => template.id);
     console.log(idList);
     let res = await batchRemove(idList);
-    useSuccessTip("成功删除选中角色");
+    useSuccessTip("成功删除选中评教模板");
     getMyPageData();
   });
 }
 
 function handleSelectionChange(roles) {
-  handleRoles.value = roles;
+  handleTemplates.value = roles;
 }
 /**
  * 生成快速选择的value

@@ -14,3 +14,28 @@ export function getPageData(reqData = {page: 0,size: 0,queryObj: {}}){
        data: reqData
    })
 }
+
+/**
+ * 删除单个评教模板
+ * @param {Number} templateId 待删除的评教模板的id 
+ * @returns 
+ */
+export function removeOne(templateId){
+    return request({
+        url: `/evaluate/template?templateId=${templateId}`,
+        method: 'DELETE'
+    })
+}
+
+/**
+ * 批量删除评教模板
+ * @param {Number} idList 待删除的评教模板的id集合 
+ * @returns 
+ */
+export function batchRemove(idList){
+    return request({
+        url: '/evaluate/templates',
+        method: 'DELETE',
+        data: idList
+    })
+}
