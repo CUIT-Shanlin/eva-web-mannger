@@ -105,6 +105,45 @@
               <el-radio :value="2">按钮</el-radio>
             </el-radio-group>
           </el-form-item>
+          <el-form-item label="图标">
+            <el-select placeholder="请选择图标" v-model="checkedMenu.icon">
+              <el-option
+                v-for="icon in allIcons"
+                :key="icon.ico"
+                :label="icon.namr"
+                :value="icon.ico"
+              >
+                <div class="iconBox">
+                  <i class="iconfont ico" v-html="icon.ico"></i>
+                  <span>{{icon.name}}</span>
+                </div>
+              </el-option>
+              <template #label>
+                <div class="iconBox">
+                  <i class="iconfont ico" v-html="checkedMenu.icon"></i>
+                  <span>{{getIconName(checkedMenu.icon)}}</span>
+                </div>
+              </template>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="菜单名称">
+            <el-input v-model="checkedMenu.name"></el-input>
+          </el-form-item>
+          <el-form-item label="路由地址"  v-if="checkedMenu.type !== 2">
+            <el-input v-model="checkedMenu.path"></el-input>
+          </el-form-item>
+          <el-form-item label="组件路径"  v-if="checkedMenu.type !== 2">
+            <el-input v-model="checkedMenu.component"></el-input>
+          </el-form-item>
+          <el-form-item label="权限标识" v-if="checkedMenu.type === 2">
+            <el-input v-model="checkedMenu.perm"></el-input>
+          </el-form-item>
+          <el-form-item label="菜单状态" v-if="funMode === 0">
+            <el-radio-group v-model="checkedMenu.status">
+              <el-radio :value="0">正常</el-radio>
+              <el-radio :value="1">禁用</el-radio>
+            </el-radio-group>
+          </el-form-item>
           <el-form-item label="创建时间" v-if="funMode === 0">
             <el-input v-model="checkedMenu.createTime" disabled></el-input>
           </el-form-item>
@@ -133,6 +172,7 @@ import {
 } from "@/utils/msgTip.js";
 import { isEmptyArr, deepCopy, isEmptyObj } from "@/utils/objUtil";
 import { isSpace, removeSpace } from "@/utils/stringUtil";
+import { allIcons, getIconName } from '@/utils/service/staticData.js';
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -205,9 +245,10 @@ const updateOrAddMenu = async () => {
  * @param {Number} fun 弹窗功能 0：修改，1：新建
  */
 function initDialog(menu = {}, fun = 0) {
-  const myMenu = checkedMenu.value
   // TODO 确定父菜单
   if(fun === 1){
+    checkedMenu.value = {}
+    const myMenu = checkedMenu.value
     if(isEmptyObj(menu)){
       myMenu.parentName = ROOT_NAME
       myMenu.parentId = 0
@@ -319,7 +360,13 @@ onMounted(() => {
       border-radius: 10px;
   }
 }
-
+.iconBox{
+  @include flex-center-y;
+  .ico{
+    margin-right: 5px;
+    
+  }
+}
 .rightStatus,.wrongStatus{
     text-align: center;
     padding: 2px 4px;
