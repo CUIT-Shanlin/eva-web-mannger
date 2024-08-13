@@ -48,7 +48,7 @@
     >
       <el-table-column type="selection" width="50" :selectable="selectable" />
       <el-table-column prop="name" label="模板名称" width="200" />
-      <el-table-column prop="description" label="描述" width="350" />
+      <el-table-column prop="description" label="描述" width="450" />
       <el-table-column
         prop="createTime"
         label="创建日期"
@@ -68,13 +68,6 @@
             type="primary"
             @click="initDialog(scope.row, 0)"
           >
-            修改指标
-          </el-link>
-          <el-link
-            class="iconfont operation"
-            type="primary"
-            @click="initDialog(scope.row, 0)"
-          >
             预览表单
           </el-link>
           <el-link
@@ -82,7 +75,7 @@
             type="primary"
             @click="initDialog(scope.row, 0)"
           >
-            编辑信息
+            编辑模板
           </el-link>
           <el-link
             class="iconfont operation"
@@ -124,8 +117,8 @@
           <div class="propAll">
             <div class="propOne" v-for="(prop,index) in myProps" :key="prop"
             :style="{marginBottom: index < myProps.length - 1 ? '30px' :''}">
-                <el-input v-model="myProps[index]" size="large"
-                style="width: 450px;" placeholder="请输入指标名称"></el-input>
+                <el-input v-model="myProps[index]" size="large" style="width: 450px;"
+                placeholder="请输入指标名称" @change="deelDuplicateName()"></el-input>
                 <el-link disabledclass="operation" type="primary" @click="removeRow(prop)">删除</el-link>
             </div>
           </div>
@@ -154,7 +147,7 @@
   </div>
 </template>
   
-  <script setup>
+<script setup>
 import PageTitle from "@/components/PageTitle.vue";
 import { Search } from "@element-plus/icons-vue";
 import { ref, onMounted, computed } from "vue";
@@ -166,7 +159,7 @@ import {
   useSuccessTip,
   useFailedTip,
 } from "@/utils/msgTip.js";
-import { isEmptyArr, deepCopy } from "@/utils/objUtil";
+import { isEmptyArr, deepCopy, addSuffixToDuplicates, removeSpaceStrToArr } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
 
 // 确定当前列是否允许被选中
@@ -216,7 +209,6 @@ const myProps = ref([])
  */
 function removeRow(str){
     myProps.value = myProps.value.filter(item => item !== str)
-    checkedTemplate.value.props = JSON.stringify(myProps.value)
 }
 
 /**
@@ -224,22 +216,30 @@ function removeRow(str){
  */
 function addNewRow(){
     myProps.value.push('')
-    checkedTemplate.value.props = JSON.stringify(myProps.value)
+    deelDuplicateName()
 }
 
+/**
+ * 处理重名的情况
+ */
+function deelDuplicateName(){
+    myProps.value = addSuffixToDuplicates(myProps.value)
+}
 
 /**
  * 修改和新建的总方法
  */
 const updateOrAddRole = async () => {
-  const role = checkedTemplate.value;
+  const template = checkedTemplate.value;
   let msg = "";
+  // 去除空白指标
+  checkedTemplate.value.props = JSON.stringify(removeSpaceStrToArr(myProps.value))
   if (funMode.value === 0) {
-    let res = await updateRole(role);
-    msg = `成功修改角色 “${role.roleName}”`;
+    let res = await updateRole(template);
+    msg = `成功修改模板 “${template.name}”`;
   } else {
-    let res = await addRole(role);
-    msg = "成功新建角色";
+    let res = await addRole(template);
+    msg = "成功新建模板";
   }
   getMyPageData(); // 刷新页面
   updateOrAddDialogVisible.value = false;
@@ -253,7 +253,11 @@ const updateOrAddRole = async () => {
  */
 function initDialog(template = {}, fun = 0) {
   funMode.value = fun;
-  myProps.value = JSON.parse(template.props)
+  try{
+    myProps.value = JSON.parse(template.props)
+  }catch{
+    myProps.value = ['']
+  }
   checkedTemplate.value = deepCopy(template);
   updateOrAddDialogVisible.value = true;
 }
