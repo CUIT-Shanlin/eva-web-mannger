@@ -46,7 +46,7 @@
       class="tableBox"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="50" :selectable="selectable"/>
+      <el-table-column type="selection" width="50" :selectable="selectable" />
       <el-table-column prop="name" label="模板名称" width="200" />
       <el-table-column prop="description" label="描述" width="350" />
       <el-table-column
@@ -63,7 +63,6 @@
       />
       <el-table-column label="操作">
         <template #default="scope">
-
           <el-link
             class="iconfont operation"
             type="primary"
@@ -98,38 +97,47 @@
     <el-button @click="batchRemoveMyTemplates()">批量删除</el-button>
 
     <!-- 新建/修改弹窗 -->
-    <teleport to="body">
-      <el-dialog
-        width="500"
-        v-model="updateOrAddDialogVisible"
-        :title="funMode === 0 ? '修改角色' : '新建角色'"
-      >
-        <el-form label-width="80px">
-          <el-form-item label="姓名">
-            <el-input
-              v-model="checkedTemplate.roleName"
-              placeholder="请输入角色名称"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="描述">
-            <el-input
-              v-model="checkedTemplate.description"
-              placeholder="请输入该角色描述信息"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="创建时间" v-if="funMode === 0">
-            <el-input v-model="checkedTemplate.createTime" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="修改时间" v-if="funMode === 0">
-            <el-input v-model="checkedTemplate.updateTime" disabled></el-input>
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <el-button type="primary" @click="updateOrAddRole()">保存</el-button>
-          <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
-        </template>
-      </el-dialog>
-    </teleport>
+    <el-dialog
+      v-model="updateOrAddDialogVisible"
+      width="650"
+      append-to-body
+      :title="funMode === 0 ? '修改模板' : '新建模板'"
+    >
+      <el-form label-width="80px">
+        <el-form-item label="模板名称">
+          <el-input
+            v-model="checkedTemplate.name"
+            placeholder="请输入评教模板的名称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input
+            v-model="checkedTemplate.description"
+            placeholder="请输入该模板描述信息"
+          ></el-input>
+        </el-form-item>
+        <div class="myProp">
+          <div class="propHeader">
+            <span>指标名称</span>
+            <span>操作</span>
+          </div>
+          <div class="propAll">
+            <div class="propOne" v-for="(prop,index) in myProps" :key="prop"
+            :style="{marginBottom: index < myProps.length - 1 ? '30px' :''}">
+                <el-input v-model="myProps[index]" size="large"
+                style="width: 450px;" placeholder="请输入指标名称"></el-input>
+                <el-link disabledclass="operation" type="primary" @click="removeRow(prop)">删除</el-link>
+            </div>
+          </div>
+
+        </div>
+        <button class="addBtn" type="button" @click="addNewRow()">＋</button>
+      </el-form>
+      <template #footer>
+        <el-button type="primary" @click="updateOrAddRole()">保存</el-button>
+        <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
+      </template>
+    </el-dialog>
 
     <el-pagination
       v-model:current-page="pageData.current"
@@ -149,11 +157,8 @@
   <script setup>
 import PageTitle from "@/components/PageTitle.vue";
 import { Search } from "@element-plus/icons-vue";
-import { ref, onMounted } from "vue";
-import {
-  updateRole,
-  addRole,
-} from "@/api/role";
+import { ref, onMounted, computed } from "vue";
+import { updateRole, addRole } from "@/api/role";
 import { getPageData, removeOne, batchRemove } from "@/api/template";
 import {
   useSimpleConfirm,
@@ -165,7 +170,7 @@ import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
 
 // 确定当前列是否允许被选中
-const selectable = (row) => !row.isPreventRemove
+const selectable = (row) => !row.isPreventRemove;
 // 当前正在操作的评教模板
 const checkedTemplate = ref({});
 // 控制弹窗功能 0: 修改，1：新建
@@ -200,6 +205,29 @@ const updateTimeArr = ref([]);
 // 存创建日期对应数组
 const createTimeArr = ref([]);
 
+
+// 当前正在操作的指标
+const myProps = ref([])
+
+
+/**
+ * 移除一个指标（仅作用于页面数据）
+ * @param {string} str 指标名称
+ */
+function removeRow(str){
+    myProps.value = myProps.value.filter(item => item !== str)
+    checkedTemplate.value.props = JSON.stringify(myProps.value)
+}
+
+/**
+ * 新建一个新的空指标
+ */
+function addNewRow(){
+    myProps.value.push('')
+    checkedTemplate.value.props = JSON.stringify(myProps.value)
+}
+
+
 /**
  * 修改和新建的总方法
  */
@@ -220,12 +248,13 @@ const updateOrAddRole = async () => {
 
 /**
  * 初始化弹窗
- * @param {Object} role 操作的角色
+ * @param {Object} template 操作的评教模板
  * @param {Number} fun 弹窗功能 0：修改，1：新建
  */
-function initDialog(role = {}, fun = 0) {
+function initDialog(template = {}, fun = 0) {
   funMode.value = fun;
-  checkedTemplate.value = deepCopy(role);
+  myProps.value = JSON.parse(template.props)
+  checkedTemplate.value = deepCopy(template);
   updateOrAddDialogVisible.value = true;
 }
 
@@ -235,12 +264,14 @@ function initDialog(role = {}, fun = 0) {
  */
 function removeOneTemplate(template) {
   // TODO 确定该模板是否允许被删除
-  if(template.isPreventRemove){
-    useWarningConfirm('该模板已被分配在课程中或已经有用户使用过该模板进行评教，不允许被删除！')
-    return
+  if (template.isPreventRemove) {
+    useWarningConfirm(
+      "该模板已被分配在课程中或已经有用户使用过该模板进行评教，不允许被删除！"
+    );
+    return;
   }
   useSimpleConfirm(`你确定要删除评教模板 “${template.name}” 吗？`).then(
-    async() => {
+    async () => {
       let res = await removeOne(template);
       useSuccessTip(`成功删除评教模板 “${template.name}”`);
     }
@@ -255,7 +286,7 @@ function batchRemoveMyTemplates() {
     useFailedTip("未选中评教模板");
     return;
   }
-  useSimpleConfirm("你确定要删除所有选中的评教模板吗？").then(async ()=> {
+  useSimpleConfirm("你确定要删除所有选中的评教模板吗？").then(async () => {
     const idList = handleTemplates.value.map((template) => template.id);
     console.log(idList);
     let res = await batchRemove(idList);
@@ -318,6 +349,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 @import url("../../assets/font/iconfont.css");
 @import "../../styles/commonFlexStyles.scss";
+@import "../../styles/globalPage.scss";
 
 .roleAllSty {
   background-color: #fff;
@@ -338,15 +370,62 @@ onMounted(() => {
     margin-bottom: 35px;
   }
 }
+$table-th-color: rgb(250, 250, 250);
+.myProp{
+    .propHeader, .propOne{
+        @include flex-center-y;
+        justify-content: space-between;
+    }
+    .propHeader{
+        padding: 20px 15px;
+        margin-bottom: 15px;
+    }
+    .propAll{
+        max-height: 300px;
+        overflow: auto;
+        &::-webkit-scrollbar {
+            width: 7px;
+        }  
+        &::-webkit-scrollbar-thumb {
+            background: #cdcaca;
+            border-radius: 10px;
+        }  
+        &::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 10px;
+        }
+    }
+    .propOne{
+        padding-right: 15px;
+    }
+}
+/**.addBtn */
+
+.addBtn{
+    margin-top: 15px;
+    border: 0;
+    font-size: 25px;
+    background-color: $table-th-color;
+    box-shadow: $small-box-shadow;
+    cursor: pointer;
+    &:hover{
+        background: rgb(245, 242, 242);
+    }
+    &:active{
+        background: rgb(238, 223, 223);
+    }
+}
+/**.addBtn */
+
 .myPage {
   float: right;
 }
 :deep() {
-  th.el-table__cell {
+  th.el-table__cell, .propHeader {
     font-size: 15px;
     font-weight: 500;
     color: black;
-    background-color: rgb(250, 250, 250);
+    background-color: $table-th-color;
   }
   .el-table__body-wrapper {
     td {
