@@ -7,6 +7,7 @@
         v-model="pageReqData.queryObj.teacherIds"
         multiple
         filterable
+        clearable
         placeholder="请输入教学老师姓名"
         >
             <el-option
@@ -20,6 +21,7 @@
         v-model="pageReqData.queryObj.evaTeacherIds"
         multiple
         filterable
+        clearable
         placeholder="请输入评教老师姓名"
         >
             <el-option
@@ -33,6 +35,7 @@
         v-model="pageReqData.queryObj.courseIds"
         multiple
         filterable
+        clearable
         placeholder="请输入评教课程名称"
         >
             <el-option
@@ -43,8 +46,9 @@
             />
         </el-select>
         <el-select
+        clearable
         v-model="pageReqData.queryObj.departmentName"
-        placeholder="请输入课程所在的学院名"
+        placeholder="请选择课程所在的学院名"
         >
             <el-option
             v-for="department in allDepartments"
@@ -53,6 +57,26 @@
             :value="department"
             />
         </el-select>
+    </div>
+    <div class="chartsShow">
+      <div class="dataShowOne" style="margin-right: 15px;">
+        <div class="dataTitle">
+            <span>评教任务完成度</span>
+            <el-link type="primary">详情</el-link>
+        </div>
+        <div class="chartBox">
+            6
+        </div>
+      </div>
+
+
+      <div class="dataShowOne">
+        <div class="dataTitle">
+            <span>分数情况统计</span>
+            <el-link type="primary">详情</el-link>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -108,16 +132,37 @@ onMounted(()=>{
 </script>
 
 <style lang="scss" scoped>
+@import "../../styles/commonFlexStyles.scss";
+@import "../../styles/globalPage.scss";
+
 .pageAll{
     overflow: auto;
     & > * {
         padding: 15px;
+        background: #FFF;
     }
     .topFunBar{
-        background: #FFF;
         display: grid;
         grid-template-columns:repeat(4,1fr);
         gap: 30px;
+        margin-bottom: 15px;
+    }
+    .chartsShow{
+        @include flex-center-y;
+        .dataShowOne{
+            width: 50%;
+            .dataTitle{
+                @include flex-center-y;
+                justify-content: space-between;
+                font-size: 15px;
+                margin-bottom: 15px;
+            }
+            .chartBox{
+                box-shadow: $common-box-shadow;
+                box-shadow: 0px 5px 5px $box-shadow-color;
+            }
+        }
+        
     }
 }
 
