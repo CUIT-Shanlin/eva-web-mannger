@@ -14,6 +14,7 @@ import LeftMenu from '@/components/LeftMenu.vue';
 
 <style lang="scss" scoped>
 @import '../styles/globalPage.scss';
+@import '../styles/common.scss';
 .homeSty{
     position: fixed;
 	top: 0;
@@ -27,5 +28,6 @@ import LeftMenu from '@/components/LeftMenu.vue';
     background: $page-back-color;
     overflow-y: auto;
     overflow-x: hidden;
+    @include myScrollbar;
 }
 </style>

@@ -322,6 +322,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 @import url("../../../assets/font/iconfont.css");
 @import "../../../styles/commonFlexStyles.scss";
+@import "../../../styles/common.scss";
 
 .roleAllSty {
   background-color: #fff;
@@ -346,21 +347,7 @@ onMounted(() => {
   overflow: auto;
   max-height: 400px;
   font-weight: 550;
-  // 滚动条样式
-  &::-webkit-scrollbar {
-      width: 7px;
-  }  
-  /* 滚动条滑块 */
-  &::-webkit-scrollbar-thumb {
-      background: #888;
-      border-radius: 10px;
-  }  
-    
-  /* 滚动条轨道 */
-  &::-webkit-scrollbar-track {
-      background: #f1f1f1; 
-      border-radius: 10px;
-  }
+  @include myScrollbar;
 }
 .iconBox{
   @include flex-center-y;

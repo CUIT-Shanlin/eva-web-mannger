@@ -345,6 +345,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 @import url("../../assets/font/iconfont.css");
 @import "../../styles/commonFlexStyles.scss";
+@import "../../styles/common.scss";
 @import "../../styles/globalPage.scss";
 
 .templateAllSty {
@@ -379,17 +380,7 @@ $table-th-color: rgb(250, 250, 250);
     .propAll{
         max-height: 300px;
         overflow: auto;
-        &::-webkit-scrollbar {
-            width: 7px;
-        }  
-        &::-webkit-scrollbar-thumb {
-            background: #cdcaca;
-            border-radius: 10px;
-        }  
-        &::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-            border-radius: 10px;
-        }
+        @include myScrollbar;
     }
     .propOne{
         padding-right: 15px;
