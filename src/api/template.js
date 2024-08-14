@@ -39,3 +39,30 @@ export function batchRemove(idList){
         data: idList
     })
 }
+
+
+/**
+ * 修改一个模板的信息
+ * @param {Object} template 该模板的新信息
+ * @returns 
+ */
+export function updateTemplate(template = {}){
+    return request({
+        url: '/evaluate/template',
+        method: 'PUT',
+        data: template
+    })
+}
+
+/**
+ * 新建一个模板
+ * @param {Object} template 新模板信息
+ * @returns 
+ */
+export function addTemplate(template = {}){
+    return request({
+        url: '/evaluate/template',
+        method: 'POST',
+        data: template
+    })
+}

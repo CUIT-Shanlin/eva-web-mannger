@@ -1,7 +1,7 @@
 <!-- 评教模板页面 -->
 <template>
   <PageTitle content="评教模板列表" />
-  <div class="roleAllSty">
+  <div class="templateAllSty">
     <div class="funBar">
       <el-button type="primary" @click="initDialog({}, 1)">新建</el-button>
       <span class="iptFuns">
@@ -151,8 +151,7 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { Search } from "@element-plus/icons-vue";
 import { ref, onMounted, computed } from "vue";
-import { updateRole, addRole } from "@/api/role";
-import { getPageData, removeOne, batchRemove } from "@/api/template";
+import { getPageData, removeOne, batchRemove, updateTemplate, addTemplate } from "@/api/template";
 import {
   useSimpleConfirm,
   useWarningConfirm,
@@ -235,10 +234,10 @@ const updateOrAddRole = async () => {
   // 去除空白指标
   checkedTemplate.value.props = JSON.stringify(removeSpaceStrToArr(myProps.value))
   if (funMode.value === 0) {
-    let res = await updateRole(template);
+    let res = await updateTemplate(template);
     msg = `成功修改模板 “${template.name}”`;
   } else {
-    let res = await addRole(template);
+    let res = await addTemplate(template);
     msg = "成功新建模板";
   }
   getMyPageData(); // 刷新页面
@@ -355,7 +354,7 @@ onMounted(() => {
 @import "../../styles/commonFlexStyles.scss";
 @import "../../styles/globalPage.scss";
 
-.roleAllSty {
+.templateAllSty {
   background-color: #fff;
   overflow: auto;
   padding: 15px;
