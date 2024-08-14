@@ -68,13 +68,6 @@
             type="primary"
             @click="initDialog(scope.row, 0)"
           >
-            预览表单
-          </el-link>
-          <el-link
-            class="iconfont operation"
-            type="primary"
-            @click="initDialog(scope.row, 0)"
-          >
             编辑模板
           </el-link>
           <el-link
