@@ -116,3 +116,13 @@ export function addUser(user = {}){
         data: user
     })
 }
+
+/**
+ * 获取所有用户的基础信息（仅有id和姓名）
+ * @returns 
+ */
+export function getAllBaseUser(){
+    return request({
+        url: '/users/all'
+    })
+}
