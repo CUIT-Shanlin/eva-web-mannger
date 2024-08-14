@@ -3,7 +3,11 @@
     <div class="topAll">
         <ChooseSem />
         <span class="user">
-            <img class="avatar" :src="userMsg.avatar"/>
+            <el-avatar class="avatar" 
+            :src="userMsg.avatarUrl"
+            :size="40"
+            fit="cover"
+            />
             <span class="name">{{userMsg.name}}</span>
             <span :class="{open,iconfont:true, openNotAct:!isChoose }"
              @click="isChoose = !isChoose">&#xe656;</span>
@@ -22,13 +26,13 @@ import { getMyAvatar } from '@/utils/service/userUtil';
 import ChooseSem from "./ChooseSem.vue";
 
 let isChoose = ref(false)
-let userMsg = ref({id: 0,avatar:''})
+let userMsg = ref({id: 0,avatarUrl:''})
 // 初始化用户信息
 const initMsg = async()=>{
     let {info} = await getInfo()
     userMsg.value = info
-    // console.log(userMsg.value)
-    userMsg.value.avatar = getMyAvatar(userMsg.value.avatar)
+    let res = await getMyAvatar(userMsg.value.id)
+    userMsg.value.avatarUrl = res
 }
 onMounted(()=>{
     initMsg()

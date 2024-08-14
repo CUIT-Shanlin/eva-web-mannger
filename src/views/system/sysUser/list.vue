@@ -69,7 +69,7 @@
               shape="square"
               :size="40"
               fit="cover"
-              :src="getMyAvatar(scope.row.info.avatar)"
+              :src="scope.row.info.avatarUrl"
             />
             {{ scope.row.info.name }}
           </div>
@@ -603,9 +603,22 @@ const getMyPageData = async () => {
   let data = await getPageData(pageReqData.value);
   // console.log(data)
   pageData.value = data;
+  // 获取头像信息
+  pageData.value.records.forEach(user => {
+    initAvatarOne(user.info)
+  })
   isLoadingTable.value = false;
 };
-
+/**
+ * 初始化一个用户的头像
+ * @param {Object} userInfo 
+ */
+const initAvatarOne = async(userInfo)=>{
+  isLoadingTable.value = true
+  let res = await getMyAvatar(userInfo.id)
+  userInfo.avatarUrl = res
+  isLoadingTable.value = false
+}
 /**
  * 发请求删除一个用户
  */

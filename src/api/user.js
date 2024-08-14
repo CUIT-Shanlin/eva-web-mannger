@@ -1,4 +1,5 @@
 import request from '@/utils/request.js'
+import axios from 'axios'
 import { getSemesterId } from '@/utils/service/semesterUtil';
 
 
@@ -124,5 +125,18 @@ export function addUser(user = {}){
 export function getAllBaseUser(){
     return request({
         url: '/users/all'
+    })
+}
+
+/**
+ * 获取用户的头像
+ * @param {Number} id 用户id
+ * @returns 
+ */
+export function getUserAvatar(id = -1){
+    return axios({
+        url: `/user/avatar/${id}`,
+        method: 'get',
+        responseType: 'blob', // 指示axios以Blob形式处理响应
     })
 }
