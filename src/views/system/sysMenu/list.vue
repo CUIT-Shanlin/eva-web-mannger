@@ -136,7 +136,7 @@
             <el-input v-model="checkedMenu.component"></el-input>
           </el-form-item>
           <el-form-item label="权限标识" v-if="checkedMenu.type === 2">
-            <el-input v-model="checkedMenu.perm"></el-input>
+            <el-input v-model="checkedMenu.perms"></el-input>
           </el-form-item>
           <el-form-item label="菜单状态" v-if="funMode === 0">
             <el-radio-group v-model="checkedMenu.status">
