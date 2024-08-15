@@ -11,9 +11,15 @@ $page-padding: 0 50.5px;
 $operation-color: rgb(24,144,255);
 
 $box-shadow-color: #928c8c64;
-$small-box-shadow: 0px 0px 1px $box-shadow-color;
-$common-box-shadow: 0px 0px 4px $box-shadow-color;
-$large-box-shadow: 0px 0px 10px $box-shadow-color;
+
+// 动态生成box-shadow值
+@function act-box-shadow($blur-radius) {
+    @return 0px 0px #{$blur-radius} $box-shadow-color;
+}
+$small-box-shadow: act-box-shadow(1px);
+$common-box-shadow: act-box-shadow(4px);
+$large-box-shadow: act-box-shadow(10px);
+
 $title-font-color: rgb(36,47,87);
 $ipt-font-color: rgb(9,82,200);
 $holder-font-color: rgb(211,227,253);
