@@ -70,10 +70,12 @@
             <div class="textMsg">
               <div>
                 <div class="topText">待评教(个)</div>
-                <div style="font-size: 20px">10</div>
+                <div style="font-size: 20px">
+                  {{getShowNum(evaTaskCompleteMsg.totalNum - evaTaskCompleteMsg.evaNum)}}
+                </div>
               </div>
               <div class="bottomText">
-                今日 +1
+                今日 +{{getShowNum(evaTaskCompleteMsg.moreEvaNum)}}
                 <i class="iconfont ico">&#xe6e9;</i>
               </div>
             </div>
@@ -85,7 +87,7 @@
           <div class="lineBox">
             <div class="textMsg">
               <div>
-                <div class="topText">评教情况(个)</div>
+                <div class="topText">新增评教情况(个)</div>
                 <div style="font-size: 20px">170</div>
               </div>
               <div class="bottomText">
@@ -148,6 +150,7 @@ import PageTitle from "@/components/PageTitle.vue";
 import { getAllBaseUser } from "@/api/user";
 import { getAllBaseCourse } from "@/api/course";
 import { getAllDepartments } from "@/api/other";
+import { getEvaSituation } from '@/api/evaluation';
 import { onMounted, ref } from "vue";
 import * as echarts from "echarts";
 
@@ -159,6 +162,9 @@ const allCourseMsg = ref([]);
 
 // 存所有学院名
 const allDepartments = ref([]);
+
+// 存评教任务完成情况信息
+const evaTaskCompleteMsg = ref({})
 
 // 存分页请求数据
 const pageReqData = ref({
@@ -174,6 +180,21 @@ const pageReqData = ref({
     endEvaluateTime: null,
   },
 });
+
+/**
+ * 处理显示的数字，让数字在加载过来之前有加载显示
+ * @param {*} num 
+ */
+function getShowNum(num){
+  const DEFAULT_SHOW = '--'
+  return (!num && num !== 0) ? DEFAULT_SHOW : num
+}
+
+// 获取评教任务完成情况信息
+const getEvaTaskMsg = async()=>{
+  let res = await getEvaSituation()
+  evaTaskCompleteMsg.value = res
+}
 
 /**
  * 初始化所有的chart
@@ -199,6 +220,7 @@ function initCharts() {
 function getLineOption(data = []){
   return {
       xAxis: {
+        data: ['8.9总评教数目','8.9总评教数目','8.9总评教数目','8.9总评教数目','8.9总评教数目','8.9总评教数目','8.9总评教数目'],
         type: "category",
         splitLine: { show: false },
         axisLabel: { show: false },
@@ -209,6 +231,9 @@ function getLineOption(data = []){
         type: "value",
         splitLine: { show: false },
         axisLabel: { show: false },
+      },
+      tooltip: {
+        trigger: 'axis',
       },
       toolbox: {
         show: true,
@@ -278,6 +303,7 @@ function getCircleOption( title = '统计情况', data = []){
 }
 
 onMounted(() => {
+  getEvaTaskMsg();
   getAllBaseUser().then((res) => {
     allUserMsg.value = res.dataArr;
   });
@@ -375,7 +401,7 @@ $gap-size: 15px;
             width: $chart-size;
             height: $chart-size;
             #line1,#line2 {
-              height: 142%;
+              height: 130%;
             }
           }
         }
