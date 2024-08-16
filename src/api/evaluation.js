@@ -11,3 +11,13 @@ export function getEvaSituation(){
         url: `/evaluate/task/situation?semId=${getSemesterId()}`
     })
 }
+
+/**
+ * 获取评教分数统计基础信息
+ * @returns 
+ */
+export function getEvaScoreSituation(){
+    return request({
+        url: `/evaluate/score/situation?semId=${getSemesterId()}`
+    })
+}

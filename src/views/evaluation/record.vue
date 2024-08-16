@@ -75,8 +75,9 @@
                 </div>
               </div>
               <div class="bottomText">
-                今日 +{{getShowNum(evaTaskCompleteMsg.moreEvaNum)}}
-                <i class="iconfont ico">&#xe6e9;</i>
+                今日 {{getShowNum(evaTaskCompleteMsg.moreEvaNum,true)}}
+                <i :class="{iconfont: true, ico: true,
+                downIco: (evaTaskCompleteMsg.totalNum - evaTaskCompleteMsg.evaNum) < 0}">&#xe6e9;</i>
               </div>
             </div>
             <div class="imgShow">
@@ -87,12 +88,14 @@
           <div class="lineBox">
             <div class="textMsg">
               <div>
-                <div class="topText">新增评教情况(个)</div>
-                <div style="font-size: 20px">170</div>
+                <div class="topText">新增评教任务(个)</div>
+                <div style="font-size: 20px">
+                  {{getShowNum(evaTaskCompleteMsg.moreEvaNum)}}
+                </div>
               </div>
               <div class="bottomText">
-                较昨日 +1
-                <i class="iconfont ico">&#xe6e9;</i>
+                较昨日 {{getShowNum(evaTaskCompleteMsg.moreNum,true)}}
+                <i :class="{iconfont: true, ico: true, downIco: evaTaskCompleteMsg.moreNum < 0}">&#xe6e9;</i>
               </div>
             </div>
             <div class="imgShow">
@@ -112,11 +115,11 @@
             <div class="textMsg">
               <div>
                 <div class="topText">95分以下(个)</div>
-                <div style="font-size: 20px">10</div>
+                <div style="font-size: 20px">{{getShowNum(evaScoreMsg.lowerNum)}}</div>
               </div>
               <div class="bottomText">
-                今日 +1
-                <i class="iconfont ico">&#xe6e9;</i>
+                今日 {{getShowNum(evaScoreMsg.moreNum, true)}}
+                <i :class="{iconfont: true, ico: true, downIco: evaScoreMsg.moreNum < 0}">&#xe6e9;</i>
               </div>
             </div>
             <div class="imgShow">
@@ -127,12 +130,12 @@
           <div class="lineBox">
             <div class="textMsg">
               <div>
-                <div class="topText">95分以上占比(个)</div>
-                <div style="font-size: 20px">90.24</div>
+                <div class="topText">95分以上占比(%)</div>
+                <div style="font-size: 20px">{{getShowNum(evaScoreMsg.percent)}}</div>
               </div>
               <div class="bottomText">
-                较昨日 +1
-                <i class="iconfont ico">&#xe6e9;</i>
+                较昨日 {{getShowNum(evaScoreMsg.morePercent, true)}}%
+                <i :class="{iconfont: true, ico: true, downIco: evaScoreMsg.morePercent < 0}">&#xe6e9;</i>
               </div>
             </div>
             <div class="imgShow">
@@ -150,7 +153,8 @@ import PageTitle from "@/components/PageTitle.vue";
 import { getAllBaseUser } from "@/api/user";
 import { getAllBaseCourse } from "@/api/course";
 import { getAllDepartments } from "@/api/other";
-import { getEvaSituation } from '@/api/evaluation';
+import { getEvaSituation, getEvaScoreSituation } from '@/api/evaluation';
+import { choreDateStr } from "@/utils/dateUtil";
 import { onMounted, ref } from "vue";
 import * as echarts from "echarts";
 
@@ -165,6 +169,9 @@ const allDepartments = ref([]);
 
 // 存评教任务完成情况信息
 const evaTaskCompleteMsg = ref({})
+
+// 存评教分数统计基础信息
+const evaScoreMsg = ref({})
 
 // 存分页请求数据
 const pageReqData = ref({
@@ -181,46 +188,98 @@ const pageReqData = ref({
   },
 });
 
+
 /**
  * 处理显示的数字，让数字在加载过来之前有加载显示
  * @param {*} num 
+ * @param {Boolean} isShowSymbol
  */
-function getShowNum(num){
+function getShowNum(num, isShowSymbol = false){
   const DEFAULT_SHOW = '--'
-  return (!num && num !== 0) ? DEFAULT_SHOW : num
+  num = (!num && num !== 0) ? DEFAULT_SHOW : num
+  if(isShowSymbol){
+    return num >= 0 ? `+${num}` : num
+  }
+  return num
 }
 
-// 获取评教任务完成情况信息
+/**
+ * 获取评教任务完成情况信息
+ */
 const getEvaTaskMsg = async()=>{
   let res = await getEvaSituation()
   evaTaskCompleteMsg.value = res
 }
 
 /**
+ * 获取评教分数统计基础信息
+ */
+const getEvaScoreMsg = async()=>{
+  let res = await getEvaScoreSituation()
+  evaScoreMsg.value = res
+}
+
+/**
  * 初始化所有的chart
  */
 function initCharts() {
-  // TODO 初始化环形图
   let circle1 = echarts.init(document.getElementById("circle1"));
   let circle2 = echarts.init(document.getElementById("circle2"));
-  circle1.setOption(getCircleOption("评教任务完成情况"));
-  circle2.setOption(getCircleOption("分数统计情况"));
-
-  // TODO 初始化线形图
   let line1 = echarts.init(document.getElementById("line1"));
   let line2 = echarts.init(document.getElementById("line2"));
-  line1.setOption(getLineOption());
-  line2.setOption(getLineOption());
+  // TODO 初始化第一个图形区
+  getEvaTaskMsg().then(()=>{
+    circle1.setOption(getCircleOption("评教任务完成情况", [
+      {
+        name: '待完成任务',
+        value: evaTaskCompleteMsg.value.totalNum - evaTaskCompleteMsg.value.evaNum
+      },
+      {
+        name: '已完成任务',
+        value: evaTaskCompleteMsg.value.evaNum
+      }
+    ]));
+    line1.setOption(getLineOption(evaTaskCompleteMsg.value.evaNumArr));
+  })
+  // TODO 初始化第二个图形区
+  getEvaScoreMsg().then(()=>{
+    circle2.setOption(getCircleOption("分数统计情况", [
+      {
+        name: '低于95分的评教数目',
+        value: evaScoreMsg.value.lowerNum
+      },
+      {
+        name: '95分及以上的评教数目',
+        value: evaScoreMsg.value.totalNum - evaScoreMsg.value.lowerNum
+      }
+    ]));
+    line2.setOption(getLineOption(evaScoreMsg.value.percentArr));
+  })
+
+  
 }
 
 /**
  * 加载线形图配置及其数据
  * @param {Array} data 数据
  */
-function getLineOption(data = []){
+function getLineOption(myData = [
+  {
+    date: '2005-08-17',
+    value: 100
+  }
+]){
+  // 找到data中的最值
+  let min = myData[0].value
+  let max = myData[0].value
+  myData.map(item => item.value).forEach(it => {
+    max = it > max ? it : max
+    min = it < min ? it : min
+  })
+
   return {
       xAxis: {
-        data: ['8.9总评教数目','8.9总评教数目','8.9总评教数目','8.9总评教数目','8.9总评教数目','8.9总评教数目','8.9总评教数目'],
+        data: myData.map(item => `截止${choreDateStr(item.date)}日完成的评教数目`),
         type: "category",
         splitLine: { show: false },
         axisLabel: { show: false },
@@ -252,13 +311,13 @@ function getLineOption(data = []){
           show: false,
           type: "continuous",
           seriesIndex: 0,
-          min: 400,
-          max: 2000,
+          min,
+          max,
         },
       ],
       series: [
         {
-          data: [40, 932, 600, 934, 1290, 1330, 2000],
+          data: myData.map(it => it.value),
           type: "line",
           smooth: true,
         },
@@ -270,7 +329,17 @@ function getLineOption(data = []){
  * 加载环形图配置及其数据
  * @param {Array} data 数据
  */
-function getCircleOption( title = '统计情况', data = []){
+function getCircleOption( title = '统计情况', 
+  myData = [
+    {
+      name: '待完成情况',
+      value: 1000
+    },
+    {
+      name: '已完成情况',
+      value: 800
+    }
+  ]){
   return {
     tooltip: {
       trigger: "item",
@@ -287,13 +356,13 @@ function getCircleOption( title = '统计情况', data = []){
         },
         data: [
           {
-            value: 1000,
-            name: "已完成任务",
+            value: myData[1].value,
+            name: myData[1].name,
             itemStyle: { color: "rgb(24,144,255)", borderRadius: "100px" },
           },
           {
-            value: 500,
-            name: "待完成任务",
+            value: myData[0].value,
+            name: myData[0].name,
             itemStyle: { color: "rgb(242,243,245)" },
           },
         ],
@@ -303,7 +372,6 @@ function getCircleOption( title = '统计情况', data = []){
 }
 
 onMounted(() => {
-  getEvaTaskMsg();
   getAllBaseUser().then((res) => {
     allUserMsg.value = res.dataArr;
   });
@@ -376,7 +444,7 @@ $gap-size: 15px;
                 margin-left: 20px;
                 color: rgb(255, 182, 118);
               }
-              .upIco {
+              .downIco {
                 display: inline-block;
                 transform: rotate(180deg);
                 color: rgb(221, 83, 83);
