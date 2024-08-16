@@ -145,6 +145,10 @@
         </div>
       </div>
     </div>
+
+    <div class="dataShow">
+      
+    </div>
   </div>
 </template>
 
@@ -253,7 +257,7 @@ function initCharts() {
         value: evaScoreMsg.value.totalNum - evaScoreMsg.value.lowerNum
       }
     ]));
-    line2.setOption(getLineOption(evaScoreMsg.value.percentArr));
+    line2.setOption(getLineOption(evaScoreMsg.value.percentArr, '95分及以上的记录占比'));
   })
 
   
@@ -268,7 +272,7 @@ function getLineOption(myData = [
     date: '2005-08-17',
     value: 100
   }
-]){
+], suffix = '完成的评教数目'){
   // 找到data中的最值
   let min = myData[0].value
   let max = myData[0].value
@@ -279,7 +283,7 @@ function getLineOption(myData = [
 
   return {
       xAxis: {
-        data: myData.map(item => `截止${choreDateStr(item.date)}日完成的评教数目`),
+        data: myData.map(item => `截止${choreDateStr(item.date)}日${suffix}`),
         type: "category",
         splitLine: { show: false },
         axisLabel: { show: false },
