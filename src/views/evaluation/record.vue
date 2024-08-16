@@ -354,6 +354,9 @@ function getCircleOption( title = '统计情况',
         labelLine: {
           show: false,
         },
+        label: {
+          show: false,
+        },
         data: [
           {
             value: myData[1].value,
