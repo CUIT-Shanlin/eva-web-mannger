@@ -147,7 +147,63 @@
     </div>
 
     <div class="dataShow">
-      
+      <div class="funBar">
+        <el-input
+        v-model="pageReqData.queryObj.keyword"
+        style="width: 260px;"
+        placeholder="请输入评教内容进行查询"
+        clearable
+        @change="getMyPageData"
+        >
+          <template #append>
+            <el-button :icon="Search" @click="getMyPageData()"/>
+          </template>
+        </el-input>
+        <el-date-picker
+        v-model="evaTimeArr"
+        type="daterange"
+        range-separator="—"
+        start-placeholder="开始评教时间"
+        end-placeholder="结束评教时间"
+        :shortcuts="shortcuts"
+        @change="getMyPageData()"
+        style="width: 240px;"
+        />
+      </div>
+      <el-table
+      :data="pageData.records"
+      v-loading="isLoadingTable"
+      class="tableBox"
+      style="width: 100%;"
+      >
+        <el-table-column prop="createTime" label="评教日期" width="200" sortable/>
+        <el-table-column prop="evaTeacherName" label="评教老师"/>
+        <el-table-column prop="courseName" label="评教课程"/>
+        <el-table-column prop="teacherName" label="教学老师"/>
+        <el-table-column prop="averScore" label="综合评分"/>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, 0)">
+              <span class="ico">&#xe8cf;&nbsp;</span>
+              修改
+            </el-link>
+          </template>
+        </el-table-column>
+      </el-table>
+
+
+      <el-pagination
+      v-model:current-page="pageData.current"
+      v-model:page-size="pageData.size"
+      :page-sizes="[5, 10, 20, 40]"
+      :size="pageData.size"
+      layout="sizes, prev, pager, next, jumper"
+      :total="pageData.total"
+      @size-change="getMyPageData"
+      @current-change="getMyPageData"
+      background
+      class="myPage"
+      />
     </div>
   </div>
 </template>
@@ -157,9 +213,11 @@ import PageTitle from "@/components/PageTitle.vue";
 import { getAllBaseUser } from "@/api/user";
 import { getAllBaseCourse } from "@/api/course";
 import { getAllDepartments } from "@/api/other";
-import { getEvaSituation, getEvaScoreSituation } from '@/api/evaluation';
+import { getEvaSituation, getEvaScoreSituation, getPageData } from '@/api/evaluation';
 import { choreDateStr } from "@/utils/dateUtil";
+import { removeSpace } from "@/utils/stringUtil";
 import { onMounted, ref } from "vue";
+import { Search } from '@element-plus/icons-vue'
 import * as echarts from "echarts";
 
 // 存所有老师的基础信息
@@ -177,6 +235,9 @@ const evaTaskCompleteMsg = ref({})
 // 存评教分数统计基础信息
 const evaScoreMsg = ref({})
 
+// 用于确定表格是否是loading状态
+const isLoadingTable = ref(false)
+
 // 存分页请求数据
 const pageReqData = ref({
   size: 0,
@@ -192,6 +253,55 @@ const pageReqData = ref({
   },
 });
 
+// 存分页获取的数据
+const pageData = ref({
+  total: 0,
+  size: 0,
+  current: 1,
+  records: [],
+});
+
+// 存创建日期对应数组
+const evaTimeArr = ref([])
+
+
+const getMyPageData = async()=>{
+  isLoadingTable.value = true
+  const queryObj = pageReqData.value.queryObj
+  queryObj.keyword = removeSpace(queryObj.keyword)
+  queryObj.startEvaluateTime = evaTimeArr[0]
+  queryObj.endEvaluateTime = evaTimeArr[1]
+  let res = await getPageData(pageReqData.value)
+  pageData.value = res
+  isLoadingTable.value = false
+}
+
+/**
+ * 生成快速选择的value
+ * @param {Number} days 天数 
+ */
+const evaCutValue = (days = 1)=>{
+  const end = new Date()
+  const start = new Date()
+  start.setTime(start.getTime() - 3600 * 1000 * 24 * days)
+  return [start, end]
+}
+
+// 实现日期选择器的快速选择
+const shortcuts = [
+  {
+    text: '上周',
+    value: evaCutValue(7),
+  },
+  {
+    text: '上个月',
+    value: evaCutValue(30),
+  },
+  {
+    text: '3个月前',
+    value: evaCutValue(90),
+  },
+]
 
 /**
  * 处理显示的数字，让数字在加载过来之前有加载显示
@@ -389,6 +499,7 @@ onMounted(() => {
     allDepartments.value = res.dataArr;
   });
   initCharts();
+  getMyPageData();
 });
 </script>
 
@@ -413,6 +524,7 @@ $gap-size: 15px;
   .chartsShow {
     overflow: hidden;
     @include flex-center-y;
+    margin-bottom: 25px;
     .dataShowOne {
       width: 50%;
       .dataTitle,
@@ -485,6 +597,47 @@ $gap-size: 15px;
         box-shadow: act-box-shadow(5px);
       }
     }
+  }
+  .dataShow{
+    display: flex;
+    flex-wrap: wrap;
+    .funBar{
+      margin-left: auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+    .tableBox{
+      width: 100%;
+      margin-top: 50px;
+      margin-bottom: 35px;
+    }
+    .myPage {
+      @include flex-center-y;
+      margin-left: auto;
+    }
+  }
+}
+:deep() {
+  th.el-table__cell {
+    font-size: 15px;
+    font-weight: 500;
+    color: black;
+    background-color: rgb(250,250,250);
+  }
+  .el-table__body-wrapper{
+    td{
+       color: rgb(89,89,89); 
+    }
+  }
+}
+
+.operation{
+  font-size: 14px;
+  margin-right: 15px;
+  // color: rgb(64,158,255);
+  .ico{
+    font-size: 18px;
   }
 }
 </style>
