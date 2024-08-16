@@ -37,3 +37,15 @@ export function getPageData(reqData = {page: 0,size: 0,queryObj: {}}){
         data: reqData
     })
 }
+
+/**
+ * 删除单个评教记录
+ * @param {Number} id 待删除的评教记录的id 
+ * @returns 
+ */
+export function removeOne(id = -1){
+    return request({
+        url: `/evaluate/record?id=${id}`,
+        method: 'DELETE'
+    })
+}

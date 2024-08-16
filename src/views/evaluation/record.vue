@@ -183,14 +183,26 @@
         <el-table-column prop="averScore" label="综合评分"/>
         <el-table-column label="操作">
           <template #default="scope">
-            <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, 0)">
-              <span class="ico">&#xe8cf;&nbsp;</span>
-              修改
+            <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row)">
+              详情
+            </el-link>
+            <el-link class="iconfont operation" type="primary" @click="removeOneRecord(scope.row)">
+              删除
             </el-link>
           </template>
         </el-table-column>
       </el-table>
 
+      <!-- 评教表单详情弹窗 -->
+      <el-dialog
+        v-model="dialogVisible"
+        width="350"
+        append-to-body
+        title="评教表单"
+      >
+
+      
+      </el-dialog>
 
       <el-pagination
       v-model:current-page="pageData.current"
@@ -213,9 +225,10 @@ import PageTitle from "@/components/PageTitle.vue";
 import { getAllBaseUser } from "@/api/user";
 import { getAllBaseCourse } from "@/api/course";
 import { getAllDepartments } from "@/api/other";
-import { getEvaSituation, getEvaScoreSituation, getPageData } from '@/api/evaluation';
+import { getEvaSituation, getEvaScoreSituation, getPageData, removeOne } from '@/api/evaluation';
 import { choreDateStr } from "@/utils/dateUtil";
 import { removeSpace } from "@/utils/stringUtil";
+import { useSimpleConfirm, useSuccessTip } from "@/utils/msgTip";
 import { onMounted, ref } from "vue";
 import { Search } from '@element-plus/icons-vue'
 import * as echarts from "echarts";
@@ -235,9 +248,12 @@ const evaTaskCompleteMsg = ref({})
 // 存评教分数统计基础信息
 const evaScoreMsg = ref({})
 
+// 存当前正在操作的评教记录
+const checkedRecord = ref({})
+// 控制弹窗的开启
+const dialogVisible = ref(false)
 // 用于确定表格是否是loading状态
 const isLoadingTable = ref(false)
-
 // 存分页请求数据
 const pageReqData = ref({
   size: 0,
@@ -252,7 +268,6 @@ const pageReqData = ref({
     endEvaluateTime: null,
   },
 });
-
 // 存分页获取的数据
 const pageData = ref({
   total: 0,
@@ -264,7 +279,29 @@ const pageData = ref({
 // 存创建日期对应数组
 const evaTimeArr = ref([])
 
+/**
+ * 删除一条评教记录
+ * @param record 待删除的记录信息
+ */
+function removeOneRecord(record = {}){
+  useSimpleConfirm('你确定要删除这条评教记录吗？').then(async()=>{
+    let res = removeOne(record.id)
+    useSuccessTip('成功删除一条评教记录')
+  })
+}
 
+/**
+ * 初始化弹窗
+ */
+function initDialog(record = {}){
+  checkedRecord.value = record
+  dialogVisible.value = true
+}
+
+
+/**
+ * 获取分页评教记录信息
+ */
 const getMyPageData = async()=>{
   isLoadingTable.value = true
   const queryObj = pageReqData.value.queryObj
