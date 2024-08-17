@@ -175,7 +175,9 @@
       v-loading="isLoadingTable"
       class="tableBox"
       style="width: 100%;"
+      @selection-change="handleSelectionChange"
       >
+        <el-table-column type="selection" width="50" />
         <el-table-column prop="createTime" label="评教日期" width="200" sortable/>
         <el-table-column prop="evaTeacherName" label="评教老师"/>
         <el-table-column prop="courseName" label="评教课程"/>
@@ -196,14 +198,18 @@
       <!-- 评教表单详情弹窗 -->
       <el-dialog
         v-model="dialogVisible"
-        width="350"
+        width="650"
         append-to-body
         title="评教表单"
       >
-
       
-      </el-dialog>
-
+      <el-form label-width="80px">
+        
+      </el-form>
+      
+    </el-dialog>
+    
+      <el-button @click="batchRemoveMyRecords()">批量删除</el-button>
       <el-pagination
       v-model:current-page="pageData.current"
       v-model:page-size="pageData.size"
@@ -225,10 +231,11 @@ import PageTitle from "@/components/PageTitle.vue";
 import { getAllBaseUser } from "@/api/user";
 import { getAllBaseCourse } from "@/api/course";
 import { getAllDepartments } from "@/api/other";
-import { getEvaSituation, getEvaScoreSituation, getPageData, removeOne } from '@/api/evaluation';
+import { getEvaSituation, getEvaScoreSituation, getPageData, removeOne, batchRemove } from '@/api/evaluation';
 import { choreDateStr } from "@/utils/dateUtil";
 import { removeSpace } from "@/utils/stringUtil";
-import { useSimpleConfirm, useSuccessTip } from "@/utils/msgTip";
+import { isEmptyArr } from "@/utils/objUtil";
+import { useSimpleConfirm, useSuccessTip, useFailedTip } from "@/utils/msgTip";
 import { onMounted, ref } from "vue";
 import { Search } from '@element-plus/icons-vue'
 import * as echarts from "echarts";
@@ -278,6 +285,30 @@ const pageData = ref({
 
 // 存创建日期对应数组
 const evaTimeArr = ref([])
+
+// 存勾选了的评教记录
+const handleRecords = ref([])
+
+/**
+ * 批量删除评教记录
+ */
+ function batchRemoveMyRecords(){
+  if(isEmptyArr(handleRecords.value)){
+    useFailedTip('未选中评教记录')
+    return
+  }
+  useSimpleConfirm('你确定要删除所有选中的评教记录吗？').then(async()=>{
+    const idList = handleRecords.value.map(record => record.id)
+    let res = await batchRemove(idList)
+    useSuccessTip('成功删除选中的评教记录')
+    getMyPageData()
+  })
+}
+
+
+function handleSelectionChange(records){
+  handleRecords.value = records
+}
 
 /**
  * 删除一条评教记录

@@ -49,3 +49,16 @@ export function removeOne(id = -1){
         method: 'DELETE'
     })
 }
+
+/**
+ * 批量删除评教记录
+ * @param {Number} idList 待删除的评教记录的id集合 
+ * @returns 
+ */
+export function batchRemove(idList){
+    return request({
+        url: '/evaluate/records',
+        method: 'DELETE',
+        data: idList
+    })
+}
