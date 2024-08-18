@@ -150,7 +150,7 @@
       <div class="funBar">
         <el-input
         v-model="pageReqData.queryObj.keyword"
-        style="width: 260px;"
+        style="width: 260px;height: 30px;"
         placeholder="请输入评教内容进行查询"
         clearable
         @change="getMyPageData"
@@ -168,6 +168,16 @@
         :shortcuts="shortcuts"
         @change="getMyPageData()"
         style="width: 240px;"
+        />
+        <el-cascader
+          :options="options"
+          :props="props"
+          collapse-tags
+          collapse-tags-tooltip
+          :max-collapse-tags="1"
+          placeholder="请选择上课时间段"
+          clearable
+          style="width: 300px;"
         />
       </div>
       <el-table
@@ -243,7 +253,7 @@ import { getAllBaseCourse } from "@/api/course";
 import { getAllDepartments } from "@/api/other";
 import { getEvaSituation, getEvaScoreSituation, getPageData, removeOne, batchRemove } from '@/api/evaluation';
 import { choreDateStr } from "@/utils/dateUtil";
-import { removeSpace } from "@/utils/stringUtil";
+import { removeSpace, replaceStr } from "@/utils/stringUtil";
 import { isEmptyArr } from "@/utils/objUtil";
 import { useSimpleConfirm, useSuccessTip, useFailedTip } from "@/utils/msgTip";
 import { onMounted, ref } from "vue";
@@ -299,9 +309,44 @@ const evaTimeArr = ref([])
 // 存勾选了的评教记录
 const handleRecords = ref([])
 
+// 级联选择器的选项
+const options = ref([])
+// 级联选择器的配置
+const props = { multiple: true }
+// 数字与周的映射（num-1）
+const weeks = ['一','二','三','四','五','六','日']
+
+const lenArr = [20,7,11,11]
+const strArr = ['第|周','星期|','第|节课开始','第|节课结束']
+/**
+ * 生成级联选择器的选项
+ * @param {Number} level 当前递归层数
+ * @param {number} [maxLevel=4] 最大递归层数
+ * @param {any[]} dataArr 当前层的数组
+ */
+function createOptions(level = 1, maxLevel = 4, dataArr = []){
+  for (let i = 1;i <= lenArr[level - 1];i++) {
+    const nodeOne = {
+      value: i,
+      label: replaceStr(i, strArr[level - 1]),
+      children: []
+    }
+    if(level === 2){
+      nodeOne.label = replaceStr(weeks[i - 1], strArr[level - 1])
+    }
+    dataArr.push(nodeOne)
+    // 非最后一层才进行递归
+    if(level < maxLevel){
+      createOptions(level + 1,maxLevel,nodeOne.children)
+    }
+  }
+  if(level >= maxLevel){
+    return
+  }
+}
+
 function getCourseTime(obj = {}){
-  const weeks = ['一','二','三','四','五','六','日']
-  return `第${obj.week}周 星期${weeks[obj.day]}，第${obj.startTime}节课到第${obj.endTime}节课`
+  return `第${obj.week}周 星期${weeks[obj.day + 1]}，第${obj.startTime}节课到第${obj.endTime}节课`
 }
 
 /**
@@ -583,6 +628,8 @@ onMounted(() => {
   });
   initCharts();
   getMyPageData();
+  createOptions(1, 4,options.value)
+  console.log(options.value)
 });
 </script>
 
@@ -687,7 +734,7 @@ $gap-size: 15px;
     .funBar{
       margin-left: auto;
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, 1fr) 1.25fr;
       gap: 30px;
     }
     .tableBox{

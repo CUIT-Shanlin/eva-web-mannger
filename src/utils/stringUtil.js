@@ -55,3 +55,15 @@ export function isPhone(str = ''){
     const regex = /^1(3|4|5|6|7|8|9)\d{9}$/;
     return regex.test(str);
 }
+
+/**
+ * 将一个字符串中的分隔符替换成变量
+ * @param {string|number|...} data 变量
+ * @param {string} str1 原始字符串，带分隔符 
+ * @param {string} str2 分隔符，默认是 | 
+ * @returns 替换完成的字符串
+ */
+export function replaceStr(data, str1 = '',str2='|'){
+    const regex = new RegExp(str2.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+    return str1.replace(regex, data);
+}
