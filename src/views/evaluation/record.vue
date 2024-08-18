@@ -181,6 +181,11 @@
         <el-table-column prop="createTime" label="评教日期" width="200" sortable/>
         <el-table-column prop="evaTeacherName" label="评教老师"/>
         <el-table-column prop="courseName" label="评教课程"/>
+        <el-table-column label="上课时间" width="300">
+          <template #default="scope">
+            {{getCourseTime(scope.row.courseTime)}}
+          </template>
+        </el-table-column>
         <el-table-column prop="teacherName" label="教学老师"/>
         <el-table-column prop="averScore" label="综合评分"/>
         <el-table-column label="操作">
@@ -198,15 +203,20 @@
       <!-- 评教表单详情弹窗 -->
       <el-dialog
         v-model="dialogVisible"
-        width="650"
+        width="400"
         append-to-body
         title="评教表单"
       >
-      
-      <el-form label-width="80px">
-        
-      </el-form>
-      
+        <div class="propOne" v-for="(prop, i) in JSON.parse(checkedRecord.formPropsValues)" :key="i">
+          <span>{{prop.prop}}</span>
+          <el-input v-model="prop.score" class="myIpt"></el-input>
+        </div>
+        <p>评价：</p>
+        <el-input type="textarea" :rows="5" v-model="checkedRecord.textValue"></el-input>
+        <div class="propOne">
+          <span>综合评分</span>
+          <el-input v-model="checkedRecord.averScore" class="myIpt"></el-input>
+        </div>
     </el-dialog>
     
       <el-button @click="batchRemoveMyRecords()">批量删除</el-button>
@@ -288,6 +298,11 @@ const evaTimeArr = ref([])
 
 // 存勾选了的评教记录
 const handleRecords = ref([])
+
+function getCourseTime(obj = {}){
+  const weeks = ['一','二','三','四','五','六','日']
+  return `第${obj.week}周 星期${weeks[obj.day]}，第${obj.startTime}节课到第${obj.endTime}节课`
+}
 
 /**
  * 批量删除评教记录
@@ -684,6 +699,14 @@ $gap-size: 15px;
       @include flex-center-y;
       margin-left: auto;
     }
+  }
+}
+.propOne{
+  @include flex-center-y;
+  margin: 10px 0;
+  .myIpt{
+    width: 60px;
+    margin-left: auto;
   }
 }
 :deep() {
