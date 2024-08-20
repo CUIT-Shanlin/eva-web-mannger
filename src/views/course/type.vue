@@ -90,30 +90,30 @@
       <el-dialog
         width="500"
         v-model="updateOrAddDialogVisible"
-        :title="funMode === 0 ? '修改角色' : '新建角色'"
+        :title="funMode === 0 ? '修改课程类型' : '新建课程类型'"
       >
         <el-form label-width="80px">
           <el-form-item label="姓名">
             <el-input
-              v-model="checkedRole.roleName"
-              placeholder="请输入角色名称"
+              v-model="checkedType.name"
+              placeholder="请输入类型名称"
             ></el-input>
           </el-form-item>
           <el-form-item label="描述">
             <el-input
-              v-model="checkedRole.description"
-              placeholder="请输入该角色描述信息"
+              v-model="checkedType.description"
+              placeholder="请输入该课程类型描述信息"
             ></el-input>
           </el-form-item>
           <el-form-item label="创建时间" v-if="funMode === 0">
-            <el-input v-model="checkedRole.createTime" disabled></el-input>
+            <el-input v-model="checkedType.createTime" disabled></el-input>
           </el-form-item>
           <el-form-item label="修改时间" v-if="funMode === 0">
-            <el-input v-model="checkedRole.updateTime" disabled></el-input>
+            <el-input v-model="checkedType.updateTime" disabled></el-input>
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button type="primary" @click="updateOrAddRole()">保存</el-button>
+          <el-button type="primary" @click="updateOrAddType()">保存</el-button>
           <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
         </template>
       </el-dialog>
@@ -139,17 +139,15 @@ import PageTitle from "@/components/PageTitle.vue";
 import { Search } from "@element-plus/icons-vue";
 import { ref, onMounted } from "vue";
 import {
-  updateRoleStatus,
+  getPageData,
   batchRemove,
   removeOne,
-  updateRole,
-  addRole,
-} from "@/api/role";  
-import { getPageData } from '@/api/course';
+  updateType,
+  addType,
+} from '@/api/course';
 import {
   useSimpleConfirm,
   useSuccessTip,
-  useInfoTip,
   useFailedTip,
 } from "@/utils/msgTip.js";
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
@@ -158,16 +156,16 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-// 当前正在操作的角色
-const checkedRole = ref({});
+// 当前正在操作的课程类型
+const checkedType = ref({});
 // 控制弹窗功能 0: 修改，1：新建
 const funMode = ref(0);
 // 控制弹窗的开启
 const updateOrAddDialogVisible = ref(false);
 // 是否正在加载表格
 const isLoadingTable = ref(false);
-// 存勾选了的角色
-const handleRoles = ref([]);
+// 存勾选了的课程类型
+const handleTypes = ref([]);
 // 存分页请求数据
 const pageReqData = ref({
   size: 0,
@@ -195,15 +193,15 @@ const createTimeArr = ref([]);
 /**
  * 修改和新建的总方法
  */
-const updateOrAddRole = async () => {
-  const role = checkedRole.value;
+const updateOrAddType = async () => {
+  const type = checkedType.value;
   let msg = "";
   if (funMode.value === 0) {
-    let res = await updateRole(role);
-    msg = `成功修改角色 “${role.roleName}”`;
+    let res = await updateType(type);
+    msg = `成功修改课程类型 “${type.name}”`;
   } else {
-    let res = await addRole(role);
-    msg = "成功新建角色";
+    let res = await addType(type);
+    msg = "成功新建课程类型";
   }
   getMyPageData(); // 刷新页面
   updateOrAddDialogVisible.value = false;
@@ -212,47 +210,47 @@ const updateOrAddRole = async () => {
 
 /**
  * 初始化弹窗
- * @param {Object} role 操作的角色
+ * @param {Object} type 操作的课程类型
  * @param {Number} fun 弹窗功能 0：修改，1：新建
  */
-function initDialog(role = {}, fun = 0) {
+function initDialog(type = {}, fun = 0) {
   funMode.value = fun;
-  checkedRole.value = deepCopy(role);
+  checkedType.value = deepCopy(type);
   updateOrAddDialogVisible.value = true;
 }
 
 /**
- * 删除单个角色
- * @param {Number} roleId 待删除角色id
+ * 删除单个课程类型
+ * @param {Object} type 待删除课程类型
  */
-function removeOneRole(role) {
-  useSimpleConfirm(`你确定要删除角色 “${role.roleName}” 吗？`).then(
+function removeOneRole(type) {
+  useSimpleConfirm(`你确定要删除课程类型 “${type.name}” 吗？`).then(
     async () => {
-      let res = await removeOne(role);
-      useSuccessTip(`成功删除角色 “${role.roleName}”`);
+      let res = await removeOne(type);
+      useSuccessTip(`成功删除课程类型 “${type.name}”`);
     }
   );
 }
 
 /**
- * 批量删除角色
+ * 批量删除课程类型
  */
 function batchRemoveMyRoles() {
-  if (isEmptyArr(handleRoles.value)) {
-    useFailedTip("未选中角色");
+  if (isEmptyArr(handleTypes.value)) {
+    useFailedTip("未选中课程类型");
     return;
   }
-  useSimpleConfirm("你确定要删除选中角色吗？").then(async () => {
-    const idList = handleRoles.value.map((role) => role.id);
+  useSimpleConfirm("你确定要删除选中课程类型吗？").then(async () => {
+    const idList = handleTypes.value.map((type) => type.id);
     console.log(idList);
     let res = await batchRemove(idList);
-    useSuccessTip("成功删除选中角色");
+    useSuccessTip("成功删除选中课程类型");
     getMyPageData();
   });
 }
 
 function handleSelectionChange(roles) {
-  handleRoles.value = roles;
+  handleTypes.value = roles;
 }
 /**
  * 生成快速选择的value

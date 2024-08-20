@@ -24,3 +24,55 @@ export function getPageData(reqData = {page: 0,size: 0,queryObj: {}}){
         data: reqData
     })
 }
+
+/**
+ * 批量删除课程类型
+ * @param {Number} idList 待删除的课程类型的id集合 
+ * @returns 
+ */
+export function batchRemove(idList){
+    return request({
+        url: '/course/types',
+        method: 'DELETE',
+        data: idList
+    })
+}
+
+
+/**
+ * 删除单个课程类型
+ * @param {Number} typeId 待删除的课程类型的id 
+ * @returns 
+ */
+export function removeOne(typeId){
+    return request({
+        url: `/course/type?id=${typeId}`,
+        method: 'DELETE'
+    })
+}
+
+/**
+ * 修改一个课程类型的信息
+ * @param {Object} type 该课程类型的新信息
+ * @returns 
+ */
+export function updateType(type = {}){
+    return request({
+        url: '/course/type',
+        method: 'PUT',
+        data: type
+    })
+}
+
+/**
+ * 新建一个课程类型
+ * @param {Object} type 新课程类型信息
+ * @returns 
+ */
+export function addType(type = {}){
+    return request({
+        url: '/course/type',
+        method: 'POST',
+        data: type
+    })
+}
