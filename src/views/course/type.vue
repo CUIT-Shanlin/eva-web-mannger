@@ -75,7 +75,7 @@
           <el-link
             class="iconfont operation"
             type="primary"
-            @click="removeOneRole(scope.row)"
+            @click="removeOneType(scope.row)"
           >
             <span class="ico">&#xe610;&nbsp;</span>
             删除
@@ -223,7 +223,7 @@ function initDialog(type = {}, fun = 0) {
  * 删除单个课程类型
  * @param {Object} type 待删除课程类型
  */
-function removeOneRole(type) {
+function removeOneType(type) {
   useSimpleConfirm(`你确定要删除课程类型 “${type.name}” 吗？`).then(
     async () => {
       let res = await removeOne(type);
