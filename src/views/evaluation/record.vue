@@ -328,9 +328,8 @@ const strArr = ['第|周','星期|','第|节课开始','第|节课结束']
  * @param {number} [maxLevel=4] 最大递归层数
  * @param {any[]} dataArr 当前层的数组
  */
-function createOptions(level = 1, maxLevel = 4, dataArr = []){
+function createOptions(level = 1, maxLevel = 4, dataArr = [], parentValue = 0){
   for (let i = 1;i <= lenArr[level - 1];i++) {
-    const valueField = `value${level}`
     const nodeOne = {
       value: i,
       label: replaceStr(i, strArr[level - 1]),
@@ -339,10 +338,15 @@ function createOptions(level = 1, maxLevel = 4, dataArr = []){
     if(level === 2){
       nodeOne.label = replaceStr(weeks[i - 1], strArr[level - 1])
     }
-    dataArr.push(nodeOne)
     // 非最后一层才进行递归
     if(level < maxLevel){
-      createOptions(level + 1,maxLevel,nodeOne.children)
+      dataArr.push(nodeOne)
+      createOptions(level + 1,maxLevel,nodeOne.children,nodeOne.value)
+    }else{
+      // 最后一层按需加入
+      if(parentValue <= nodeOne.value){
+        dataArr.push(nodeOne)
+      }
     }
   }
   if(level >= maxLevel){
