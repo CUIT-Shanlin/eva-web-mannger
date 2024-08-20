@@ -9,6 +9,7 @@
         filterable
         clearable
         placeholder="请输入教学老师姓名"
+        @change="getMyPageData"
       >
         <el-option
           v-for="user in allUserMsg"
@@ -23,6 +24,7 @@
         filterable
         clearable
         placeholder="请输入评教老师姓名"
+        @change="getMyPageData"
       >
         <el-option
           v-for="user in allUserMsg"
@@ -37,6 +39,7 @@
         filterable
         clearable
         placeholder="请输入评教课程名称"
+        @change="getMyPageData"
       >
         <el-option
           v-for="course in allCourseMsg"
@@ -49,6 +52,7 @@
         clearable
         v-model="pageReqData.queryObj.departmentName"
         placeholder="请选择课程所在的学院名"
+        @change="getMyPageData"
       >
         <el-option
           v-for="department in allDepartments"
