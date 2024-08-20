@@ -177,6 +177,7 @@
           :max-collapse-tags="1"
           placeholder="请选择上课时间段"
           clearable
+          @change="deelChooseCourseTimes"
           style="width: 300px;"
         />
       </div>
@@ -293,6 +294,7 @@ const pageReqData = ref({
     departmentName: "",
     startEvaluateTime: null,
     endEvaluateTime: null,
+    courseTimes: []
   },
 });
 // 存分页获取的数据
@@ -313,6 +315,8 @@ const handleRecords = ref([])
 const options = ref([])
 // 级联选择器的配置
 const props = { multiple: true }
+
+
 // 数字与周的映射（num-1）
 const weeks = ['一','二','三','四','五','六','日']
 
@@ -326,6 +330,7 @@ const strArr = ['第|周','星期|','第|节课开始','第|节课结束']
  */
 function createOptions(level = 1, maxLevel = 4, dataArr = []){
   for (let i = 1;i <= lenArr[level - 1];i++) {
+    const valueField = `value${level}`
     const nodeOne = {
       value: i,
       label: replaceStr(i, strArr[level - 1]),
@@ -345,8 +350,25 @@ function createOptions(level = 1, maxLevel = 4, dataArr = []){
   }
 }
 
+/**
+ * 处理教学时间的数据
+ * @param {Array} data 
+ */
+function deelChooseCourseTimes(data = []){
+  data.forEach(timeArr => {
+    const courseTime = {
+      week: timeArr[0],
+      day: timeArr[1],
+      startTime: timeArr[2],
+      endTime: timeArr[3]
+    }
+    pageReqData.value.queryObj.courseTimes.push(courseTime)
+  })
+  getMyPageData()
+}
+
 function getCourseTime(obj = {}){
-  return `第${obj.week}周 星期${weeks[obj.day + 1]}，第${obj.startTime}节课到第${obj.endTime}节课`
+  return `第${obj.week}周 星期${weeks[obj.day - 1]}，第${obj.startTime}节课到第${obj.endTime}节课`
 }
 
 /**
@@ -378,6 +400,7 @@ function removeOneRecord(record = {}){
   useSimpleConfirm('你确定要删除这条评教记录吗？').then(async()=>{
     let res = removeOne(record.id)
     useSuccessTip('成功删除一条评教记录')
+    getMyPageData()
   })
 }
 
