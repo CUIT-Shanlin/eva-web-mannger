@@ -254,7 +254,7 @@
 <script setup>
 import PageTitle from "@/components/PageTitle.vue";
 import { getAllBaseUser } from "@/api/user";
-import { getAllBaseCourse } from "@/api/courseType";
+import { getAllBaseCourse } from "@/api/courseList";
 import { getAllDepartments } from "@/api/other";
 import { getEvaSituation, getEvaScoreSituation, getPageData, removeOne, batchRemove } from '@/api/evaluation';
 import { choreDateStr } from "@/utils/dateUtil";

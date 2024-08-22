@@ -228,6 +228,7 @@ function removeOneType(type) {
     async () => {
       let res = await removeOne(type);
       useSuccessTip(`成功删除课程类型 “${type.name}”`);
+      getMyPageData()
     }
   );
 }
