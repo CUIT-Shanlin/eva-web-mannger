@@ -144,7 +144,7 @@ import {
   removeOne,
   updateType,
   addType,
-} from "@/api/course";
+} from "@/api/courseType";
 import {
   useSimpleConfirm,
   useSuccessTip,

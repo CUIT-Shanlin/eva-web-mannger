@@ -1,16 +1,6 @@
 import request from '@/utils/request.js'
 
 /**
- * 获取所有课程的基础信息（仅有id和名称）
- * @returns 
- */
-export function getAllBaseCourse(){
-    return request({
-        url: '/courses/all'
-    })
-}
-
-/**
  * 分页获取课程类型信息
  * @param {Number} page 页数
  * @param {Number} size 一页的元素个数
