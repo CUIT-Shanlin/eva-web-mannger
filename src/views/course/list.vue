@@ -46,78 +46,97 @@
       class="tableBox"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="50" />
-      <el-table-column prop="name" label="类型名称" width="200" />
-      <el-table-column prop="description" label="描述" width="350" />
-
+      <el-table-column prop="name" label="课程名称" width="200"/>
+      <el-table-column prop="teacherMsg.name" label="教学老师" width="120" />
+      <el-table-column prop="templateMsg.name" label="评教模板" width="300" />
+      <el-table-column prop="teacherMsg.department" label="学院" width="200" />
       <el-table-column
-        prop="createTime"
         label="创建日期"
         width="220"
         sortable
-      />
-      <el-table-column
-        prop="updateTime"
-        label="修改日期"
-        width="220"
-        sortable
-      />
+      >
+        <template #default="scope">
+          {{getTime(scope.row.createTime)}}
+        </template>
+      </el-table-column>
+
       <el-table-column label="操作">
         <template #default="scope">
           <el-link
-            class="iconfont operation"
+            class="operation"
             type="primary"
-            @click="initDialog(scope.row, 0)"
+            @click="getThisEvaData(scope.row)"
           >
-            <span class="ico">&#xe8cf;&nbsp;</span>
-            修改
+            评教统计
           </el-link>
           <el-link
-            class="iconfont operation"
+            class="operation"
             type="primary"
             @click="removeOneType(scope.row)"
           >
-            <span class="ico">&#xe610;&nbsp;</span>
-            删除
+            评教记录
           </el-link>
+          <el-link
+            class="operation"
+            type="primary"
+            @click="initDialog(scope.row, 0)"
+          >
+            课程详情
+          </el-link>
+          
         </template>
       </el-table-column>
     </el-table>
-    <el-button @click="batchRemoveMyRoles()">批量删除</el-button>
 
     <!-- 新建/修改弹窗 -->
-    <teleport to="body">
-      <el-dialog
-        width="500"
-        v-model="updateOrAddDialogVisible"
-        :title="funMode === 0 ? '修改课程类型' : '新建课程类型'"
-      >
-        <el-form label-width="80px">
-          <el-form-item label="姓名">
-            <el-input
-              v-model="checkedType.name"
-              placeholder="请输入类型名称"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="描述">
-            <el-input
-              v-model="checkedType.description"
-              placeholder="请输入该课程类型描述信息"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="创建时间" v-if="funMode === 0">
-            <el-input v-model="checkedType.createTime" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="修改时间" v-if="funMode === 0">
-            <el-input v-model="checkedType.updateTime" disabled></el-input>
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <el-button type="primary" @click="updateOrAddType()">保存</el-button>
-          <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
-        </template>
-      </el-dialog>
-    </teleport>
+    <el-dialog
+      width="500"
+      v-model="updateOrAddDialogVisible"
+      append-to-body
+      :title="funMode === 0 ? '修改课程类型' : '新建课程类型'"
+    >
+      <el-form label-width="80px">
+        <el-form-item label="姓名">
+          <el-input
+            v-model="checkedType.name"
+            placeholder="请输入类型名称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input
+            v-model="checkedType.description"
+            placeholder="请输入该课程类型描述信息"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="创建时间" v-if="funMode === 0">
+          <el-input v-model="checkedType.createTime" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="修改时间" v-if="funMode === 0">
+          <el-input v-model="checkedType.updateTime" disabled></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button type="primary" @click="updateOrAddType()">保存</el-button>
+        <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 评分查询的弹窗 -->
+    <el-dialog v-model="evaDataDialogVisible"
+      width="1000"
+      append-to-body
+      :title="evaDataTitle"
+    >
+      <el-table :data="evaDataList">
+          <el-table-column prop="prop" label="指标名称" width="365" />
+          <el-table-column prop="averScore" label="平均分" width="200" />
+          <el-table-column prop="minScore" label="最低分" width="200"/>
+          <el-table-column prop="maxScore" label="最高分" width="200"/>
+      </el-table>
+      <template #footer>
+        <el-button @click="evaDataDialogVisible = false">关闭</el-button>
+      </template>
+    </el-dialog>
 
     <el-pagination
       v-model:current-page="pageData.current"
@@ -139,22 +158,32 @@ import PageTitle from "@/components/PageTitle.vue";
 import { Search } from "@element-plus/icons-vue";
 import { ref, onMounted } from "vue";
 import {
-  getPageData,
   batchRemove,
   removeOne,
   updateType,
   addType,
 } from "@/api/courseType";
 import {
+  getPageData,
+  getCourseEvaData
+} from '@/api/courseList';
+import {
   useSimpleConfirm,
   useSuccessTip,
-  useFailedTip,
 } from "@/utils/msgTip.js";
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
+import { getTime } from "@/utils/dateUtil";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+
+// 控制统计数据弹窗的开关
+const evaDataDialogVisible = ref(false)
+// 存当前展示的这门课程的评教的统计数据
+const evaDataList = ref([])
+// 存统计数据弹窗的title
+const evaDataTitle = ref('')
 
 // 当前正在操作的课程类型
 const checkedType = ref({});
@@ -164,8 +193,6 @@ const funMode = ref(0);
 const updateOrAddDialogVisible = ref(false);
 // 是否正在加载表格
 const isLoadingTable = ref(false);
-// 存勾选了的课程类型
-const handleTypes = ref([]);
 // 存分页请求数据
 const pageReqData = ref({
   size: 0,
@@ -189,6 +216,17 @@ const pageData = ref({
 const updateTimeArr = ref([]);
 // 存创建日期对应数组
 const createTimeArr = ref([]);
+
+/**
+ * 加载该门课程的评教统计数据并打开弹窗
+ * @param {Object} course 该门课程的基础信息
+ */
+const getThisEvaData = async(course) => {
+  evaDataTitle.value = `${course.name}  ${course.teacherMsg.name}  ${course.teacherMsg.department}`
+  let {dataArr} = await getCourseEvaData(course.id)
+  evaDataList.value = dataArr
+  evaDataDialogVisible.value = true
+}
 
 /**
  * 修改和新建的总方法
@@ -233,26 +271,6 @@ function removeOneType(type) {
 }
 
 /**
- * 批量删除课程类型
- */
-function batchRemoveMyRoles() {
-  if (isEmptyArr(handleTypes.value)) {
-    useFailedTip("未选中课程类型");
-    return;
-  }
-  useSimpleConfirm("你确定要删除选中课程类型吗？").then(async () => {
-    const idList = handleTypes.value.map((type) => type.id);
-    console.log(idList);
-    let res = await batchRemove(idList);
-    useSuccessTip("成功删除选中课程类型");
-    getMyPageData();
-  });
-}
-
-function handleSelectionChange(roles) {
-  handleTypes.value = roles;
-}
-/**
  * 生成快速选择的value
  * @param {Number} days 天数
  */
@@ -280,7 +298,7 @@ const shortcuts = [
 ];
 
 /**
- * 获取分页课程类型信息
+ * 获取分页课程列表信息
  */
 const getMyPageData = async () => {
   isLoadingTable.value = true;

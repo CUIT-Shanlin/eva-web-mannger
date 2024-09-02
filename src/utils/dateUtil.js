@@ -30,3 +30,16 @@ export function formatDate(date) {
     // 拼接成 yyyy-MM-dd 格式
     return `${year}-${month}-${day}`;
 }
+
+/**
+ * 处理日期字符串 将完整日期字符串转成yyyy-MM-DD格式
+ * @param {string} dateString 日期字符串
+ * @returns 处理完之后的日期字符串
+ */
+export function getTime(dateString){
+    let parts = dateString.split(' ')[0].split('-');
+    let year = parts[0];
+    let month = parts[1];
+    let day = parts[2].trim(); // 去除字符串两端的空格
+    return `${year}-${month}-${day}`;
+}

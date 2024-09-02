@@ -1,4 +1,5 @@
 import request from '@/utils/request.js'
+import { getSemesterId } from '@/utils/service/semesterUtil';
 
 /**
  * 获取所有课程的基础信息（仅有id和名称）
@@ -23,5 +24,15 @@ export function getPageData(reqData = {page: 0,size: 0,queryObj: {}}){
         url: '/courses',
         method: 'POST',
         data: reqData
+    })
+}
+
+/**
+ * 获取一门课程的评教统计
+ * @param {Number | string} id 一门课程的id
+ */
+export function getCourseEvaData(id = -1){
+    return request({
+        url: `/course/eva?semId=${getSemesterId()}&id=${id}`
     })
 }
