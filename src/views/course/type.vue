@@ -83,7 +83,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-button @click="batchRemoveMyRoles()">批量删除</el-button>
+    <el-button @click="batchRemoveMyTypes()">批量删除</el-button>
 
     <!-- 新建/修改弹窗 -->
     <teleport to="body">
@@ -236,7 +236,7 @@ function removeOneType(type) {
 /**
  * 批量删除课程类型
  */
-function batchRemoveMyRoles() {
+function batchRemoveMyTypes() {
   if (isEmptyArr(handleTypes.value)) {
     useFailedTip("未选中课程类型");
     return;
@@ -250,8 +250,8 @@ function batchRemoveMyRoles() {
   });
 }
 
-function handleSelectionChange(roles) {
-  handleTypes.value = roles;
+function handleSelectionChange(types) {
+  handleTypes.value = types;
 }
 /**
  * 生成快速选择的value
