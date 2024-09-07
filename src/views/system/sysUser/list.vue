@@ -49,7 +49,7 @@
           txt="新建用户"
           :is-large="true"
           default-color="rgb(255,97,117)"
-          @click="showFunDialog({info:{}}, 1)"
+          @click="showFunDialog({info:{}}, ADD_MODE)"
           ico="&#xe712;"
         />
       </div>
@@ -119,13 +119,13 @@
               txt="查看"
               :default-color="getRandColor()"
               :is-large="true"
-              @click="showFunDialog(scope.row, 2)"
+              @click="showFunDialog(scope.row, CHECK_MODE)"
             />
             <my-common-btn
               txt="修改"
               :default-color="getRandColor()"
               :is-large="true"
-              @click="showFunDialog(scope.row, 0)"
+              @click="showFunDialog(scope.row, UPDATE_MODE)"
             />
             <el-popover placement="left" :width="200" trigger="hover">
               <template #reference>
@@ -216,26 +216,26 @@
         <el-form label-width="80px">
           <el-form-item label="姓名">
             <el-input v-model="checkedUser.info.name" placeholder="请输入姓名"
-            :disabled="updateOrAddProp.fun === 2"></el-input>
+            :disabled="updateOrAddProp.fun === CHECK_MODE"></el-input>
           </el-form-item>
           <el-form-item label="用户名">
             <el-input v-model="checkedUser.info.username" placeholder="请输入用户名"
             @change="checkUsername(checkedUser.info.username)"
-            :disabled="updateOrAddProp.fun === 2"></el-input>
+            :disabled="updateOrAddProp.fun === CHECK_MODE"></el-input>
             <div class="tipMsg">{{updateOrAddProp.usernameMsg}}</div>
           </el-form-item>
-          <el-form-item label="密码" v-if="!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0">
+          <el-form-item label="密码" v-if="!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === UPDATE_MODE">
             <el-link type="primary"
             @click="updateOrAddProp.isUpdatePwd = !updateOrAddProp.isUpdatePwd">修改密码</el-link>
           </el-form-item>
-          <el-form-item :label="updateOrAddProp.fun === 0 ? '新密码' : '密码'" 
-          v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0) && updateOrAddProp.fun !== 2">
+          <el-form-item :label="updateOrAddProp.fun === UPDATE_MODE ? '新密码' : '密码'" 
+          v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === UPDATE_MODE) && updateOrAddProp.fun !== CHECK_MODE">
             <el-input v-model="checkedUser.info.password" placeholder="请输入密码"
             @change="checkNewPwd(checkedUser.info.password)" type="password" show-password></el-input>
             <div class="tipMsg">{{updateOrAddProp.pwdMsg}}</div>
           </el-form-item>
-          <el-form-item label="重复密码" v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === 0)
-          && updateOrAddProp.fun !== 2">
+          <el-form-item label="重复密码" v-if="!(!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === UPDATE_MODE)
+          && updateOrAddProp.fun !== CHECK_MODE">
             <el-input v-model="updateOrAddProp.againPwd" placeholder="请再次输入相同密码"
             @change="checkAgainPwd(updateOrAddProp.againPwd)" type="password" show-password></el-input>
             <div class="tipMsg">{{updateOrAddProp.againPwdMsg}}</div>
@@ -245,7 +245,7 @@
             v-model="checkedUser.info.department"
             filterable
             placeholder="请输入学院名称"
-            :disabled="updateOrAddProp.fun === 2"
+            :disabled="updateOrAddProp.fun === CHECK_MODE"
             >
             <el-option
             v-for="department in departments"
@@ -256,36 +256,36 @@
             </el-select>
           </el-form-item>
           <el-form-item label="性别">
-            <el-radio-group v-model="checkedUser.info.sex" :disabled="updateOrAddProp.fun === 2">
+            <el-radio-group v-model="checkedUser.info.sex" :disabled="updateOrAddProp.fun === CHECK_MODE">
               <el-radio :value="1" >男</el-radio>
               <el-radio :value="0">女</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="电话号码">
             <el-input v-model="checkedUser.info.phone" placeholder="请输入电话号码"
-            :disabled="updateOrAddProp.fun === 2"></el-input>
-            <div class="tipMsg" v-if="updateOrAddProp.fun !== 2"
+            :disabled="updateOrAddProp.fun === CHECK_MODE"></el-input>
+            <div class="tipMsg" v-if="updateOrAddProp.fun !== CHECK_MODE"
             v-text="isPhone(checkedUser.info.phone) ? '✔️ 电话格式正确' : '* 非法电话号码'"></div>
           </el-form-item>
           <el-form-item label="邮箱地址">
             <el-input v-model="checkedUser.info.email" placeholder="请输入邮箱地址"
-            :disabled="updateOrAddProp.fun === 2"></el-input>
-            <div class="tipMsg" v-if="updateOrAddProp.fun !== 2"
+            :disabled="updateOrAddProp.fun === CHECK_MODE"></el-input>
+            <div class="tipMsg" v-if="updateOrAddProp.fun !== CHECK_MODE"
             v-text="isEmail(checkedUser.info.email) ? '✔️ 邮箱格式正确' : '* 非法邮箱地址'"></div>
           </el-form-item>
           <el-form-item label="职称">
             <el-input v-model="checkedUser.info.profTitle"
             placeholder="请输入职称，例如：教授等（非必填）"
-            :disabled="updateOrAddProp.fun === 2"></el-input>
+            :disabled="updateOrAddProp.fun === CHECK_MODE"></el-input>
           </el-form-item>
-          <el-form-item label="创建时间" v-if="updateOrAddProp.fun !== 1">
+          <el-form-item label="创建时间" v-if="updateOrAddProp.fun !== ADD_MODE">
             <el-input v-model="checkedUser.info.createTime" disabled></el-input>
           </el-form-item>
-          <el-form-item label="修改时间" v-if="updateOrAddProp.fun !== 1">
+          <el-form-item label="修改时间" v-if="updateOrAddProp.fun !== ADD_MODE">
             <el-input v-model="checkedUser.info.updateTime" disabled></el-input>
           </el-form-item>
         </el-form>
-        <template #footer v-if="updateOrAddProp.fun !== 2">
+        <template #footer v-if="updateOrAddProp.fun !== CHECK_MODE">
           <el-button type="primary" :disabled="!totalCheck()" @click="updateOrAddThisUser()">保存</el-button>
           <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
         </template>
@@ -314,6 +314,11 @@ import { formatDate } from "@/utils/dateUtil";
 import { getPageData, removeOne, doAssign, getScoreMsg, isExistUsername, updateUser, updateUserStatus, addUser } from "@/api/user";
 import { getAllRoles } from "@/api/role";
 import { getAllDepartments } from '@/api/other';
+import {
+  UPDATE_MODE,
+  ADD_MODE,
+  CHECK_MODE,
+} from "@/utils/service/staticData";
 import { getMyAvatar } from "@/utils/service/userUtil";
 import { getRandomNumber } from "@/utils/randomUtil";
 import { useSimpleConfirm, useSuccessTip, useInfoTip } from "@/utils/msgTip.js";
@@ -330,7 +335,7 @@ const isLoadingTable = ref(false);
 
 // 用于确定弹窗格式
 const updateOrAddProp = ref({
-  fun: 0,// 确定弹窗的功能，0：修改 1：增加 2：查看
+  fun: UPDATE_MODE,// 确定弹窗的功能，0：修改 1：增加 2：查看
   isUsername: true,// 用户名是否合法
   isUpdatePwd: 0,
   againPwd: '',
@@ -498,7 +503,7 @@ const isThisExist = async(username)=>{
  * 初始化修改弹窗
  * @param {Object} user 待修改的用户 
  */
-function showFunDialog(user, fun = 0){
+function showFunDialog(user, fun = CHECK_MODE){
   checkedUser.value = deepCopy(user)
   tmpOriginUsername = user.info.username
   updateOrAddProp.value = {
@@ -518,12 +523,12 @@ function showFunDialog(user, fun = 0){
  * 获取功能弹窗的title
  * @param fun 弹窗功能
  */
-function getFunTitle(user = {info: {}}, fun = 0){
-  if(fun === 0){
+function getFunTitle(user = {info: {}}, fun = CHECK_MODE){
+  if(fun === UPDATE_MODE){
     return `修改用户 “${user.info.name}” `
-  }else if(fun === 1){
+  }else if(fun === ADD_MODE){
     return '新建用户'
-  } else if(fun === 2){
+  } else if(fun === CHECK_MODE){
     return '查看详情'
   }
 }
