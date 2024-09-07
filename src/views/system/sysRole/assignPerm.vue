@@ -72,9 +72,9 @@ let oldMenuIdList = ref([])
 // 拿到原本就有的菜单id列表(无子节点)
 
 const getMyMenuIds = async()=>{
-    let {dataArr} = await getMenuIdListByRoleId(role.value.id)
+    let res = await getMenuIdListByRoleId(role.value.id)
     // 将旧数据拿到默认选中里面
-    oldMenuIdList.value = dataArr
+    oldMenuIdList.value = res
 }
 
 // 获取到所有的树型菜单列表
