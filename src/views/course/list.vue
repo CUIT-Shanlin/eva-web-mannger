@@ -170,12 +170,12 @@
     <!-- 评分查询的弹窗 -->
     <el-dialog
       v-model="evaDataDialogVisible"
-      width="1000"
+      width="1200"
       append-to-body
       :title="evaDataTitle"
     >
       <el-table :data="evaDataList">
-        <el-table-column prop="prop" label="指标名称" width="365" />
+        <el-table-column prop="prop" label="指标名称" width="565" />
         <el-table-column prop="averScore" label="平均分" width="200" />
         <el-table-column prop="minScore" label="最低分" width="200" />
         <el-table-column prop="maxScore" label="最高分" width="200" />
