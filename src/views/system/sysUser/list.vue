@@ -534,8 +534,8 @@ function getFunTitle(user = {info: {}}, fun = 0){
  */
 const showScoreMsg = async(user)=>{
   checkedUser.value = user;
-  let {dataArr} = await getScoreMsg(user.info.id)
-  scoreMsg.value = dataArr
+  let data = await getScoreMsg(user.info.id)
+  scoreMsg.value = data
   scoreDialogVisible.value = true;
 }
 
@@ -577,16 +577,16 @@ function handleCheckAllChange() {
  * 初始化学院信息
  */
 const initDepartments = async()=>{
-  let {dataArr} = await getAllDepartments()
-  departments.value = dataArr
+  let res = await getAllDepartments()
+  departments.value = res
 }
 
 /**
  * 初始化 角色信息
  */
 const initRoles = async () => {
-  let { dataArr } = await getAllRoles();
-  allRoles.value = dataArr;
+  let res = await getAllRoles();
+  allRoles.value = res;
 };
 
 /**
