@@ -3,7 +3,7 @@
   <PageTitle content="评教模板列表" />
   <div class="templateAllSty">
     <div class="funBar">
-      <el-button type="primary" @click="initDialog({}, 1)">新建</el-button>
+      <el-button type="primary" @click="initDialog({}, ADD_MODE)">新建</el-button>
       <span class="iptFuns">
         <el-input
           v-model="pageReqData.queryObj.keyword"
@@ -66,7 +66,7 @@
           <el-link
             class="iconfont operation"
             type="primary"
-            @click="initDialog(scope.row, 0)"
+            @click="initDialog(scope.row, UPDATE_MODE)"
           >
             编辑模板
           </el-link>
@@ -87,7 +87,7 @@
       v-model="updateOrAddDialogVisible"
       width="650"
       append-to-body
-      :title="funMode === 0 ? '修改模板' : '新建模板'"
+      :title="funMode === UPDATE_MODE ? '修改模板' : '新建模板'"
     >
       <el-form label-width="80px">
         <el-form-item label="模板名称">
@@ -151,6 +151,10 @@ import {
   useSuccessTip,
   useFailedTip,
 } from "@/utils/msgTip.js";
+import {
+  UPDATE_MODE,
+  ADD_MODE,
+} from "@/utils/service/staticData";
 import { isEmptyArr, deepCopy, addSuffixToDuplicates, removeSpaceStrToArr } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
 
@@ -159,7 +163,7 @@ const selectable = (row) => !row.isPreventRemove;
 // 当前正在操作的评教模板
 const checkedTemplate = ref({});
 // 控制弹窗功能 0: 修改，1：新建
-const funMode = ref(0);
+const funMode = ref(UPDATE_MODE);
 // 控制弹窗的开启
 const updateOrAddDialogVisible = ref(false);
 // 是否正在加载表格
@@ -226,7 +230,7 @@ const updateOrAddRole = async () => {
   let msg = "";
   // 去除空白指标
   checkedTemplate.value.props = JSON.stringify(removeSpaceStrToArr(myProps.value))
-  if (funMode.value === 0) {
+  if (funMode.value === UPDATE_MODE) {
     let res = await updateTemplate(template);
     msg = `成功修改模板 “${template.name}”`;
   } else {
@@ -243,7 +247,7 @@ const updateOrAddRole = async () => {
  * @param {Object} template 操作的评教模板
  * @param {Number} fun 弹窗功能 0：修改，1：新建
  */
-function initDialog(template = {}, fun = 0) {
+function initDialog(template = {}, fun = UPDATE_MODE) {
   funMode.value = fun;
   try{
     myProps.value = JSON.parse(template.props)
