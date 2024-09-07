@@ -19,7 +19,7 @@
         <el-select v-model="treeReqData.status" placeholder="筛选状态"
         @change="getMyTreeData" clearable>
         <el-option
-          v-for="item in [{label: '正常', value: 0},{label: '禁用', value: 1}]"
+          v-for="item in [{label: '正常', value: NORMAL_STATE},{label: '禁用', value: DISABLED_STATE}]"
           :key="item.value"
           :label="item.label"
           :value="item.value"
@@ -47,7 +47,7 @@
       <el-table-column prop="component" label="组件路径"></el-table-column>
       <el-table-column label="状态" width="80">
         <template #default="scope">
-          <div v-if="scope.row.status === 0" class="rightStatus">正常</div>
+          <div v-if="scope.row.status === NORMAL_STATE" class="rightStatus">正常</div>
           <div v-else class="wrongStatus">禁用</div>
         </template>
       </el-table-column>
@@ -140,8 +140,8 @@
           </el-form-item>
           <el-form-item label="菜单状态" v-if="funMode === UPDATE_MODE">
             <el-radio-group v-model="checkedMenu.status">
-              <el-radio :value="0">正常</el-radio>
-              <el-radio :value="1">禁用</el-radio>
+              <el-radio :value="NORMAL_STATE">正常</el-radio>
+              <el-radio :value="DISABLED_STATE">禁用</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="创建时间" v-if="funMode === UPDATE_MODE">
@@ -179,7 +179,9 @@ import {
   UPDATE_MODE,
   LIB_TYPE,
   MENU_TYPE,
-  BTN_TYPE
+  BTN_TYPE,
+  NORMAL_STATE,
+  DISABLED_STATE
 } from '@/utils/service/staticData.js';
 import { useRouter } from "vue-router";
 
