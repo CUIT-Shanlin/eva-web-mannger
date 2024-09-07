@@ -100,12 +100,12 @@
           </el-form-item>
           <el-form-item label="菜单类型">
             <el-radio-group v-model="checkedMenu.type">
-              <el-radio :value="0">目录</el-radio>
-              <el-radio :value="1">菜单</el-radio>
-              <el-radio :value="2">按钮</el-radio>
+              <el-radio :value="LIB_TYPE">目录</el-radio>
+              <el-radio :value="MENU_TYPE">菜单</el-radio>
+              <el-radio :value="BTN_TYPE">按钮</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="图标" v-if="checkedMenu.type !== 2">
+          <el-form-item label="图标" v-if="checkedMenu.type !== BTN_TYPE">
             <el-select placeholder="请选择图标" v-model="checkedMenu.icon" clearable>
               <el-option
                 v-for="icon in allIcons"
@@ -129,13 +129,13 @@
           <el-form-item label="菜单名称">
             <el-input v-model="checkedMenu.name"></el-input>
           </el-form-item>
-          <el-form-item label="路由地址"  v-if="checkedMenu.type !== 2">
+          <el-form-item label="路由地址"  v-if="checkedMenu.type !== BTN_TYPE">
             <el-input v-model="checkedMenu.path"></el-input>
           </el-form-item>
-          <el-form-item label="组件路径"  v-if="checkedMenu.type !== 2">
+          <el-form-item label="组件路径"  v-if="checkedMenu.type !== BTN_TYPE">
             <el-input v-model="checkedMenu.component"></el-input>
           </el-form-item>
-          <el-form-item label="权限标识" v-if="checkedMenu.type === 0">
+          <el-form-item label="权限标识" v-if="checkedMenu.type === BTN_TYPE">
             <el-input v-model="checkedMenu.perms"></el-input>
           </el-form-item>
           <el-form-item label="菜单状态" v-if="funMode === UPDATE_MODE">
@@ -172,7 +172,15 @@ import {
 } from "@/utils/msgTip.js";
 import { isEmptyArr, deepCopy, isEmptyObj } from "@/utils/objUtil";
 import { isSpace, removeSpace } from "@/utils/stringUtil";
-import { ADD_MODE, allIcons, getIconName, UPDATE_MODE } from '@/utils/service/staticData.js';
+import { 
+  allIcons,
+  getIconName,
+  ADD_MODE,
+  UPDATE_MODE,
+  LIB_TYPE,
+  MENU_TYPE,
+  BTN_TYPE
+} from '@/utils/service/staticData.js';
 import { useRouter } from "vue-router";
 
 const router = useRouter();

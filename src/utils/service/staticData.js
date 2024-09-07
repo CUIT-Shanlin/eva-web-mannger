@@ -105,3 +105,10 @@ export const allCourseNature = [
         name: '其他'
     },
 ]
+
+/**
+ * 用于确定菜单类型
+ */
+export const LIB_TYPE = 0
+export const MENU_TYPE = 1
+export const BTN_TYPE = 2
