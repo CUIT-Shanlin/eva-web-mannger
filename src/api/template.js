@@ -66,3 +66,13 @@ export function addTemplate(template = {}){
         data: template
     })
 }
+
+/**
+ * 获取所有评教模板的基础信息
+ * @returns 
+ */
+export function getAllTemplates(){
+    return request({
+        url: '/evaluate/template/all'
+    })
+}

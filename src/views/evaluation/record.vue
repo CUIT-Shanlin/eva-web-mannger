@@ -259,12 +259,14 @@ import { getAllDepartments } from "@/api/other";
 import { getEvaSituation, getEvaScoreSituation, getPageData, removeOne, batchRemove } from '@/api/evaluation';
 import { choreDateStr } from "@/utils/dateUtil";
 import { removeSpace, replaceStr } from "@/utils/stringUtil";
-import { isEmptyArr } from "@/utils/objUtil";
+import { isEmptyArr, isEmptyObj } from "@/utils/objUtil";
 import { useSimpleConfirm, useSuccessTip, useFailedTip } from "@/utils/msgTip";
 import { onMounted, ref } from "vue";
+import { useRoute } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
 import * as echarts from "echarts";
 
+const route = useRoute()
 // 存所有老师的基础信息
 const allUserMsg = ref([]);
 
@@ -660,7 +662,14 @@ onMounted(() => {
   initCharts();
   getMyPageData();
   createOptions(1, 4,options.value)
-  console.log(options.value)
+  // 初始化参数
+  const query = route.query
+  if(!isEmptyObj(query)){
+    const queryObj = pageReqData.value.queryObj
+    queryObj.courseIds.push(Number(query.courseId))
+    queryObj.teacherIds.push(Number(query.teacherId))
+    queryObj.departmentName = query.department
+  }
 });
 </script>
 

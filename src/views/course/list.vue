@@ -1,9 +1,8 @@
 <!-- 课程列表页面 -->
 <template>
   <PageTitle content="课程列表" />
-  <div class="typeAllSty">
+  <div class="courseListAllSty">
     <div class="funBar">
-      <el-button type="primary" @click="initDialog({}, 1)">新建</el-button>
       <span class="iptFuns">
         <el-input
           v-model="pageReqData.queryObj.keyword"
@@ -16,6 +15,32 @@
             <el-button :icon="Search" @click="getMyPageData()" />
           </template>
         </el-input>
+        <el-select
+          clearable
+          v-model="pageReqData.queryObj.departmentName"
+          placeholder="请选择课程所在的学院名"
+          @change="getMyPageData"
+        >
+          <el-option
+            v-for="department in allDepartments"
+            :key="department"
+            :label="department"
+            :value="department"
+          />
+        </el-select>
+        <el-select
+          clearable
+          v-model="pageReqData.queryObj.templateId"
+          placeholder="请选择课程模板"
+          @change="getMyPageData"
+        >
+          <el-option
+            v-for="template in allTemplates"
+            :key="template.id"
+            :label="template.name"
+            :value="template.id"
+          />
+        </el-select>
         <el-date-picker
           v-model="createTimeArr"
           type="daterange"
@@ -46,9 +71,10 @@
       class="tableBox"
       @selection-change="handleSelectionChange"
     >
+      <el-table-column type="selection" width="50"/>
       <el-table-column prop="name" label="课程名称" width="200"/>
       <el-table-column prop="teacherMsg.name" label="教学老师" width="120" />
-      <el-table-column prop="templateMsg.name" label="评教模板" width="300" />
+      <el-table-column prop="templateMsg.name" label="评教模板" width="250" />
       <el-table-column prop="teacherMsg.department" label="学院" width="200" />
       <el-table-column
         label="创建日期"
@@ -72,14 +98,14 @@
           <el-link
             class="operation"
             type="primary"
-            @click="removeOneType(scope.row)"
+            @click="goToMyRecord(scope.row)"
           >
             评教记录
           </el-link>
           <el-link
             class="operation"
             type="primary"
-            @click="initDialog(scope.row, 0)"
+            @click="initDialog(scope.row.id)"
           >
             课程详情
           </el-link>
@@ -87,37 +113,46 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-button @click="batchUpdateMyTemplate()">批量修改课程模板</el-button>
 
-    <!-- 新建/修改弹窗 -->
+    <!-- 课程详情弹窗 -->
     <el-dialog
       width="500"
-      v-model="updateOrAddDialogVisible"
+      v-model="detailDialogVisible"
       append-to-body
-      :title="funMode === 0 ? '修改课程类型' : '新建课程类型'"
+      title="课程详情"
     >
       <el-form label-width="80px">
-        <el-form-item label="姓名">
-          <el-input
-            v-model="checkedType.name"
-            placeholder="请输入类型名称"
-          ></el-input>
+        <el-form-item label="课程名称">
+          <el-input v-model="checkedCourse.courseBaseMsg.name"></el-input>
         </el-form-item>
-        <el-form-item label="描述">
-          <el-input
-            v-model="checkedType.description"
-            placeholder="请输入该课程类型描述信息"
-          ></el-input>
+        <el-form-item label="教学老师">
+          <el-input v-model="checkedCourse.courseBaseMsg.teacherMsg.name"></el-input>
         </el-form-item>
-        <el-form-item label="创建时间" v-if="funMode === 0">
-          <el-input v-model="checkedType.createTime" disabled></el-input>
+        <el-form-item label="课程模板">
+          <el-input v-model="checkedCourse.courseBaseMsg.templateMsg.name"></el-input>
         </el-form-item>
-        <el-form-item label="修改时间" v-if="funMode === 0">
-          <el-input v-model="checkedType.updateTime" disabled></el-input>
+        <el-form-item label="课程性质">
+          <el-input :model-value="getNature(checkedCourse.courseBaseMsg.nature)"></el-input>
+        </el-form-item>
+        <el-form-item label="课程类型">
+          <el-input :model-value="getTypeNameStr(checkedCourse.typeList)"></el-input>
+        </el-form-item>
+        <el-form-item label="课程教室">
+          <el-input :model-value="getClassroomStr(checkedCourse.courseBaseMsg.classroomList)"></el-input>
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-input v-model="checkedCourse.courseBaseMsg.createTime"></el-input>
+        </el-form-item>
+        <el-form-item label="修改时间">
+          <el-input v-model="checkedCourse.courseBaseMsg.updateTime"></el-input>
+        </el-form-item>
+        <el-form-item label="课程时间:">
+          <el-input type="textarea" :rows="5" :model-value="getDatesStr(checkedCourse.dateList)"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button type="primary" @click="updateOrAddType()">保存</el-button>
-        <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
+        <el-button @click="detailDialogVisible = false">关闭</el-button>
       </template>
     </el-dialog>
 
@@ -158,19 +193,19 @@ import PageTitle from "@/components/PageTitle.vue";
 import { Search } from "@element-plus/icons-vue";
 import { ref, onMounted } from "vue";
 import {
-  batchRemove,
-  removeOne,
-  updateType,
-  addType,
-} from "@/api/courseType";
-import {
   getPageData,
-  getCourseEvaData
+  getCourseEvaData,
+  getOneCourseDetail,
+  batchUpdateTemplate
 } from '@/api/courseList';
+import { getAllDepartments } from "@/api/other";
+import { getAllTemplates } from '@/api/template'
 import {
   useSimpleConfirm,
   useSuccessTip,
+  useFailedTip
 } from "@/utils/msgTip.js";
+import { getChineseNum, getWeekByNum } from '@/utils/numUtil';
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
 import { getTime } from "@/utils/dateUtil";
@@ -184,13 +219,19 @@ const evaDataDialogVisible = ref(false)
 const evaDataList = ref([])
 // 存统计数据弹窗的title
 const evaDataTitle = ref('')
+// 存已选中的课程
+const handleCourses = ref([])
 
-// 当前正在操作的课程类型
-const checkedType = ref({});
-// 控制弹窗功能 0: 修改，1：新建
-const funMode = ref(0);
+// 存所有学院名
+const allDepartments = ref([]);
+
+// 存所有评教模板的基础信息
+const allTemplates = ref([]);
+
+// 当前正在操作的课程
+const checkedCourse = ref({});
 // 控制弹窗的开启
-const updateOrAddDialogVisible = ref(false);
+const detailDialogVisible = ref(false);
 // 是否正在加载表格
 const isLoadingTable = ref(false);
 // 存分页请求数据
@@ -199,6 +240,8 @@ const pageReqData = ref({
   page: 1,
   queryObj: {
     keyword: "",
+    departmentName: '',
+    templateId: null,
     startCreateTime: null,
     endCreateTime: null,
     startUpdateTime: null,
@@ -218,6 +261,100 @@ const updateTimeArr = ref([]);
 const createTimeArr = ref([]);
 
 /**
+ * 批量修改课程的评教模板
+ */
+ function batchUpdateMyTemplate() {
+  if (isEmptyArr(handleCourses.value)) {
+    useFailedTip("未选中课程");
+    return;
+  }
+  useSimpleConfirm("你确定要将选中课程的评教模板修改为吗？").then(async () => {
+    const idList = handleCourses.value.map((course) => course.id);
+    let res = await batchUpdateTemplate(idList);
+    useSuccessTip("成功将选中课程的评教模板修改为");
+    getMyPageData();
+  });
+}
+
+function handleSelectionChange(courses) {
+  handleCourses.value = courses;
+}
+
+function getNature(nature = 0){
+  return nature === 0 ? '理论课' : '实验课'
+}
+
+/**
+ * 生成教室字符串的组合字符串，eg: 'H1201、H4120'
+ * @param {Array} classroomArr 课程教室的字符串数组 
+ */
+ function getClassroomStr(classroomArr = []){
+  let str = ''
+  let i = 0
+  classroomArr.forEach(classroom => {
+    if(i === 0){
+      str = classroom
+    }else{
+      str = `${str}、${classroom}`
+    }
+    i++
+  })
+  return str
+}
+
+/**
+ * 生成课程时间的组合字符串
+ * @param {Array} dateList 时间数组 
+ */
+function getDatesStr(dateList = []){
+  let str = ''
+  let i = 0
+  dateList.forEach(date => {
+    let oneTime = `${date.startWeek} - ${date.endWeek}周 星期${getWeekByNum(date.day)} 第${getChineseNum(date.startTime)}到${getChineseNum(date.endTime)}节课`
+    if(i === 0){
+      str = oneTime
+    }else{
+      str = `${str}、\n\n${oneTime}`
+    }
+    i++
+  })
+  return str
+}
+
+/**
+ * 生成类型名称的组合字符串，eg: '编程类、实践类'
+ * @param {Array} typeArr 课程类型类型数组 
+ */
+function getTypeNameStr(typeArr = []){
+  let str = ''
+  let i = 0
+  typeArr.forEach(type => {
+    if(i === 0){
+      str = type.name
+    }else{
+      str = `${str}、${type.name}`
+    }
+    i++
+  })
+  return str
+}
+
+/**
+ * 跳转到 该门课程对应的评教记录页面
+ * @param {Object} course 课程信息
+ */
+function goToMyRecord(course = {}){
+  router.push({
+    path:'/evaluation/record',
+    query:{
+      courseId: course.id,
+      teacherId: course.teacherMsg.id,
+      department: course.teacherMsg.department
+    }
+  })
+}
+
+/**
  * 加载该门课程的评教统计数据并打开弹窗
  * @param {Object} course 该门课程的基础信息
  */
@@ -228,46 +365,15 @@ const getThisEvaData = async(course) => {
   evaDataDialogVisible.value = true
 }
 
-/**
- * 修改和新建的总方法
- */
-const updateOrAddType = async () => {
-  const type = checkedType.value;
-  let msg = "";
-  if (funMode.value === 0) {
-    let res = await updateType(type);
-    msg = `成功修改课程类型 “${type.name}”`;
-  } else {
-    let res = await addType(type);
-    msg = "成功新建课程类型";
-  }
-  getMyPageData(); // 刷新页面
-  updateOrAddDialogVisible.value = false;
-  useSuccessTip(msg);
-};
 
 /**
  * 初始化弹窗
- * @param {Object} type 操作的课程类型
- * @param {Number} fun 弹窗功能 0：修改，1：新建
+ * @param {Number | string} courseId 操作课程的id
  */
-function initDialog(type = {}, fun = 0) {
-  funMode.value = fun;
-  checkedType.value = deepCopy(type);
-  updateOrAddDialogVisible.value = true;
-}
-
-/**
- * 删除单个课程类型
- * @param {Object} type 待删除课程类型
- */
-function removeOneType(type) {
-  useSimpleConfirm(`你确定要删除课程类型 “${type.name}” 吗？`).then(
-    async () => {
-      let res = await removeOne(type);
-      useSuccessTip(`成功删除课程类型 “${type.name}”`);
-    }
-  );
+const initDialog = async(courseId = -1) => {
+  let res = await getOneCourseDetail(courseId)
+  checkedCourse.value = res
+  detailDialogVisible.value = true;
 }
 
 /**
@@ -315,6 +421,12 @@ const getMyPageData = async () => {
 
 onMounted(() => {
   getMyPageData();
+  getAllDepartments().then(res => {
+    allDepartments.value = res.dataArr;
+  });
+  getAllTemplates().then(res => {
+    allTemplates.value = res
+  })
 });
 </script>
     
@@ -322,7 +434,7 @@ onMounted(() => {
 @import url("../../assets/font/iconfont.css");
 @import "../../styles/commonFlexStyles.scss";
 
-.typeAllSty {
+.courseListAllSty {
   background-color: #fff;
   overflow: auto;
   padding: 15px;
@@ -331,7 +443,7 @@ onMounted(() => {
     justify-content: space-between;
     .iptFuns {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       column-gap: 10px;
     }
   }

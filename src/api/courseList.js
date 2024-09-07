@@ -36,3 +36,31 @@ export function getCourseEvaData(id = -1){
         url: `/course/eva?semId=${getSemesterId()}&id=${id}`
     })
 }
+
+/**
+ * 获取一门课程的详细信息
+ * @param {Number | string} id 一门课程的id
+ * @returns 
+ */
+export function getOneCourseDetail(id = -1){
+    return request({
+        url: `/course?semId=${getSemesterId()}&id=${id}`
+    })
+}
+
+/**
+ * 批量修改课程的评教模板
+ *@param {number[]} [courseIdList=[]] 待修改评教模板的课程的id数组
+ * @param {Number | string} templateId 评教模板的id 
+ * @returns 
+ */
+export function batchUpdateTemplate(courseIdList = [], templateId = -1){
+    return request({
+        url: `/courses/template`,
+        method: 'PUT',
+        data:{
+            courseIdList,
+            templateId
+        }
+    })
+}
