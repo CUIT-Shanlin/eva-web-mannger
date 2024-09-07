@@ -3,7 +3,7 @@
   <PageTitle content="菜单列表" />
   <div class="roleAllSty">
     <div class="funBar">
-      <el-button type="primary" @click="initDialog({}, 1)">新建</el-button>
+      <el-button type="primary" @click="initDialog({}, ADD_MODE)">新建</el-button>
       <span class="iptFuns">
         <el-input
           v-model="treeReqData.keyword"
@@ -54,11 +54,11 @@
       <el-table-column prop="createTime" label="创建时间" sortable=""></el-table-column>
       <el-table-column label="操作" width="250">
         <template #default="scope">
-          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, 0)">
+          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, UPDATE_MODE)">
             <span class="ico">&#xe8cf;&nbsp;</span>
             修改
           </el-link>
-          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, 1)">
+          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, ADD_MODE)">
             <span class="ico">&#xe611;&nbsp;</span>
             新增
           </el-link>
@@ -135,19 +135,19 @@
           <el-form-item label="组件路径"  v-if="checkedMenu.type !== 2">
             <el-input v-model="checkedMenu.component"></el-input>
           </el-form-item>
-          <el-form-item label="权限标识" v-if="checkedMenu.type === 2">
+          <el-form-item label="权限标识" v-if="checkedMenu.type === 0">
             <el-input v-model="checkedMenu.perms"></el-input>
           </el-form-item>
-          <el-form-item label="菜单状态" v-if="funMode === 0">
+          <el-form-item label="菜单状态" v-if="funMode === UPDATE_MODE">
             <el-radio-group v-model="checkedMenu.status">
               <el-radio :value="0">正常</el-radio>
               <el-radio :value="1">禁用</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="创建时间" v-if="funMode === 0">
+          <el-form-item label="创建时间" v-if="funMode === UPDATE_MODE">
             <el-input v-model="checkedMenu.createTime" disabled></el-input>
           </el-form-item>
-          <el-form-item label="修改时间" v-if="funMode === 0">
+          <el-form-item label="修改时间" v-if="funMode === UPDATE_MODE">
             <el-input v-model="checkedMenu.updateTime" disabled></el-input>
           </el-form-item>
         </el-form>
@@ -172,7 +172,7 @@ import {
 } from "@/utils/msgTip.js";
 import { isEmptyArr, deepCopy, isEmptyObj } from "@/utils/objUtil";
 import { isSpace, removeSpace } from "@/utils/stringUtil";
-import { allIcons, getIconName } from '@/utils/service/staticData.js';
+import { ADD_MODE, allIcons, getIconName, UPDATE_MODE } from '@/utils/service/staticData.js';
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -182,7 +182,7 @@ const checkedMenu = ref({
   parentId: 0
 });
 // 控制弹窗功能 0: 修改，1：新建
-const funMode = ref(0);
+const funMode = ref(UPDATE_MODE);
 // 控制弹窗的开启
 const updateOrAddDialogVisible = ref(false);
 // 是否正在加载表格
@@ -227,7 +227,7 @@ function handleNodeClick(data){
 const updateOrAddMenu = async () => {
   const menu = checkedMenu.value;
   let msg = "";
-  if (funMode.value === 0) {
+  if (funMode.value === UPDATE_MODE) {
     let res = await updateMenu(menu);
     msg = `成功修改菜单 “${menu.name}”`;
   } else {
@@ -244,9 +244,9 @@ const updateOrAddMenu = async () => {
  * @param {Object} menu 操作的菜单
  * @param {Number} fun 弹窗功能 0：修改，1：新建
  */
-function initDialog(menu = {}, fun = 0) {
+function initDialog(menu = {}, fun = UPDATE_MODE) {
   // TODO 确定父菜单
-  if(fun === 1){
+  if(fun === ADD_MODE){
     checkedMenu.value = {}
     const myMenu = checkedMenu.value
     if(isEmptyObj(menu)){
@@ -261,7 +261,6 @@ function initDialog(menu = {}, fun = 0) {
     checkedMenu.value = deepCopy(menu);
   }
   funMode.value = fun;
-  console.log(checkedMenu.value)
   updateOrAddDialogVisible.value = true;
 }
 

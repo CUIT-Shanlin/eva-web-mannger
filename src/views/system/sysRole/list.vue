@@ -2,7 +2,7 @@
   <PageTitle content="角色列表" />
   <div class="roleAllSty">
     <div class="funBar">
-      <el-button type="primary" @click="initDialog({}, 1)">新建</el-button>
+      <el-button type="primary" @click="initDialog({}, ADD_MODE)">新建</el-button>
       <span class="iptFuns">
         <el-input
         v-model="pageReqData.queryObj.keyword"
@@ -62,7 +62,7 @@
       <el-table-column prop="updateTime" label="修改日期" width="200" sortable/>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, 0)">
+          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, UPDATE_MODE)">
             <span class="ico">&#xe8cf;&nbsp;</span>
             修改
           </el-link>
