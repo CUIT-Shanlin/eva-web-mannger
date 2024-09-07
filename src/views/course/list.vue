@@ -198,7 +198,7 @@
         v-model="handleCourseIds"
         filterable
         :filter-method="filterMethod"
-        filter-placeholder="请输入课程名称"
+        filter-placeholder="请输入课程名称或老师姓名"
         :data="allCourseMsg"
         :props="{
           key: 'id',
@@ -254,7 +254,6 @@ import {
   useFailedTip
 } from "@/utils/msgTip.js";
 import { getChineseNum, getWeekByNum } from '@/utils/numUtil';
-import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
 import { getTime } from "@/utils/dateUtil";
 import { useRouter } from "vue-router";
@@ -316,6 +315,15 @@ const updateTimeArr = ref([]);
 // 存创建日期对应数组
 const createTimeArr = ref([]);
 
+/**
+ * 穿梭框的自定义过滤功能
+ * @param {string} query 关键字
+ * @param {*} item 
+ */
+function filterMethod(query, item){
+  return item.name.toLowerCase().includes(query.toLowerCase()) ||
+  item.teacherName.toLowerCase().includes(query.toLowerCase())
+}
 
 function handleSelectionChange(courses = []){
   handleCourseIds.value = courses.map(course => course.id)
