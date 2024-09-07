@@ -438,6 +438,7 @@ const updateMyCourse = async () => {
   let res = await updateCourse(updatedCourse.value);
   useSuccessTip("成功修改课程信息");
   checkOrUpdateDialogVisible.value = false;
+  getMyPageData()
 };
 
 /**
