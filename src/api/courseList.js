@@ -2,12 +2,22 @@ import request from '@/utils/request.js'
 import { getSemesterId } from '@/utils/service/semesterUtil';
 
 /**
- * 获取所有课程的基础信息（仅有id和名称）
+ * 获取所有课程的基础信息（仅有id、名称和教学老师姓名）
  * @returns 
  */
 export function getAllBaseCourse(){
     return request({
         url: '/courses/all'
+    })
+}
+
+/**
+ * 获取所有学科的基础信息（仅有id和名称）
+ * @returns 
+ */
+export function getAllBaseSubject(){
+    return request({
+        url: '/courses/subject/all'
     })
 }
 

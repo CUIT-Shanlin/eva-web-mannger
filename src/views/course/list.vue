@@ -71,7 +71,7 @@
       class="tableBox"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="50"/>
+      <el-table-column type="selection" width="50" />
       <el-table-column prop="name" label="课程名称" width="200"/>
       <el-table-column prop="teacherMsg.name" label="教学老师" width="120" />
       <el-table-column prop="templateMsg.name" label="评教模板" width="250" />
@@ -113,7 +113,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-button @click="batchUpdateMyTemplate()">批量修改课程模板</el-button>
+    <el-button @click="batchUpdateVisible = true">批量修改课程模板</el-button>
 
     <!-- 课程详情弹窗 -->
     <el-dialog
@@ -173,6 +173,53 @@
       </template>
     </el-dialog>
 
+    <!-- 批量修改评教模板的弹窗 -->
+    <el-dialog v-model="batchUpdateVisible"
+      append-to-body
+      title="批量修改课程模板中"
+    >
+      <div class="chooseBox">
+        <el-select
+          clearable
+          v-model="changeTemplateId"
+          placeholder="请选择要改成的课程模板"
+          class="myChoose"
+        >
+          <el-option
+            v-for="template in allTemplates"
+            :key="template.id"
+            :label="template.name"
+            :value="template.id"
+          />
+        </el-select>
+      </div>
+
+      <el-transfer
+        v-model="handleCourseIds"
+        filterable
+        :filter-method="filterMethod"
+        filter-placeholder="请输入课程名称"
+        :data="allCourseMsg"
+        :props="{
+          key: 'id',
+        }"
+        :titles="['不进行修改的课程', '待修改模板的课程']"
+        @change="handleChange"
+        style="display: flex;justify-content: center;align-items: center;"
+      >
+        <template #default="{ option }">
+          <span>{{ option.name }} - {{option.teacherName}}</span>
+        </template>
+      </el-transfer>
+
+      <template #footer>
+        <el-button type="primary" @click="batchUpdateMyTemplate()" :disabled="changeTemplateId == null">保存</el-button>
+        <el-button @click="batchUpdateVisible = false">取消</el-button>
+      </template>
+    </el-dialog>
+
+
+
     <el-pagination
       v-model:current-page="pageData.current"
       v-model:page-size="pageData.size"
@@ -196,7 +243,8 @@ import {
   getPageData,
   getCourseEvaData,
   getOneCourseDetail,
-  batchUpdateTemplate
+  batchUpdateTemplate,
+  getAllBaseCourse
 } from '@/api/courseList';
 import { getAllDepartments } from "@/api/other";
 import { getAllTemplates } from '@/api/template'
@@ -213,14 +261,22 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+// 控制修改评教模板的弹窗的开关
+const batchUpdateVisible = ref(false)
+
 // 控制统计数据弹窗的开关
 const evaDataDialogVisible = ref(false)
 // 存当前展示的这门课程的评教的统计数据
 const evaDataList = ref([])
 // 存统计数据弹窗的title
 const evaDataTitle = ref('')
-// 存已选中的课程
-const handleCourses = ref([])
+// 存已选中的课程id数组
+const handleCourseIds = ref([])
+// 存用于统一修改的模板的id
+const changeTemplateId = ref(null)
+
+// 存所有的课程基础信息
+const allCourseMsg = ref([])
 
 // 存所有学院名
 const allDepartments = ref([]);
@@ -260,24 +316,22 @@ const updateTimeArr = ref([]);
 // 存创建日期对应数组
 const createTimeArr = ref([]);
 
+
+function handleSelectionChange(courses = []){
+  handleCourseIds.value = courses.map(course => course.id)
+}
+
 /**
  * 批量修改课程的评教模板
  */
  function batchUpdateMyTemplate() {
-  if (isEmptyArr(handleCourses.value)) {
-    useFailedTip("未选中课程");
-    return;
-  }
-  useSimpleConfirm("你确定要将选中课程的评教模板修改为吗？").then(async () => {
-    const idList = handleCourses.value.map((course) => course.id);
-    let res = await batchUpdateTemplate(idList);
-    useSuccessTip("成功将选中课程的评教模板修改为");
+  useSimpleConfirm('你确定要修改所有待修改课程的评教模板吗？').then(async () => {
+    const idList = handleCourseIds.value
+    let res = await batchUpdateTemplate(idList,changeTemplateId.value.id);
+    batchUpdateVisible.value = false
+    useSuccessTip('成功修改所有待修改课程的评教模板');
     getMyPageData();
   });
-}
-
-function handleSelectionChange(courses) {
-  handleCourses.value = courses;
 }
 
 function getNature(nature = 0){
@@ -427,6 +481,9 @@ onMounted(() => {
   getAllTemplates().then(res => {
     allTemplates.value = res
   })
+  getAllBaseCourse().then(res => {
+    allCourseMsg.value = res
+  })
 });
 </script>
     
@@ -453,6 +510,13 @@ onMounted(() => {
     margin-bottom: 35px;
   }
 }
+.chooseBox{
+  @include flex-center;
+  .myChoose{
+    margin: 20px 0;
+    width: 80%;
+  }
+}
 .myPage {
   float: right;
 }
@@ -467,6 +531,9 @@ onMounted(() => {
     td {
       color: rgb(89, 89, 89);
     }
+  }
+  .el-transfer-panel{
+    width: auto;
   }
 }
 .operation {
