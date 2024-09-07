@@ -444,8 +444,8 @@ function goToMyRecord(course = {}) {
  */
 const getThisEvaData = async (course) => {
   evaDataTitle.value = `${course.name}  ${course.teacherMsg.name}  ${course.teacherMsg.department}`;
-  let { dataArr } = await getCourseEvaData(course.id);
-  evaDataList.value = dataArr;
+  let res = await getCourseEvaData(course.id);
+  evaDataList.value = res;
   evaDataDialogVisible.value = true;
 };
 
@@ -505,7 +505,7 @@ const getMyPageData = async () => {
 onMounted(() => {
   getMyPageData();
   getAllDepartments().then((res) => {
-    allDepartments.value = res.dataArr;
+    allDepartments.value = res;
   });
   getAllTemplates().then((res) => {
     allTemplates.value = res;
