@@ -254,7 +254,7 @@
 <script setup>
 import PageTitle from "@/components/PageTitle.vue";
 import { getAllBaseUser } from "@/api/user";
-import { getAllBaseCourse } from "@/api/courseList";
+import { getAllBaseSubject } from "@/api/courseList";
 import { getAllDepartments } from "@/api/other";
 import { getEvaSituation, getEvaScoreSituation, getPageData, removeOne, batchRemove } from '@/api/evaluation';
 import { choreDateStr } from "@/utils/dateUtil";
@@ -651,13 +651,13 @@ function getCircleOption( title = '统计情况',
 
 onMounted(() => {
   getAllBaseUser().then((res) => {
-    allUserMsg.value = res.dataArr;
+    allUserMsg.value = res;
   });
-  getAllBaseCourse().then((res) => {
-    allCourseMsg.value = res.dataArr;
+  getAllBaseSubject().then((res) => {
+    allCourseMsg.value = res;
   });
   getAllDepartments().then((res) => {
-    allDepartments.value = res.dataArr;
+    allDepartments.value = res;
   });
   initCharts();
   getMyPageData();
