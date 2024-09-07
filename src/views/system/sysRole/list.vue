@@ -52,8 +52,8 @@
         <template #default="scope">
           <el-switch
           v-model="scope.row.status"
-          :active-value="0"
-          :inactive-value="1"
+          :active-value="NORMAL_STATE"
+          :inactive-value="DISABLED_STATE"
           @change="updateThisRoleStatus(scope.row)"
           />
         </template>
@@ -129,6 +129,8 @@ import { useSimpleConfirm, useSuccessTip, useInfoTip, useFailedTip } from "@/uti
 import {
   UPDATE_MODE,
   ADD_MODE,
+  NORMAL_STATE,
+  DISABLED_STATE
 } from "@/utils/service/staticData";
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
@@ -264,7 +266,7 @@ const shortcuts = [
  */
 const updateThisRoleStatus = async(role)=>{
   let res = await updateRoleStatus(role.id, role.status)
-  if(role.status === 0){
+  if(role.status === NORMAL_STATE){
     useSuccessTip(`成功启用角色 “${role.roleName}”`)
   }else{
     useInfoTip(`成功禁用角色 “${role.roleName}”`)
