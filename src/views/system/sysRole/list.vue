@@ -83,7 +83,7 @@
 
     <!-- 新建/修改弹窗 -->
     <teleport to="body">
-      <el-dialog width="500" v-model="updateOrAddDialogVisible" :title="funMode === 0 ? '修改角色' : '新建角色'">
+      <el-dialog width="500" v-model="updateOrAddDialogVisible" :title="funMode === UPDATE_MODE ? '修改角色' : '新建角色'">
         <el-form label-width="80px">
           <el-form-item label="姓名">
             <el-input v-model="checkedRole.roleName" placeholder="请输入角色名称"></el-input>
@@ -91,10 +91,10 @@
           <el-form-item label="描述">
             <el-input v-model="checkedRole.description" placeholder="请输入该角色描述信息"></el-input>
           </el-form-item>
-          <el-form-item label="创建时间" v-if="funMode === 0">
+          <el-form-item label="创建时间" v-if="funMode === UPDATE_MODE">
             <el-input v-model="checkedRole.createTime" disabled></el-input>
           </el-form-item>
-          <el-form-item label="修改时间" v-if="funMode === 0">
+          <el-form-item label="修改时间" v-if="funMode === UPDATE_MODE">
             <el-input v-model="checkedRole.updateTime" disabled></el-input>
           </el-form-item>
         </el-form>
@@ -126,6 +126,10 @@ import { Search } from '@element-plus/icons-vue'
 import { ref, onMounted } from 'vue'
 import { getPageData, updateRoleStatus, batchRemove, removeOne, updateRole, addRole } from '@/api/role';
 import { useSimpleConfirm, useSuccessTip, useInfoTip, useFailedTip } from "@/utils/msgTip.js";
+import {
+  UPDATE_MODE,
+  ADD_MODE,
+} from "@/utils/service/staticData";
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
 import { useRouter } from "vue-router";
@@ -135,7 +139,7 @@ const router = useRouter()
 // 当前正在操作的角色
 const checkedRole = ref({})
 // 控制弹窗功能 0: 修改，1：新建
-const funMode = ref(0)
+const funMode = ref(UPDATE_MODE)
 // 控制弹窗的开启
 const updateOrAddDialogVisible = ref(false)
 // 是否正在加载表格
@@ -172,7 +176,7 @@ const createTimeArr = ref([])
 const updateOrAddRole = async()=>{
   const role = checkedRole.value
   let msg = ''
-  if(funMode.value === 0){
+  if(funMode.value === UPDATE_MODE){
     let res = await updateRole(role)
     msg = `成功修改角色 “${role.roleName}”`
   }else{
@@ -189,7 +193,7 @@ const updateOrAddRole = async()=>{
  * @param {Object} role 操作的角色
  * @param {Number} fun 弹窗功能 0：修改，1：新建
  */
-function initDialog(role = {}, fun = 0){
+function initDialog(role = {}, fun = UPDATE_MODE){
   funMode.value = fun
   checkedRole.value = deepCopy(role)
   updateOrAddDialogVisible.value = true
