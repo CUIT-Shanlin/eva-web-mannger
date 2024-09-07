@@ -3,7 +3,7 @@
   <PageTitle content="课程类型列表" />
   <div class="typeAllSty">
     <div class="funBar">
-      <el-button type="primary" @click="initDialog({}, 1)">新建</el-button>
+      <el-button type="primary" @click="initDialog({}, ADD_MODE)">新建</el-button>
       <span class="iptFuns">
         <el-input
           v-model="pageReqData.queryObj.keyword"
@@ -67,7 +67,7 @@
           <el-link
             class="iconfont operation"
             type="primary"
-            @click="initDialog(scope.row, 0)"
+            @click="initDialog(scope.row, UPDATE_MODE)"
           >
             <span class="ico">&#xe8cf;&nbsp;</span>
             修改
@@ -90,7 +90,7 @@
       <el-dialog
         width="500"
         v-model="updateOrAddDialogVisible"
-        :title="funMode === 0 ? '修改课程类型' : '新建课程类型'"
+        :title="funMode === UPDATE_MODE ? '修改课程类型' : '新建课程类型'"
       >
         <el-form label-width="80px">
           <el-form-item label="姓名">
@@ -105,10 +105,10 @@
               placeholder="请输入该课程类型描述信息"
             ></el-input>
           </el-form-item>
-          <el-form-item label="创建时间" v-if="funMode === 0">
+          <el-form-item label="创建时间" v-if="funMode === UPDATE_MODE">
             <el-input v-model="checkedType.createTime" disabled></el-input>
           </el-form-item>
-          <el-form-item label="修改时间" v-if="funMode === 0">
+          <el-form-item label="修改时间" v-if="funMode === UPDATE_MODE">
             <el-input v-model="checkedType.updateTime" disabled></el-input>
           </el-form-item>
         </el-form>
@@ -150,6 +150,10 @@ import {
   useSuccessTip,
   useFailedTip,
 } from "@/utils/msgTip.js";
+import {
+  UPDATE_MODE,
+  ADD_MODE,
+} from "@/utils/service/staticData";
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
 import { useRouter } from "vue-router";
@@ -159,7 +163,7 @@ const router = useRouter();
 // 当前正在操作的课程类型
 const checkedType = ref({});
 // 控制弹窗功能 0: 修改，1：新建
-const funMode = ref(0);
+const funMode = ref(UPDATE_MODE);
 // 控制弹窗的开启
 const updateOrAddDialogVisible = ref(false);
 // 是否正在加载表格
@@ -196,7 +200,7 @@ const createTimeArr = ref([]);
 const updateOrAddType = async () => {
   const type = checkedType.value;
   let msg = "";
-  if (funMode.value === 0) {
+  if (funMode.value === UPDATE_MODE) {
     let res = await updateType(type);
     msg = `成功修改课程类型 “${type.name}”`;
   } else {
@@ -213,7 +217,7 @@ const updateOrAddType = async () => {
  * @param {Object} type 操作的课程类型
  * @param {Number} fun 弹窗功能 0：修改，1：新建
  */
-function initDialog(type = {}, fun = 0) {
+function initDialog(type = {}, fun = UPDATE_MODE) {
   funMode.value = fun;
   checkedType.value = deepCopy(type);
   updateOrAddDialogVisible.value = true;
