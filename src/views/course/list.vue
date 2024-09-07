@@ -111,16 +111,10 @@
     <el-button @click="batchUpdateVisible = true">批量修改课程模板</el-button>
 
     <!-- 课程详情查看及修改弹窗 -->
-    <el-dialog
-      width="500"
-      v-model="checkOrUpdateDialogVisible"
-      append-to-body
-    >
+    <el-dialog width="500" v-model="checkOrUpdateDialogVisible" append-to-body>
       <template #header="{ titleId, titleClass }">
         <div :id="titleId" :class="titleClass">
-          <el-radio-group v-model="funMode"
-            @change="changeMode()"
-          >
+          <el-radio-group v-model="funMode" @change="changeMode()">
             <el-radio-button label="查看详情" :value="CHECK_MODE" />
             <el-radio-button label="修改信息" :value="UPDATE_MODE" />
           </el-radio-group>
@@ -128,7 +122,10 @@
       </template>
       <el-form label-width="80px">
         <el-form-item label="课程名称">
-          <el-input v-if="funMode === CHECK_MODE" v-model="checkedCourse.courseBaseMsg.name"></el-input>
+          <el-input
+            v-if="funMode === CHECK_MODE"
+            v-model="checkedCourse.courseBaseMsg.name"
+          ></el-input>
           <el-input v-model="updatedCourse.subjectMsg.name" v-else></el-input>
         </el-form-item>
         <el-form-item label="教学老师" v-if="funMode === CHECK_MODE">
@@ -196,8 +193,15 @@
             />
           </el-select>
         </el-form-item>
-        <el-alert type="info" show-icon :closable="false" v-if="funMode === UPDATE_MODE">
-          <p>同步修改：选中后，进行批量修改，将所有老师的该课程一起修改，慎重勾选。</p>
+        <el-alert
+          type="info"
+          show-icon
+          :closable="false"
+          v-if="funMode === UPDATE_MODE"
+        >
+          <p>
+            同步修改：选中后，进行批量修改，将所有老师的该课程一起修改，慎重勾选。
+          </p>
         </el-alert>
         <el-form-item label="同步修改" v-if="funMode === UPDATE_MODE">
           <el-radio-group v-model="updatedCourse.isUpdate">
@@ -228,7 +232,12 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button v-if="funMode === UPDATE_MODE" type="primary" @click="updateMyCourse()">保存</el-button>
+        <el-button
+          v-if="funMode === UPDATE_MODE"
+          type="primary"
+          @click="updateMyCourse()"
+          >保存</el-button
+        >
         <el-button @click="checkOrUpdateDialogVisible = false">关闭</el-button>
       </template>
     </el-dialog>
@@ -321,28 +330,25 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { Search } from "@element-plus/icons-vue";
 import { ref, onMounted } from "vue";
-import { 
+import {
   UPDATE_MODE,
   CHECK_MODE,
   THEORY_COURSE,
   OTHER_COURSE,
-  allCourseNature
-} from '@/utils/service/staticData';
+  allCourseNature,
+} from "@/utils/service/staticData";
 import {
   getPageData,
   getCourseEvaData,
   getOneCourseDetail,
   batchUpdateTemplate,
   getAllBaseCourse,
-  updateCourse
+  updateCourse,
 } from "@/api/courseList";
-import { getAllType } from '@/api/courseType'
+import { getAllType } from "@/api/courseType";
 import { getAllDepartments } from "@/api/other";
 import { getAllTemplates } from "@/api/template";
-import {
-  useSimpleConfirm,
-  useSuccessTip,
-} from "@/utils/msgTip.js";
+import { useSimpleConfirm, useSuccessTip } from "@/utils/msgTip.js";
 import { deepCopy } from "@/utils/objUtil";
 import { getChineseNum, getWeekByNum } from "@/utils/numUtil";
 import { removeSpace } from "@/utils/stringUtil";
@@ -352,7 +358,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 // 用于确定当前弹窗的模式，修改还是查看
-const funMode = ref(CHECK_MODE)
+const funMode = ref(CHECK_MODE);
 
 // 控制修改评教模板的弹窗的开关
 const batchUpdateVisible = ref(false);
@@ -372,7 +378,7 @@ const changeTemplateId = ref(null);
 const allCourseMsg = ref([]);
 
 // 存所有课程类型的信息
-const allTypes = ref([])
+const allTypes = ref([]);
 
 // 存所有学院名
 const allDepartments = ref([]);
@@ -385,15 +391,15 @@ const checkedCourse = ref({});
 // 临时存的操作课程原始数据
 const tempCourse = ref({});
 const updatedCourse = ref({
-    id: -1,
-    subjectMsg: {
-      name: '',
-      nature: -1,
-    },
-    templateId: -1,
-    typeIdList: [],
-    isUpdate: false
-})
+  id: -1,
+  subjectMsg: {
+    name: "",
+    nature: -1,
+  },
+  templateId: -1,
+  typeIdList: [],
+  isUpdate: false,
+});
 
 // 控制查看详情及修改弹窗的开启
 const checkOrUpdateDialogVisible = ref(false);
@@ -428,20 +434,22 @@ const createTimeArr = ref([]);
 /**
  * 进行修改课程信息
  */
-const updateMyCourse = async() => {
-  let res = await updateCourse(updatedCourse.value)
-  useSuccessTip('成功修改课程信息')
-  checkOrUpdateDialogVisible.value = false
-}
+const updateMyCourse = async () => {
+  let res = await updateCourse(updatedCourse.value);
+  useSuccessTip("成功修改课程信息");
+  checkOrUpdateDialogVisible.value = false;
+};
 
 /**
  * 切换模式之后进行的处理
  */
-function changeMode(){
-  if(funMode.value === CHECK_MODE){// 查看详情的模式 =》 恢复原始数据
-    checkedCourse.value = tempCourse.value
-  }else if(funMode.value === UPDATE_MODE){// 修改的模式 =》 转换数据模型
-    updatedCourse.value = changeCheckCourseToUpdateCourse(tempCourse.value)
+function changeMode() {
+  if (funMode.value === CHECK_MODE) {
+    // 查看详情的模式 =》 恢复原始数据
+    checkedCourse.value = tempCourse.value;
+  } else if (funMode.value === UPDATE_MODE) {
+    // 修改的模式 =》 转换数据模型
+    updatedCourse.value = changeCheckCourseToUpdateCourse(tempCourse.value);
   }
 }
 
@@ -449,26 +457,26 @@ function changeMode(){
  * @param originData 初始数据 即 用于查看的课程数据
  * @returns 用于修改的课程的数据模型
  */
-function changeCheckCourseToUpdateCourse(originData = {}){
+function changeCheckCourseToUpdateCourse(originData = {}) {
   // 初始化修改的数据模型
   let updateCourse = {
     id: -1,
     subjectMsg: {
-      name: '',
+      name: "",
       nature: -1,
     },
     templateId: -1,
     typeIdList: [],
-    isUpdate: false
-  }
+    isUpdate: false,
+  };
   // TODO 根据查看详情的数据模型中的数据 填充 用于修改的数据模型的数据
-  updateCourse.typeIdList = originData.typeList.map(type => type.id)
-  updateCourse.templateId = originData.courseBaseMsg.templateMsg.id
-  updateCourse.subjectMsg.name = originData.courseBaseMsg.name
-  updateCourse.id = originData.courseBaseMsg.id
-  updateCourse.subjectMsg.nature = originData.courseBaseMsg.nature
-  
-  return updateCourse
+  updateCourse.typeIdList = originData.typeList.map((type) => type.id);
+  updateCourse.templateId = originData.courseBaseMsg.templateMsg.id;
+  updateCourse.subjectMsg.name = originData.courseBaseMsg.name;
+  updateCourse.id = originData.courseBaseMsg.id;
+  updateCourse.subjectMsg.nature = originData.courseBaseMsg.nature;
+
+  return updateCourse;
 }
 
 /**
@@ -503,8 +511,8 @@ function batchUpdateMyTemplate() {
 }
 
 function getNature(nature = 0) {
-  if(nature === OTHER_COURSE){
-    return '其他'
+  if (nature === OTHER_COURSE) {
+    return "其他";
   }
   return nature === THEORY_COURSE ? "理论课" : "实验课";
 }
@@ -657,9 +665,9 @@ onMounted(() => {
   getAllBaseCourse().then((res) => {
     allCourseMsg.value = res;
   });
-  getAllType().then(res => {
-    allTypes.value = res
-  })
+  getAllType().then((res) => {
+    allTypes.value = res;
+  });
 });
 </script>
     
