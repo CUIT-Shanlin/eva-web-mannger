@@ -66,3 +66,13 @@ export function addType(type = {}){
         data: type
     })
 }
+
+/**
+ * 获取所有课程类型的信息
+ * @returns 
+ */
+export function getAllType(){
+    return request({
+        url: '/courses/types/all'
+    })
+}

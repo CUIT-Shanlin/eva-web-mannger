@@ -77,3 +77,31 @@ export const allIcons = [
 export function getIconName(ico){
     return allIcons.find(icon => icon.ico == ico).name
 }
+
+/**
+ * 用于确定同一表单的使用模式
+ */
+export const UPDATE_MODE = 0 // 修改模式
+export const ADD_MODE = 1 // 新增模式
+export const CHECK_MODE = 2 // 查看详情模式
+
+/**
+ * 用于确定课程性质
+ */
+export const THEORY_COURSE = 0 // 理论课性质
+export const LAB_COURSE = 1 // 实验课性质
+export const OTHER_COURSE = 3 // 其他课
+export const allCourseNature = [
+    {
+        value: THEORY_COURSE,
+        name: '理论课'
+    },
+    {
+        value: LAB_COURSE,
+        name: '实验课'
+    },
+    {
+        value: OTHER_COURSE,
+        name: '其他'
+    },
+]

@@ -74,3 +74,16 @@ export function batchUpdateTemplate(courseIdList = [], templateId = -1){
         }
     })
 }
+
+/**
+ * 修改一个课程的信息
+ * @param {Object} course 该课程的新信息
+ * @returns 
+ */
+export function updateCourse(course = {}){
+    return request({
+        url: '/course',
+        method: 'PUT',
+        data: course
+    })
+}
