@@ -72,17 +72,13 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="50" />
-      <el-table-column prop="name" label="课程名称" width="200"/>
+      <el-table-column prop="name" label="课程名称" width="200" />
       <el-table-column prop="teacherMsg.name" label="教学老师" width="120" />
       <el-table-column prop="templateMsg.name" label="评教模板" width="250" />
       <el-table-column prop="teacherMsg.department" label="学院" width="200" />
-      <el-table-column
-        label="创建日期"
-        width="220"
-        sortable
-      >
+      <el-table-column label="创建日期" width="220" sortable>
         <template #default="scope">
-          {{getTime(scope.row.createTime)}}
+          {{ getTime(scope.row.createTime) }}
         </template>
       </el-table-column>
 
@@ -109,7 +105,6 @@
           >
             课程详情
           </el-link>
-          
         </template>
       </el-table-column>
     </el-table>
@@ -127,19 +122,31 @@
           <el-input v-model="checkedCourse.courseBaseMsg.name"></el-input>
         </el-form-item>
         <el-form-item label="教学老师">
-          <el-input v-model="checkedCourse.courseBaseMsg.teacherMsg.name"></el-input>
+          <el-input
+            v-model="checkedCourse.courseBaseMsg.teacherMsg.name"
+          ></el-input>
         </el-form-item>
         <el-form-item label="课程模板">
-          <el-input v-model="checkedCourse.courseBaseMsg.templateMsg.name"></el-input>
+          <el-input
+            v-model="checkedCourse.courseBaseMsg.templateMsg.name"
+          ></el-input>
         </el-form-item>
         <el-form-item label="课程性质">
-          <el-input :model-value="getNature(checkedCourse.courseBaseMsg.nature)"></el-input>
+          <el-input
+            :model-value="getNature(checkedCourse.courseBaseMsg.nature)"
+          ></el-input>
         </el-form-item>
         <el-form-item label="课程类型">
-          <el-input :model-value="getTypeNameStr(checkedCourse.typeList)"></el-input>
+          <el-input
+            :model-value="getTypeNameStr(checkedCourse.typeList)"
+          ></el-input>
         </el-form-item>
         <el-form-item label="课程教室">
-          <el-input :model-value="getClassroomStr(checkedCourse.courseBaseMsg.classroomList)"></el-input>
+          <el-input
+            :model-value="
+              getClassroomStr(checkedCourse.courseBaseMsg.classroomList)
+            "
+          ></el-input>
         </el-form-item>
         <el-form-item label="创建时间">
           <el-input v-model="checkedCourse.courseBaseMsg.createTime"></el-input>
@@ -148,7 +155,11 @@
           <el-input v-model="checkedCourse.courseBaseMsg.updateTime"></el-input>
         </el-form-item>
         <el-form-item label="课程时间:">
-          <el-input type="textarea" :rows="5" :model-value="getDatesStr(checkedCourse.dateList)"></el-input>
+          <el-input
+            type="textarea"
+            :rows="5"
+            :model-value="getDatesStr(checkedCourse.dateList)"
+          ></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -157,16 +168,17 @@
     </el-dialog>
 
     <!-- 评分查询的弹窗 -->
-    <el-dialog v-model="evaDataDialogVisible"
+    <el-dialog
+      v-model="evaDataDialogVisible"
       width="1000"
       append-to-body
       :title="evaDataTitle"
     >
       <el-table :data="evaDataList">
-          <el-table-column prop="prop" label="指标名称" width="365" />
-          <el-table-column prop="averScore" label="平均分" width="200" />
-          <el-table-column prop="minScore" label="最低分" width="200"/>
-          <el-table-column prop="maxScore" label="最高分" width="200"/>
+        <el-table-column prop="prop" label="指标名称" width="365" />
+        <el-table-column prop="averScore" label="平均分" width="200" />
+        <el-table-column prop="minScore" label="最低分" width="200" />
+        <el-table-column prop="maxScore" label="最高分" width="200" />
       </el-table>
       <template #footer>
         <el-button @click="evaDataDialogVisible = false">关闭</el-button>
@@ -174,7 +186,8 @@
     </el-dialog>
 
     <!-- 批量修改评教模板的弹窗 -->
-    <el-dialog v-model="batchUpdateVisible"
+    <el-dialog
+      v-model="batchUpdateVisible"
       append-to-body
       title="批量修改课程模板中"
     >
@@ -205,20 +218,23 @@
         }"
         :titles="['不进行修改的课程', '待修改模板的课程']"
         @change="handleChange"
-        style="display: flex;justify-content: center;align-items: center;"
+        style="display: flex; justify-content: center; align-items: center"
       >
         <template #default="{ option }">
-          <span>{{ option.name }} - {{option.teacherName}}</span>
+          <span>{{ option.name }} - {{ option.teacherName }}</span>
         </template>
       </el-transfer>
 
       <template #footer>
-        <el-button type="primary" @click="batchUpdateMyTemplate()" :disabled="changeTemplateId == null">保存</el-button>
+        <el-button
+          type="primary"
+          @click="batchUpdateMyTemplate()"
+          :disabled="changeTemplateId == null"
+          >保存</el-button
+        >
         <el-button @click="batchUpdateVisible = false">取消</el-button>
       </template>
     </el-dialog>
-
-
 
     <el-pagination
       v-model:current-page="pageData.current"
@@ -244,16 +260,16 @@ import {
   getCourseEvaData,
   getOneCourseDetail,
   batchUpdateTemplate,
-  getAllBaseCourse
-} from '@/api/courseList';
+  getAllBaseCourse,
+} from "@/api/courseList";
 import { getAllDepartments } from "@/api/other";
-import { getAllTemplates } from '@/api/template'
+import { getAllTemplates } from "@/api/template";
 import {
   useSimpleConfirm,
   useSuccessTip,
-  useFailedTip
+  useFailedTip,
 } from "@/utils/msgTip.js";
-import { getChineseNum, getWeekByNum } from '@/utils/numUtil';
+import { getChineseNum, getWeekByNum } from "@/utils/numUtil";
 import { removeSpace } from "@/utils/stringUtil";
 import { getTime } from "@/utils/dateUtil";
 import { useRouter } from "vue-router";
@@ -261,21 +277,21 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 // 控制修改评教模板的弹窗的开关
-const batchUpdateVisible = ref(false)
+const batchUpdateVisible = ref(false);
 
 // 控制统计数据弹窗的开关
-const evaDataDialogVisible = ref(false)
+const evaDataDialogVisible = ref(false);
 // 存当前展示的这门课程的评教的统计数据
-const evaDataList = ref([])
+const evaDataList = ref([]);
 // 存统计数据弹窗的title
-const evaDataTitle = ref('')
+const evaDataTitle = ref("");
 // 存已选中的课程id数组
-const handleCourseIds = ref([])
+const handleCourseIds = ref([]);
 // 存用于统一修改的模板的id
-const changeTemplateId = ref(null)
+const changeTemplateId = ref(null);
 
 // 存所有的课程基础信息
-const allCourseMsg = ref([])
+const allCourseMsg = ref([]);
 
 // 存所有学院名
 const allDepartments = ref([]);
@@ -295,7 +311,7 @@ const pageReqData = ref({
   page: 1,
   queryObj: {
     keyword: "",
-    departmentName: '',
+    departmentName: "",
     templateId: null,
     startCreateTime: null,
     endCreateTime: null,
@@ -318,125 +334,130 @@ const createTimeArr = ref([]);
 /**
  * 穿梭框的自定义过滤功能
  * @param {string} query 关键字
- * @param {*} item 
+ * @param {*} item
  */
-function filterMethod(query, item){
-  return item.name.toLowerCase().includes(query.toLowerCase()) ||
-  item.teacherName.toLowerCase().includes(query.toLowerCase())
+function filterMethod(query, item) {
+  return (
+    item.name.toLowerCase().includes(query.toLowerCase()) ||
+    item.teacherName.toLowerCase().includes(query.toLowerCase())
+  );
 }
 
-function handleSelectionChange(courses = []){
-  handleCourseIds.value = courses.map(course => course.id)
+function handleSelectionChange(courses = []) {
+  handleCourseIds.value = courses.map((course) => course.id);
 }
 
 /**
  * 批量修改课程的评教模板
  */
- function batchUpdateMyTemplate() {
-  useSimpleConfirm('你确定要修改所有待修改课程的评教模板吗？').then(async () => {
-    const idList = handleCourseIds.value
-    let res = await batchUpdateTemplate(idList,changeTemplateId.value.id);
-    batchUpdateVisible.value = false
-    useSuccessTip('成功修改所有待修改课程的评教模板');
-    getMyPageData();
-  });
+function batchUpdateMyTemplate() {
+  useSimpleConfirm("你确定要修改所有待修改课程的评教模板吗？").then(
+    async () => {
+      const idList = handleCourseIds.value;
+      let res = await batchUpdateTemplate(idList, changeTemplateId.value.id);
+      batchUpdateVisible.value = false;
+      useSuccessTip("成功修改所有待修改课程的评教模板");
+      getMyPageData();
+    }
+  );
 }
 
-function getNature(nature = 0){
-  return nature === 0 ? '理论课' : '实验课'
+function getNature(nature = 0) {
+  return nature === 0 ? "理论课" : "实验课";
 }
 
 /**
  * 生成教室字符串的组合字符串，eg: 'H1201、H4120'
- * @param {Array} classroomArr 课程教室的字符串数组 
+ * @param {Array} classroomArr 课程教室的字符串数组
  */
- function getClassroomStr(classroomArr = []){
-  let str = ''
-  let i = 0
-  classroomArr.forEach(classroom => {
-    if(i === 0){
-      str = classroom
-    }else{
-      str = `${str}、${classroom}`
+function getClassroomStr(classroomArr = []) {
+  let str = "";
+  let i = 0;
+  classroomArr.forEach((classroom) => {
+    if (i === 0) {
+      str = classroom;
+    } else {
+      str = `${str}、${classroom}`;
     }
-    i++
-  })
-  return str
+    i++;
+  });
+  return str;
 }
 
 /**
  * 生成课程时间的组合字符串
- * @param {Array} dateList 时间数组 
+ * @param {Array} dateList 时间数组
  */
-function getDatesStr(dateList = []){
-  let str = ''
-  let i = 0
-  dateList.forEach(date => {
-    let oneTime = `${date.startWeek} - ${date.endWeek}周 星期${getWeekByNum(date.day)} 第${getChineseNum(date.startTime)}到${getChineseNum(date.endTime)}节课`
-    if(i === 0){
-      str = oneTime
-    }else{
-      str = `${str}、\n\n${oneTime}`
+function getDatesStr(dateList = []) {
+  let str = "";
+  let i = 0;
+  dateList.forEach((date) => {
+    let oneTime = `${date.startWeek} - ${date.endWeek}周 星期${getWeekByNum(
+      date.day
+    )} 第${getChineseNum(date.startTime)}到${getChineseNum(date.endTime)}节课`;
+    if (i === 0) {
+      str = oneTime;
+    } else {
+      str = `${str}、\n\n${oneTime}`;
     }
-    i++
-  })
-  return str
+    i++;
+  });
+  return str;
 }
 
 /**
  * 生成类型名称的组合字符串，eg: '编程类、实践类'
- * @param {Array} typeArr 课程类型类型数组 
+ * @param {Array} typeArr 课程类型类型数组
  */
-function getTypeNameStr(typeArr = []){
-  let str = ''
-  let i = 0
-  typeArr.forEach(type => {
-    if(i === 0){
-      str = type.name
-    }else{
-      str = `${str}、${type.name}`
+function getTypeNameStr(typeArr = []) {
+  let str = "";
+  let i = 0;
+  typeArr.forEach((type) => {
+    if (i === 0) {
+      str = type.name;
+    } else {
+      str = `${str}、${type.name}`;
     }
-    i++
-  })
-  return str
+    i++;
+  });
+  return str;
 }
 
 /**
  * 跳转到 该门课程对应的评教记录页面
  * @param {Object} course 课程信息
  */
-function goToMyRecord(course = {}){
+function goToMyRecord(course = {}) {
   router.push({
-    path:'/evaluation/record',
-    query:{
+    path: "/evaluation/record",
+    query: {
       courseId: course.id,
       teacherId: course.teacherMsg.id,
-      department: course.teacherMsg.department
-    }
-  })
+      department: course.teacherMsg.department,
+    },
+  });
 }
 
 /**
  * 加载该门课程的评教统计数据并打开弹窗
  * @param {Object} course 该门课程的基础信息
  */
-const getThisEvaData = async(course) => {
-  evaDataTitle.value = `${course.name}  ${course.teacherMsg.name}  ${course.teacherMsg.department}`
-  let {dataArr} = await getCourseEvaData(course.id)
-  evaDataList.value = dataArr
-  evaDataDialogVisible.value = true
-}
-
+const getThisEvaData = async (course) => {
+  evaDataTitle.value = `${course.name}  ${course.teacherMsg.name}  ${course.teacherMsg.department}`;
+  let { dataArr } = await getCourseEvaData(course.id);
+  evaDataList.value = dataArr;
+  evaDataDialogVisible.value = true;
+};
 
 /**
  * 初始化弹窗
  * @param {Number | string} courseId 操作课程的id
  */
-const initDialog = async(courseId = -1) => {
-  let res = await getOneCourseDetail(courseId)
-  checkedCourse.value = res
+const initDialog = async (courseId = -1) => {
+  let res = await getOneCourseDetail(courseId);
+  checkedCourse.value = res;
   detailDialogVisible.value = true;
-}
+};
 
 /**
  * 生成快速选择的value
@@ -483,15 +504,15 @@ const getMyPageData = async () => {
 
 onMounted(() => {
   getMyPageData();
-  getAllDepartments().then(res => {
+  getAllDepartments().then((res) => {
     allDepartments.value = res.dataArr;
   });
-  getAllTemplates().then(res => {
-    allTemplates.value = res
-  })
-  getAllBaseCourse().then(res => {
-    allCourseMsg.value = res
-  })
+  getAllTemplates().then((res) => {
+    allTemplates.value = res;
+  });
+  getAllBaseCourse().then((res) => {
+    allCourseMsg.value = res;
+  });
 });
 </script>
     
@@ -518,9 +539,9 @@ onMounted(() => {
     margin-bottom: 35px;
   }
 }
-.chooseBox{
+.chooseBox {
   @include flex-center;
-  .myChoose{
+  .myChoose {
     margin: 20px 0;
     width: 80%;
   }
@@ -540,7 +561,7 @@ onMounted(() => {
       color: rgb(89, 89, 89);
     }
   }
-  .el-transfer-panel{
+  .el-transfer-panel {
     width: auto;
   }
 }
