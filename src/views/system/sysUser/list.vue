@@ -80,8 +80,8 @@
         <template #default="scope">
           <el-switch
             v-model="scope.row.info.status"
-            :active-value="0"
-            :inactive-value="1"
+            :active-value="NORMAL_STATE"
+            :inactive-value="DISABLED_STATE"
             @change="updateThisUserStatus(scope.row.info)"
             style="--el-switch-on-color: rgb(255, 97, 117)"
           />
@@ -318,6 +318,8 @@ import {
   UPDATE_MODE,
   ADD_MODE,
   CHECK_MODE,
+  NORMAL_STATE,
+  DISABLED_STATE
 } from "@/utils/service/staticData";
 import { getMyAvatar } from "@/utils/service/userUtil";
 import { getRandomNumber } from "@/utils/randomUtil";
@@ -393,7 +395,7 @@ const pageReqData = ref({
  */
 const updateThisUserStatus = async(info)=>{
   let res = updateUserStatus(info.id, info.status)
-  if(info.status === 0){
+  if(info.status === NORMAL_STATE){
     useSuccessTip(`成功启用用户 “${info.name}”`)
   }else{
     useInfoTip(`成功禁用用户 “${info.name}”`)

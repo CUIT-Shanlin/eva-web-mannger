@@ -112,3 +112,9 @@ export const allCourseNature = [
 export const LIB_TYPE = 0
 export const MENU_TYPE = 1
 export const BTN_TYPE = 2
+
+/**
+ * 用于确定状态
+ */
+export const DISABLED_STATE = 0
+export const NORMAL_STATE = 1
