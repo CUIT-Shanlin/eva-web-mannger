@@ -46,7 +46,7 @@
       class="tableBox"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="50" :selectable="selectable" />
+      <el-table-column type="selection" width="50" />
       <el-table-column prop="name" label="模板名称" width="200" />
       <el-table-column prop="description" label="描述" width="450" />
       <el-table-column
@@ -158,8 +158,6 @@ import {
 import { isEmptyArr, deepCopy, addSuffixToDuplicates, removeSpaceStrToArr } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
 
-// 确定当前列是否允许被选中
-const selectable = (row) => !row.isPreventRemove;
 // 当前正在操作的评教模板
 const checkedTemplate = ref({});
 // 控制弹窗功能 0: 修改，1：新建
