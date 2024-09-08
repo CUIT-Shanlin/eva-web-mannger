@@ -4,6 +4,14 @@
 
 export const allIcons = [
     {
+        name: '工作台',
+        ico: '&#xe604;'
+    },
+    {
+        name: '评教看板',
+        ico: '&#xe630;'
+    },
+    {
         name: '系统',
         ico: '&#xe696;'
     },
