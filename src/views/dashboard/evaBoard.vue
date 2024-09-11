@@ -2,21 +2,24 @@
 <template>
   <PageTitle content="评教看板" />
   <div class="boardAll">
-    <div class="commonBox" v-for="(it,i) in moreCounts" :key="i">
-      <div class="txtBox">
+    <div class="commonBox commonLineBox" v-for="(it,i) in moreCounts" :key="i">
+      <div class="txtBox flexUpDown">
         <div class="caption">
           <strong>{{i === 0 ? '昨' : '今'}}日评教增长</strong>
         </div>
         <div class="largeTitle">{{getShowNum(it.moreNum)}}</div>
-        <div :class="{tipFont: true, downFont: Number(it.morePercent) < 0}">
-          {{getShowNum(it.morePercent,true)}}%
+        <div class="tipFont">
+          <span :class="{downFont: Number(it.morePercent) < 0}">{{getShowNum(it.morePercent,true)}}%</span>
           <i :class="{iconfont: true, ico: true, downIco: Number(it.morePercent) < 0}">&#xe639;</i>
         </div>
       </div>
       <div :id="`line${i + 1}`" :ref="`line${i + 1}`" class="lineImg"></div>
     </div>
     
-    <div class="commonBox">1</div>
+    <div class="commonBox flexUpDown">
+      <div class="commonTitle">课程各分数占比</div>
+      <div id="bar" ref="bar">1</div>
+    </div>
     <div class="commonBox">1</div>
 
     <div class="largeBox">6</div>
@@ -26,7 +29,10 @@
 
 <script setup>
 import PageTitle from "@/components/PageTitle.vue";
-import { getDayMoreCount } from '@/api/evaBoard';
+import { 
+  getDayMoreCount,
+  getScoreCourseNum,
+} from '@/api/evaBoard';
 import { getShowNum } from '@/utils/numUtil';
 import { onMounted, ref } from 'vue'
 import * as echarts from "echarts";
@@ -35,7 +41,8 @@ import * as echarts from "echarts";
 const moreCounts = ref([{},{}])
 
 const initCharts = async()=>{
-  const getOption = (res = {},mode = 0) => {
+  // TODO 生成两个一般大小的线型图
+  const getLineOption = (res = {},mode = 0) => {
     let lineColors = mode === 0 ? ['rgb(54,154,254)','rgb(224,239,255)'] : ['rgb(255,200,0)','rgb(255,243,199)']
     return {
       grid: {
@@ -89,8 +96,49 @@ const initCharts = async()=>{
     let res = await getDayMoreCount(i, 10)
     moreCounts.value[i] = res
     const line = echarts.init(document.getElementById(`line${i + 1}`))
-    line.setOption(getOption(res, i))
+    line.setOption(getLineOption(res, i))
   }
+  // TODO 生成柱形图
+  const bar = echarts.init(document.getElementById('bar'))
+  let barData = await getScoreCourseNum(5, 5)
+  bar.setOption({
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow'
+    },
+    formatter: function(params) {
+      return `${params[0].name}分<br/>${params[0].value}门课程`
+    }
+  },
+  grid: {
+    top: '0',
+    left: '0',
+    right: '0',
+    bottom: '14.5px'
+  },
+  xAxis: {
+    data: barData.map(it => `${it.stratScore}-${it.endScore}`),
+    axisLabel: {
+      fontSize: 8
+    }
+  },
+  yAxis: {
+    type: 'value',
+    splitLine: { show: false },
+    axisLabel: { show: false },
+  },
+  series: [
+    {
+      type: 'bar',
+      data: barData.map(it => it.count),
+      itemStyle:{
+        borderRadius: [10, 10, 0, 0],
+        color: 'rgb(86,170,255)'
+      }
+    },
+  ]
+})
 }
 
 onMounted(()=>{
@@ -113,6 +161,12 @@ onMounted(()=>{
   &:hover{
     box-shadow: $common-box-shadow;
   }
+}
+// 动态生成title样式
+@mixin myTitle($font-size: 30px){
+  font-weight: 550;
+  font-size: $font-size;
+  color: $title-font-color;
 }
 $caption-color: rgb(151,160,195);
 .boardAll{
@@ -142,17 +196,21 @@ $caption-color: rgb(151,160,195);
         transform: rotate(180deg);
       }
     }
+    .largeTitle{
+      @include myTitle(30px)
+    }
+    .commonTitle{
+      @include myTitle(22px)
+    }
+  }
+  .commonLineBox{
+    @include flex-end;
   }
   .commonBox{
-    @include flex-end;
     justify-content: space-between;
     .txtBox{
       height: 100%;
       width: 45%;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      flex-wrap: wrap;
       .largeTitle{
         @include flex-center-y;
         width: 100%;
@@ -162,6 +220,10 @@ $caption-color: rgb(151,160,195);
       width: 65%;
       height: 100%;
     }
+    #bar{
+      width: 100%;
+      height: 65%;
+    }
   }
   .commonBox, .longBox{
     min-width: 300px;
@@ -169,16 +231,17 @@ $caption-color: rgb(151,160,195);
   .commonBox, .largeBox{
     height: 150px;
     padding: 25px;
-    .largeTitle{
-      font-weight: 550;
-      font-size: 30px;
-      color: $title-font-color;
-    }
   }
   .largeBox{
     height: 450px;
  	  grid-row: 2/3;
     grid-column: 1/4;
   }
+}
+.flexUpDown{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 </style>

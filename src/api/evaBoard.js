@@ -14,3 +14,15 @@ export function getDayMoreCount(day = 0, num = 12){
         url: `/evaluate/moreCount/${day}/${num}`
     })
 }
+
+/**
+ * 获取各个分数段中课程的数目情况
+ * @param {Number|string} num 获取多少个分数段的数据
+ * @param {Number|string} interval 间隔，分数段之间的默认间隔
+ * @returns 
+ */
+export function getScoreCourseNum(num = 5, interval = 5){
+    return request({
+        url: `/evaluate/score/count/${num}/${interval}`
+    })
+}
