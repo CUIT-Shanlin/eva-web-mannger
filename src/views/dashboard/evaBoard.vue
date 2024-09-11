@@ -27,26 +27,12 @@
 <script setup>
 import PageTitle from "@/components/PageTitle.vue";
 import { getDayMoreCount } from '@/api/evaBoard';
+import { getShowNum } from '@/utils/numUtil';
 import { onMounted, ref } from 'vue'
 import * as echarts from "echarts";
 
 // 存今天和昨日的评教数目数据
 const moreCounts = ref([{},{}])
-
-
-/**
- * 处理显示的数字，让数字在加载过来之前有加载显示
- * @param {Number|String} num 
- * @param {Boolean} isShowSymbol
- */
- function getShowNum(num, isShowSymbol = false){
-  const DEFAULT_SHOW = '--'
-  num = (!num && num !== 0) ? DEFAULT_SHOW : num
-  if(isShowSymbol){
-    return num >= 0 ? `+${num}` : num
-  }
-  return num
-}
 
 const initCharts = async()=>{
   const getOption = (res = {},mode = 0) => {

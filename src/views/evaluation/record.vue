@@ -261,6 +261,7 @@ import { choreDateStr } from "@/utils/dateUtil";
 import { removeSpace, replaceStr } from "@/utils/stringUtil";
 import { isEmptyArr, isEmptyObj } from "@/utils/objUtil";
 import { useSimpleConfirm, useSuccessTip, useFailedTip } from "@/utils/msgTip";
+import { getShowNum } from '@/utils/numUtil';
 import { onMounted, ref } from "vue";
 import { useRoute } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
@@ -463,20 +464,6 @@ const shortcuts = [
     value: evaCutValue(90),
   },
 ]
-
-/**
- * 处理显示的数字，让数字在加载过来之前有加载显示
- * @param {*} num 
- * @param {Boolean} isShowSymbol
- */
-function getShowNum(num, isShowSymbol = false){
-  const DEFAULT_SHOW = '--'
-  num = (!num && num !== 0) ? DEFAULT_SHOW : num
-  if(isShowSymbol){
-    return num >= 0 ? `+${num}` : num
-  }
-  return num
-}
 
 /**
  * 获取评教任务完成情况信息

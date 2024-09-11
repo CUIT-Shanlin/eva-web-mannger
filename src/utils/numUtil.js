@@ -64,3 +64,17 @@ export function getWeekByNum(baseNum = 1){
     const baseArr = ['一', '二', '三', '四', '五', '六', '日'];
     return baseArr[num - 1]
 }
+
+/**
+ * 处理显示的数字，让数字在加载过来之前有加载显示
+ * @param {Number|String} num 
+ * @param {Boolean} isShowSymbol
+ */
+export function getShowNum(num, isShowSymbol = false){
+    const DEFAULT_SHOW = '--'
+    num = (!num && num !== 0) ? DEFAULT_SHOW : num
+    if(isShowSymbol){
+        return num >= 0 ? `+${num}` : num
+    }
+    return num
+}
