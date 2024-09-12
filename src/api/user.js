@@ -140,3 +140,16 @@ export function getUserAvatar(id = -1){
         responseType: 'blob', // 指示axios以Blob形式处理响应
     })
 }
+
+/**
+ * 获取指定数目未达标的用户信息
+ * @param {Number|String} type 0：获取 评教 未达标的用户、1：获取 被评教 次数未达标的用户
+ * @param {Number|String} num 加载前几个用户数据
+ * @param {Number|String} target 评教或被评教的目标 数目，大于等于该数目则达标，小于则未达标
+ * @returns 
+ */
+export function getUnqualifiedUsers(type = 0, num = 5, target = 2){
+    return request({
+        url: `/users/unqualified/${type}/${num}/${target}`
+    })
+}

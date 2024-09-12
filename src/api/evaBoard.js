@@ -2,6 +2,8 @@
  * 评教看板相关接口调用
  */
 import request from '@/utils/request.js'
+import { getSemesterId } from '@/utils/service/semesterUtil';
+
 
 /**
  * 获取指定某一天的详细评教统计数据
@@ -24,5 +26,15 @@ export function getDayMoreCount(day = 0, num = 12){
 export function getScoreCourseNum(num = 5, interval = 5){
     return request({
         url: `/evaluate/score/count/${num}/${interval}`
+    })
+}
+
+/**
+ * 获取上个月和本月的评教数目
+ * @returns 
+ */
+export function getMonthEvaNum(){
+    return request({
+        url: `/evaluate/month/count?semId=${getSemesterId()}`
     })
 }

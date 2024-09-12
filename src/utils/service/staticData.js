@@ -126,3 +126,9 @@ export const BTN_TYPE = 2
  */
 export const DISABLED_STATE = 0
 export const NORMAL_STATE = 1
+
+/**
+ * 用于确定查询的是评教不达标还是被评不达标的用户
+ */
+export const EVA_UNQUALIFIED_USER = 0 // 评教未达标用户
+export const UNQUALIFIED_USER = 1 // 被评教未达标用户

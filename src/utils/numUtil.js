@@ -67,14 +67,34 @@ export function getWeekByNum(baseNum = 1){
 
 /**
  * 处理显示的数字，让数字在加载过来之前有加载显示
- * @param {Number|String} num 
- * @param {Boolean} isShowSymbol
+ * @param {Number|String} num 传入的数字
+ * @param {number} [digit=1] 小数点后几位
+ * @param {Boolean} isShowSymbol 是否要加 + 号
  */
-export function getShowNum(num, isShowSymbol = false){
+export function getShowNum(num, isShowSymbol = false, digit = 1){
     const DEFAULT_SHOW = '--'
-    num = (!num && num !== 0) ? DEFAULT_SHOW : num
+    if(!num && num !== 0){
+        return DEFAULT_SHOW
+    }
+    num = formatNumberToOneDecimalPlace(num, digit)
     if(isShowSymbol){
         return num >= 0 ? `+${num}` : num
     }
     return num
+}
+
+/**
+ * 将一个数字格式化，整数直接返回，小数会精确到指定小数点
+ * @param {Number|string} num 待格式化的数字
+ * @param {number} [digit=1] 小数点后几位
+ * @returns 格式化后的数字
+ */
+export function formatNumberToOneDecimalPlace(num = 1, digit = 1) {
+    num = Number(num)
+    // 检查num是否为整数  
+    if (Number.isInteger(num)) {
+        return num;
+    } else {
+        return Number((Math.round(num * 10) / 10).toFixed(digit));
+    }
 }

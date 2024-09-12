@@ -20,3 +20,8 @@
     display: flex;
     align-items: flex-end;
 }
+
+@mixin flex-between{
+    display: flex;
+    justify-content: space-between;
+}
