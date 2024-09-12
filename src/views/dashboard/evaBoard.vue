@@ -39,7 +39,7 @@
 
     <div class="largeBox">6</div>
     <div class="longBox">
-      <div class="flexBetween">
+      <div class="flexBetween" style="margin-bottom: 5px;">
         <div class="commonTitle">未达标用户</div>
         <el-radio-group v-model="unqualifiedType" @change="getMyUnqualifiedUsers">
           <el-radio-button label="评教" :value="EVA_UNQUALIFIED_USER" />
@@ -48,7 +48,7 @@
       </div>
       <div class="userOne" v-for="user in unqualifiedUsersInfo.dataArr" :key="user.id">
         <div class="userInfo">
-          <el-avatar class="avatar"/>
+          <el-avatar :src="user.avatarUrl" class="avatar"/>
           <span class="txt">
             <div class="name">{{user.name}}</div>
             <span>{{user.department}}</span>
@@ -64,8 +64,31 @@
         </el-link>
       </div>
       <div class="boxLine">&nbsp;</div>
-
+      <div class="caption mySet" @click="settingDialogVisible = true">
+        <strong>设置达标要求</strong>
+      </div>
     </div>
+
+    <el-dialog
+      v-model="settingDialogVisible"
+      title="设置达标要求"
+      append-to-body
+      width="325"
+    >
+      <el-form label-width="80px">
+        <el-form-item label="评教">
+          <el-input-number v-model="qualifiedNums[0]" :min="0"/>
+        </el-form-item>
+        <el-form-item label="被评">
+          <el-input-number v-model="qualifiedNums[1]" :min="0"/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button type="primary" @click="flashUnqualifiedUsers()">保存</el-button>
+        <el-button @click="settingDialogVisible = false">关闭</el-button>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -77,17 +100,29 @@ import {
   getScoreCourseNum,
   getMonthEvaNum,
 } from '@/api/evaBoard';
-import { 
-  getUnqualifiedUsers,
-  getUserAvatar,
-} from '@/api/user';
+import { getUnqualifiedUsers } from '@/api/user';
 import{
   EVA_UNQUALIFIED_USER,
   UNQUALIFIED_USER,
 }from '@/utils/service/staticData';
-import { getShowNum, formatNumberToOneDecimalPlace } from '@/utils/numUtil';
+import {
+  getMyAvatar,
+  DEFAULT_AVATAR_URL,
+} from '@/utils/service/userUtil'
+import { 
+  getShowNum,
+  formatNumberToOneDecimalPlace,
+} from '@/utils/numUtil';
+import {
+  useInfoTip,
+} from '@/utils/msgTip';
 import { onMounted, ref } from 'vue'
 import * as echarts from "echarts";
+
+// 判断设置弹窗的开关
+const settingDialogVisible = ref(false);
+// 存设置了的达标要求
+const qualifiedNums = ref([2,2])
 
 // 用于确定当前选择的未达标类型
 const unqualifiedType = ref(EVA_UNQUALIFIED_USER)
@@ -99,11 +134,24 @@ const moreCounts = ref([{},{}])
 // 存上个月和这个月的评教数目
 const monthEvaNums = ref([])
 
+function flashUnqualifiedUsers(){
+  getMyUnqualifiedUsers().then(res => {
+    useInfoTip('成功修改达标要求')
+  })
+}
+
 /**
  * 获取未达标用户信息
  */
 const getMyUnqualifiedUsers = async()=>{
-  let res = await getUnqualifiedUsers(unqualifiedType.value, 5, 2)
+  let res = await getUnqualifiedUsers(unqualifiedType.value, 5, qualifiedNums.value[unqualifiedType.value])
+  // 加载头像信息
+  res.dataArr.forEach((user) => {
+    user.avatarUrl = DEFAULT_AVATAR_URL
+    getMyAvatar(user.id).then(avatarUrl => {
+      user.avatarUrl = avatarUrl
+    })
+  })
   unqualifiedUsersInfo.value = res
 }
 
@@ -242,7 +290,7 @@ onMounted(()=>{
 }
 $caption-color: rgb(151,160,195);
 $line-color: rgb(234,237,247);
-$line-height: 3px;
+$line-height: 2px;
 $chart-color: rgb(147,144,243);
 // 所以功能盒的padding大小
 $box-padding: 25px;
@@ -386,6 +434,12 @@ $box-padding: 25px;
       background-color: $line-color;
       margin: 0 (-($box-padding));
 
+    }
+    .mySet{
+      user-select: none;
+      cursor: pointer;
+      margin-top: 20px;
+      text-align: center;
     }
   }
 
