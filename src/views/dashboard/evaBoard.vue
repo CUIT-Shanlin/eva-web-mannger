@@ -10,7 +10,7 @@
         <div class="largeTitle">{{getShowNum(it.moreNum)}}</div>
         <div class="tipFont">
           <span :class="{downFont: Number(it.morePercent) < 0}">{{getShowNum(it.morePercent,true)}}%</span>
-          <i :class="{iconfont: true, ico: true, downIco: Number(it.morePercent) < 0}">&#xe639;</i>
+          <i :class="{iconfont: true, upIco: true, downIco: Number(it.morePercent) < 0}">&#xe639;</i>
         </div>
       </div>
       <div :id="`line${i + 1}`" :ref="`line${i + 1}`" class="lineImg"></div>
@@ -37,7 +37,43 @@
       </div>
     </div>
 
-    <div class="largeBox">6</div>
+    <div class="largeBox">
+      <div class="flexBetween">
+        <div>
+          <strong class="commonTitle">评教次数分析表</strong>
+          <br/>
+          <div class="description">
+            和最近时间段评教次数进行对比，掌握总体评教的完成情况
+          </div>
+        </div>
+        <el-color-picker v-model="myColor" @change="initMainLine"/>
+
+        <!-- <div class="myColorBox">
+          <el-color-picker v-model="myColor"/>
+          <strong class="smallTitle">点击切换</strong>
+          <i class="iconfont ico">&#xe600;</i>
+        </div> -->
+      </div>
+      <div class="dataShow">
+        <span v-for="(item,index) in myNumData" :key="index">
+          <strong class="caption">{{item.title}}</strong>
+          <br/>
+          <div class="textAll">
+            <span class="commonTitle">{{getShowNum(item.num)}}</span>
+            <span :class="{percentTxt: true, downFont: item.percent < 0}">
+              <span>{{getShowNum(item.percent, 2, true)}}</span>
+              <br/>
+              <span>%</span>
+            </span>
+            <i :class="{iconfont: true, upIco: true, downIco: item.percent < 0}">
+              &#xe639;
+            </i>
+          </div>
+        </span>
+      </div>
+      <div id="mainLine" ref="mainLine"></div>
+    </div>
+
     <div class="longBox">
       <div class="flexBetween" style="margin-bottom: 5px;">
         <div class="commonTitle">未达标用户</div>
@@ -69,10 +105,12 @@
       </div>
     </div>
 
+    <!-- 设置达标要求的弹窗 -->
     <el-dialog
       v-model="settingDialogVisible"
       title="设置达标要求"
       append-to-body
+      draggable
       width="325"
     >
       <el-form label-width="80px">
@@ -99,6 +137,7 @@ import {
   getDayMoreCount,
   getScoreCourseNum,
   getMonthEvaNum,
+  getAllMyDetailEvaData,
 } from '@/api/evaBoard';
 import { getUnqualifiedUsers } from '@/api/user';
 import{
@@ -116,8 +155,21 @@ import {
 import {
   useInfoTip,
 } from '@/utils/msgTip';
+import {
+  hexToRgb,
+  colorStrToArr,
+} from '@/utils/stringUtil';
+import { choreDateStr } from '@/utils/dateUtil';
 import { onMounted, ref } from 'vue'
 import * as echarts from "echarts";
+
+// 当前主要线状图颜色
+const myColor = ref('rgb(54,154,254)')
+
+// 存所有指定过去一段时间内的详细评教统计数据
+const allMyDetailEvaData = ref({dataArr: []})
+// 相关统计记录数据
+const myNumData = ref([])
 
 // 判断设置弹窗的开关
 const settingDialogVisible = ref(false);
@@ -134,6 +186,10 @@ const moreCounts = ref([{},{}])
 // 存上个月和这个月的评教数目
 const monthEvaNums = ref([])
 
+
+/**
+ * 刷新未达标用户数据
+ */
 function flashUnqualifiedUsers(){
   getMyUnqualifiedUsers().then(res => {
     useInfoTip('成功修改达标要求')
@@ -255,6 +311,98 @@ const initCharts = async()=>{
     },
   ]
 })
+  // TODO 生成主要线状图
+  initMainLine()
+}
+
+const initMainLine = async()=>{
+  const mainLine = echarts.init(document.getElementById('mainLine'))
+  // TODO 初始化数据
+  let res = await getAllMyDetailEvaData(30, qualifiedNums.value[EVA_UNQUALIFIED_USER], qualifiedNums.value[UNQUALIFIED_USER])
+  allMyDetailEvaData.value = res
+  const fieldData = [
+    {
+      title: '评教总次数',
+      field: 'totalEvaInfo'
+    },
+    {
+      title: '评教达标人数',
+      field: 'evaQualifiedInfo'
+    },
+    {
+      title: '被评教达标人数',
+      field: 'qualifiedInfo'
+    }
+  ]
+  // TODO 初始化info数据
+  for(let i = 0; i < fieldData.length;i++){
+    const item = fieldData[i]
+    const myInfo = res[item.field]
+    const data = {
+      title: item.title,
+      num: myInfo.num,
+      percent: myInfo.morePercent
+    }
+    myNumData.value[i] = data
+  }
+
+  let option = {
+      grid: {
+        top: '0',
+        bottom: '5px',
+        right: '0',
+        left: '18px'
+      },
+      tooltip: {
+        trigger: 'axis',
+      },
+      xAxis: {
+        type: 'category',
+        data: res.dataArr.map(it => `${it.date}单日内的评教数目`),
+        boundaryGap: false,
+        splitLine: { show: false },
+        axisLabel: { show: false },
+        axisLine: { show: false },
+        axisTick: { show: false },
+      },
+      yAxis: {
+        type: 'value',
+      },
+      series: [
+        {
+          data: res.dataArr.map(it => it.moreEvaNum),
+          type: 'line',
+          // 隐藏坐标点
+          symbol: 'none',
+          itemStyle: {
+            color: myColor.value,
+          },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: getLighterColor(myColor.value),
+              },
+              {
+                offset: 1,
+                color: '#FFF'
+              }
+            ])
+          }
+        }
+      ]
+    };
+  mainLine.setOption(option)
+}
+
+/**
+ * 获取更淡颜色的rgb颜色
+ * @param {String} baseColor 基础颜色
+ * @returns 更淡颜色的rgb颜色
+ */
+function getLighterColor(baseColor){
+  let rgbNums = colorStrToArr(hexToRgb(baseColor))
+  return `rgb(${rgbNums[0] + 170}, ${rgbNums[1] + 85}, ${rgbNums[2]})`
 }
 
 onMounted(()=>{
@@ -288,6 +436,12 @@ onMounted(()=>{
   font-size: $font-size;
   color: $title-font-color;
 }
+
+@mixin upIco{
+  margin-left: 6px;
+  font-size: 10px;
+}
+
 $caption-color: rgb(151,160,195);
 $line-color: rgb(234,237,247);
 $line-height: 2px;
@@ -298,6 +452,15 @@ $box-padding: 25px;
 .commonTitle{
   @include myTitle(20px);
   letter-spacing: 1px;
+}
+
+.downFont, .downIco{
+  color: rgb(221, 83, 83);
+}
+.downIco{
+  display: inline-block;
+  transform-origin: top center;
+  transform: rotate(180deg);
 }
 .boardAll{
   display: grid;
@@ -315,17 +478,10 @@ $box-padding: 25px;
       @include flex-end;
       color: rgb(4,183,138);
       font-size: 14px;
-      .ico{
-        margin-left: 6px;
-        font-size: 10px;
+      .upIco{
+        @include upIco;
       }
-      .downFont, .downIco{
-        color: rgb(221, 83, 83);
-      }
-      .downIco{
-        display: inline-block;
-        transform: rotate(180deg);
-      }
+      //
     }
     .largeTitle{
       @include myTitle(30px)
@@ -382,6 +538,56 @@ $box-padding: 25px;
     min-height: 450px;
  	  grid-row: 2/3;
     grid-column: 1/4;
+    #mainLine{
+      width: 100%;
+      height: 60%;
+    }
+    .description{
+      font-size: 14px;
+      font-weight: 550;
+      color: rgb(99,110,149);
+      margin-top: 10px;
+      letter-spacing: 2px;
+    }
+    .myColorBox{
+      user-select: none;
+      width: 180px;
+      height: 48px;
+      @include flex-center-y;
+      justify-content: space-between;
+      border: 1.5px rgb(210,213,225) solid;
+      background-color: rgb(250,252,254);
+      border-radius: 10px;
+      padding: 0px 15px;
+      .ico{
+        color: rgb(124,136,177);
+        display: inline-block;
+        transform: rotate(90deg);
+        font-size: 25px;
+      }
+    }
+    .dataShow{
+      display: flex;
+      margin: 30px 0;
+      .textAll{
+        max-width: 150px;
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 10px;
+        margin-top: 5px;
+        padding-top: 5px;
+        margin-right: 60px;
+        color: rgb(4,183,138);
+        .percentTxt{
+          font-size: 14px;
+          text-align: center;
+        }
+        .upIco{
+          @include upIco;
+          margin-top: 8px;
+        }
+      }
+    }
   }
 
   .userOne, .userInfo, .bottomBox{
@@ -452,5 +658,8 @@ $box-padding: 25px;
 }
 .flexBetween{
   @include flex-between;
+}
+.flexCenter{
+  @include flex-center;
 }
 </style>

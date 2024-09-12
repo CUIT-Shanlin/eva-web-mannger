@@ -37,6 +37,42 @@ export function colorStrToArr(colorStr=''){
 }
 
 /**
+ * 将十六进制的颜色转成rgb
+ * @param {String} hex 十六进制颜色字符串
+ * @returns rgb颜色字符串
+ */
+export function hexToRgb(hex) {
+    // 如果本身就是rgb字符串，直接返回
+    if(isValidRgbColor(hex)){
+        return hex;
+    }
+    // 去除字符串开头的 '#'
+    hex = hex.replace('#', '');
+    // 检查字符串长度，确保它是有效的16进制颜色
+    if (hex.length !== 6) {
+        return 'rgb(0,0,0)';
+    }
+    // 分割字符串成RGB
+    let r = parseInt(hex.substring(0, 2), 16);
+    let g = parseInt(hex.substring(2, 4), 16);
+    let b = parseInt(hex.substring(4, 6), 16);
+
+    // 返回 RGB 格式的字符串
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
+/**
+ * 检验一个字符串是不是rgb颜色字符串
+ * @param {String} color 字符串
+ * @returns 是否
+ */
+export function isValidRgbColor(color){
+    const rgbRegex = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/;
+    return rgbRegex.test(color)
+}
+
+
+/**
  * 检测一个字符串是否符合基本的邮箱格式
  * @param {string} str 传入字符串
  * @returns 是否符合
