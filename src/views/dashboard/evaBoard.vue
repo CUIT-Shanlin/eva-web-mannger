@@ -100,7 +100,7 @@
         </el-link>
       </div>
       <div class="boxLine">&nbsp;</div>
-      <div class="caption mySet" @click="settingDialogVisible = true">
+      <div class="caption mySet" @click="initDialog()">
         <strong>设置达标要求</strong>
       </div>
     </div>
@@ -147,6 +147,9 @@ import{
 import {
   getMyAvatar,
   DEFAULT_AVATAR_URL,
+  setQulifiedStandards,
+  getQulifiedStandards,
+  DEFAULT_STANDARD,
 } from '@/utils/service/userUtil'
 import { 
   getShowNum,
@@ -174,7 +177,7 @@ const myNumData = ref([])
 // 判断设置弹窗的开关
 const settingDialogVisible = ref(false);
 // 存设置了的达标要求
-const qualifiedNums = ref([2,2])
+const qualifiedNums = ref(getQulifiedStandards())
 
 // 用于确定当前选择的未达标类型
 const unqualifiedType = ref(EVA_UNQUALIFIED_USER)
@@ -187,10 +190,20 @@ const moreCounts = ref([{},{}])
 const monthEvaNums = ref([])
 
 
+function initDialog(){
+  settingDialogVisible.value = true
+  qualifiedNums.value = getQulifiedStandards()
+}
+
 /**
  * 刷新未达标用户数据
  */
 function flashUnqualifiedUsers(){
+  // TODO 具体改变设置操作
+  setQulifiedStandards(qualifiedNums.value)
+
+  // TODO 改变设置之后刷新数据
+  initMainLine()
   getMyUnqualifiedUsers().then(res => {
     useInfoTip('成功修改达标要求')
   })
@@ -200,7 +213,7 @@ function flashUnqualifiedUsers(){
  * 获取未达标用户信息
  */
 const getMyUnqualifiedUsers = async()=>{
-  let res = await getUnqualifiedUsers(unqualifiedType.value, 5, qualifiedNums.value[unqualifiedType.value])
+  let res = await getUnqualifiedUsers(unqualifiedType.value, 5, getQulifiedStandards()[unqualifiedType.value])
   // 加载头像信息
   res.dataArr.forEach((user) => {
     user.avatarUrl = DEFAULT_AVATAR_URL
@@ -348,10 +361,10 @@ const initMainLine = async()=>{
 
   let option = {
       grid: {
-        top: '0',
+        top: '8px',
         bottom: '5px',
         right: '0',
-        left: '18px'
+        left: '19px'
       },
       tooltip: {
         trigger: 'axis',
