@@ -153,3 +153,20 @@ export function getUnqualifiedUsers(type = 0, num = 5, target = 2){
         url: `/users/unqualified/${type}/${num}/${target}`
     })
 }
+
+/**
+ * 分页获取未达标用户的信息
+ * @param {Number} page 页数
+ * @param {Number} size 一页的元素个数
+ * @param {Object} queryObj 条件查询的对象
+ * @param {Number|String} type 确定是获取评教未达标用户还是被评教未达标用户
+ * @param {Number|String} target 评教或被评教的目标 数目，大于等于该数目则达标，小于则未达标
+ * @returns 分页信息
+ */
+export function getUnqulifiedPageData(type = 0, target = 2, reqData = {page: 0,size: 0,queryObj: {}}){
+    return request({
+        url: `/users/unqualified/${type}/${target}`,
+        method: 'POST',
+        data: reqData
+    })
+}

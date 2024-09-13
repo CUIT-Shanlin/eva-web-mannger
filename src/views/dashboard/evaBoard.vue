@@ -94,7 +94,7 @@
       </div>
       <div class="flexBetween bottomBox">
         <span class="totalFont">共{{unqualifiedUsersInfo.total}}人</span>
-        <el-link class="moreShow">
+        <el-link class="moreShow" @click="$router.push('/dashboard/evaBoard/unqulifiedUsers')">
           <strong>查看全部</strong>
           <i class="iconfont ico">&#xeb08;</i>
         </el-link>
@@ -149,7 +149,6 @@ import {
   DEFAULT_AVATAR_URL,
   setQulifiedStandards,
   getQulifiedStandards,
-  DEFAULT_STANDARD,
 } from '@/utils/service/userUtil'
 import { 
   getShowNum,
@@ -162,8 +161,8 @@ import {
   hexToRgb,
   colorStrToArr,
 } from '@/utils/stringUtil';
-import { choreDateStr } from '@/utils/dateUtil';
 import { onMounted, ref } from 'vue'
+
 import * as echarts from "echarts";
 
 // 当前主要线状图颜色
