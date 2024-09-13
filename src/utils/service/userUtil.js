@@ -50,7 +50,7 @@ DEFAULT_STANDARD[EVA_UNQUALIFIED_USER] = 2
  * @param {Array} standards 两个达标要求
  */
 export function setQulifiedStandards(standards = []){
-    sessionStorage.setItem(QUALIFIED_STANDARD_KEY, JSON.stringify(standards))
+    localStorage.setItem(QUALIFIED_STANDARD_KEY, JSON.stringify(standards))
 }
 
 /**
@@ -58,7 +58,7 @@ export function setQulifiedStandards(standards = []){
  * @returns 
  */
 export function getQulifiedStandards(){
-    const data = sessionStorage.getItem(QUALIFIED_STANDARD_KEY)
+    const data = localStorage.getItem(QUALIFIED_STANDARD_KEY)
     if(!data){
         return DEFAULT_STANDARD
     }
