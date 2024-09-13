@@ -57,13 +57,13 @@ const semesters = ref([])
  */
 const initSemesters = async()=>{
     // 获取所有的学期信息
-    let {dataArr} = await getAllSemester()
-    semesters.value = dataArr
+    let data = await getAllSemester()
+    semesters.value = data
 
     // TODO 加载当前显示的学期，如果sessionStorage中存有学期id，就使用sessionStorage中的学期，没有就获取当前学期
     let semId = getSemesterId()
     if(semId){
-        checkedSemester.value = dataArr.find(sem => sem.id + '' === semId + '')
+        checkedSemester.value = data.find(sem => sem.id + '' === semId + '')
     }else{
         let res = await getNowSemester()
         checkedSemester.value = res
