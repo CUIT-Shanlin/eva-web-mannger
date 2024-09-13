@@ -141,6 +141,25 @@ export const PENDING_MSG = 0 // 待办
 export const NOTICOE_MSG = 1 // 通知
 export const REMINDER_MSG = 2 // 提醒
 export const WARN_MSG = 3 // 警告
+// 所有消息类型
+export const allMsgTypes = [
+    {
+        label: '待办',
+        value: PENDING_MSG
+    },
+    {
+        label: '通知',
+        value: NOTICOE_MSG
+    },
+    {
+        label: '提醒',
+        value: REMINDER_MSG
+    },
+    {
+        label: '警告',
+        value: WARN_MSG
+    },
+]
 
 
 /**

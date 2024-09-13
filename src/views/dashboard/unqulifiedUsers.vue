@@ -84,6 +84,22 @@
             disabled
           ></el-input>
         </el-form-item>
+
+        <el-form-item label="消息类型">
+          <el-select
+            clearable
+            v-model="myMsg.type"
+            placeholder="请选择消息类型"
+          >
+            <el-option
+              v-for="type in allMsgTypes"
+              :key="type.value"
+              :label="type.label"
+              :value="type.value"
+            />
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="发送内容">
           <el-input type="textarea" :rows="3" v-model="myMsg.msg"></el-input>
         </el-form-item>
@@ -127,10 +143,8 @@ import{
   EVA_UNQUALIFIED_USER,
   UNQUALIFIED_USER,
   EVA_MSG_MODE,
-  PENDING_MSG,
-  NOTICOE_MSG,
   REMINDER_MSG,
-  WARN_MSG
+  allMsgTypes,
 }from '@/utils/service/staticData';
 import { 
   getQulifiedStandards,
