@@ -132,3 +132,19 @@ export const NORMAL_STATE = 1
  */
 export const EVA_UNQUALIFIED_USER = 0 // 评教未达标用户
 export const UNQUALIFIED_USER = 1 // 被评教未达标用户
+
+
+/**
+ * 确定消息类型
+ */
+export const PENDING_MSG = 0 // 待办
+export const NOTICOE_MSG = 1 // 通知
+export const REMINDER_MSG = 2 // 提醒
+export const WARN_MSG = 3 // 警告
+
+
+/**
+ * 确定消息性质
+ */
+export const COMMON_MSG_MODE = 0 // 普通消息
+export const EVA_MSG_MODE = 1 // 评教消息

@@ -80,3 +80,12 @@ export function getQulifiedStandard(){
 export function getEvaQulifiedStandard(){
     return getQulifiedStandards[EVA_UNQUALIFIED_USER]
 }
+
+/**
+ * 拿到指定类型的达标要求
+ * @param {Number|String} type 指定类型
+ * @returns 
+ */
+export function getMyStandard(type = EVA_UNQUALIFIED_USER){
+    return getQulifiedStandards()[type]
+}

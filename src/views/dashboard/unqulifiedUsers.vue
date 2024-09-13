@@ -3,7 +3,7 @@
   <PageTitle content="未达标用户列表" />
   <div class="userAllSty">
     <div class="funBar">
-      <el-radio-group v-model="unqualifiedType" @change="getMyUnqualifiedUsers" size="large">
+      <el-radio-group v-model="unqualifiedType" @change="getMyPageData" size="large">
         <el-radio-button label="评教" :value="EVA_UNQUALIFIED_USER" />
         <el-radio-button label="被评" :value="UNQUALIFIED_USER" />
       </el-radio-group>
@@ -40,22 +40,30 @@
       v-loading="isLoadingTable"
       class="tableBox"
     >
-      <el-table-column prop="name" label="用户姓名" width="350"/>
-      <el-table-column prop="department" label="学院名称" width="400"/>
+      <el-table-column prop="name" label="用户姓名" width="300"/>
+      <el-table-column prop="department" label="学院名称" width="350"/>
 
       <el-table-column
         prop="num"
         :label="`${unqualifiedType === UNQUALIFIED_USER ? '被评教' : '评教'}已完成次数`"
         sortable
       />
+      <el-table-column
+        :label="`${unqualifiedType === UNQUALIFIED_USER ? '被评教' : '评教'}待完成次数`"
+      >
+        <template #default="scope">
+          {{getMyStandard(unqualifiedType) - scope.row.num}}
+        </template>
+      </el-table-column>
+
       <el-table-column label="操作">
         <template #default="scope">
           <el-link
             class="iconfont operation"
             type="primary"
-            @click="removeOneType(scope.row)"
+            @click="initDialog(scope.row)"
           >
-            <span class="ico">&#xe610;&nbsp;</span>
+            <span class="ico">&#xe64b;&nbsp;</span>
             发送提醒
           </el-link>
         </template>
@@ -63,32 +71,36 @@
     </el-table>
 
     <!-- 弹窗 -->
-    <teleport to="body">
-      <el-dialog
-        width="500"
-        v-model="tipDialogVisible"
-        title="发送信息提醒"
-      >
-        <el-form label-width="80px">
-          <el-form-item label="姓名">
-            <el-input
-              v-model="checkedUser.name"
-              placeholder="请输入类型名称"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="描述">
-            <el-input
-              v-model="checkedUser.description"
-              placeholder="请输入该课程类型描述信息"
-            ></el-input>
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <el-button type="primary">发送</el-button>
-          <el-button @click="tipDialogVisible = false">取消</el-button>
-        </template>
-      </el-dialog>
-    </teleport>
+    <el-dialog
+      width="500"
+      v-model="tipDialogVisible"
+      title="发送信息提醒"
+      append-to-body
+    >
+      <el-form label-width="100px">
+        <el-form-item label="接收者姓名">
+          <el-input
+            v-model="checkedUser.name"
+            disabled
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="发送内容">
+          <el-input type="textarea" :rows="3" v-model="myMsg.msg"></el-input>
+        </el-form-item>
+
+        <el-form-item label="是否匿名">
+          <el-radio-group v-model="myMsg.isShowName">
+            <el-radio :value="false" >是</el-radio>
+            <el-radio :value="true">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+      </el-form>
+      <template #footer>
+        <el-button type="primary" @click="sendMsg()">发送</el-button>
+        <el-button @click="tipDialogVisible = false">取消</el-button>
+      </template>
+    </el-dialog>
 
     <el-pagination
       v-model:current-page="pageData.current"
@@ -114,10 +126,38 @@ import { getAllDepartments } from "@/api/other";
 import{
   EVA_UNQUALIFIED_USER,
   UNQUALIFIED_USER,
+  EVA_MSG_MODE,
+  PENDING_MSG,
+  NOTICOE_MSG,
+  REMINDER_MSG,
+  WARN_MSG
 }from '@/utils/service/staticData';
-import { getQulifiedStandards } from '@/utils/service/userUtil';
+import { 
+  getQulifiedStandards,
+  getMyStandard,
+} from '@/utils/service/userUtil';
 import { deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
+import { initSocket } from '@/utils/webSocketUtil';
+import { 
+  useFailedTip,
+  useSuccessTip
+} from "@/utils/msgTip";
+import { useUserStore } from '@/stores/userStore';
+import pinia from '@/utils/pinia';
+
+// 消息
+const myMsg = ref({
+  senderId: useUserStore(pinia).info.id,
+  type: REMINDER_MSG,
+  mode: EVA_MSG_MODE,
+  isShowName: true,
+  recipientId: -1,
+  msg: ''
+})
+
+// 存socket对象
+const mySocket = ref({})
 
 // 确认当前选择的未达标用户是评教还是被评教
 const unqualifiedType = ref(EVA_UNQUALIFIED_USER)
@@ -150,14 +190,37 @@ const pageData = ref({
   records: [],
 });
 
+/**
+ * 发送消息的具体操作
+ */
+function sendMsg(){
+  try {
+    const socket = mySocket.value
+    const state = socket.readyState
+    if(state === WebSocket.CLOSED || !socket){
+      useFailedTip('socket已关闭，发送失败，尝试重连~')
+      mySocket.value = initSocket()
+      return
+    }
+    socket.send(JSON.stringify(myMsg.value))
+    useSuccessTip('发送成功~')
+  } catch (error) {
+    useFailedTip('发送失败')
+  }
+
+}
 
 /**
  * 初始化弹窗
  * @param {Object} user 操作的用户
  */
 function initDialog(user = {}) {
-  funMode.value = fun;
   checkedUser.value = deepCopy(user);
+  // TODO 初始化消息数据
+  myMsg.value.msg = `您本学期的${unqualifiedType.value === UNQUALIFIED_USER ? '被' : ''}评教次数不足，\n还差${getMyStandard(unqualifiedType.value) - user.num}次，请尽快完成~`
+  myMsg.value.recipientId = user.id
+  console.log(myMsg.value)
+
   tipDialogVisible.value = true;
 }
 
@@ -178,6 +241,7 @@ onMounted(() => {
   getAllDepartments().then((res) => {
     allDepartments.value = res;
   });
+  mySocket.value = initSocket()
 });
 </script>
     
