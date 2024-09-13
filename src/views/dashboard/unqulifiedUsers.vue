@@ -150,7 +150,6 @@ import {
   getQulifiedStandards,
   getMyStandard,
 } from '@/utils/service/userUtil';
-import { deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
 import { initSocket } from '@/utils/webSocketUtil';
 import { 
@@ -229,11 +228,10 @@ function sendMsg(){
  * @param {Object} user 操作的用户
  */
 function initDialog(user = {}) {
-  checkedUser.value = deepCopy(user);
+  checkedUser.value = user;
   // TODO 初始化消息数据
   myMsg.value.msg = `您本学期的${unqualifiedType.value === UNQUALIFIED_USER ? '被' : ''}评教次数不足，\n还差${getMyStandard(unqualifiedType.value) - user.num}次，请尽快完成~`
   myMsg.value.recipientId = user.id
-  console.log(myMsg.value)
 
   tipDialogVisible.value = true;
 }
