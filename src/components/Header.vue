@@ -3,24 +3,23 @@
     <div class="topAll">
         <ChooseSem />
         <span class="user">
+            <i class="iconfont msgIco">&#xe6d5;</i>
             <el-avatar class="avatar" 
             :src="userMsg.avatarUrl"
             :size="40"
             fit="cover"
             />
             <span class="name">{{userMsg.name}}</span>
-            <span :class="{open,iconfont:true, openNotAct:!isChoose }"
-             @click="isChoose = !isChoose">&#xe656;</span>
+            <i :class="{funChoose: true,iconfont:true, openAct: isChoose }"
+             @click="isChoose = !isChoose">&#xe656;</i>
         </span>
     </div>
 
 </template>
 
 <script setup>
-import { onMounted,ref,reactive } from "vue"
+import { onMounted, ref } from "vue"
 // import UserUse from "./UserUse.vue"
-import {useUserStore} from '@/stores/userStore'
-import { isSpace } from "@/utils/stringUtil";
 import { getInfo } from '@/api/user'
 import { getMyAvatar } from '@/utils/service/userUtil';
 import ChooseSem from "./ChooseSem.vue";
@@ -42,6 +41,7 @@ onMounted(()=>{
 <style lang="scss" scoped>
 @import url('/src/assets/font/iconfont.css');
 @import '/src/styles/globalPage.scss';
+@import '/src/styles/commonFlexStyles.scss';
 
 .topAll{
     position: fixed;
@@ -56,33 +56,41 @@ onMounted(()=>{
     background: #FFF;
     border-radius: 2px;
     box-shadow: 0px 0px 3px #928c8c64;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @include flex-center-y;
     z-index: 10;
     user-select: none;
     .user{
+        margin-left: auto;
         height: 100%;
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        gap: 35px;
         align-items: center;
+        & > * {
+            text-align: center;
+        }
+        .msgIco{
+            font-size: 25px;
+            color: rgb(124,136,177);
+            cursor: pointer;
+        }
         .avatar{
             height: 60%;
             border-radius: 50%;
         }
         .name{
-            padding: 0 1.8rem;
             font-size: 18px;
             font-weight: bold;
             color: rgb(52,62,99);
         }
-        .open{
-            font-size: 1.5vh;
-            margin-right: 0.6rem;
+        .funChoose{
+            cursor: pointer;
+            font-size: 15px;
             color: rgb(161,169,198);
+            display: inline-block;
         }
-        .openNotAct{
-            -moz-transform: rotate(-90deg);
-            -webkit-transform: rotate(-90deg);
+        .openAct{
+            transform: rotate(-90deg)
         }
     }
 }
