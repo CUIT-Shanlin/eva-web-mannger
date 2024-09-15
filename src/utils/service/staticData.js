@@ -167,3 +167,15 @@ export const allMsgTypes = [
  */
 export const COMMON_MSG_MODE = 0 // 普通消息
 export const EVA_MSG_MODE = 1 // 评教消息
+
+/**
+ * 确定消息的显示状态
+ */
+export const NOT_DISPLAYED_MSG = 0 //未显示过的消息
+export const DISPLAYED_MSG = 1 // 显示过的消息
+
+/**
+ * 确定消息已读状态
+ */
+export const UNREAD_MSG = 0 // 未读
+export const READ_MSG = 1 // 已读
