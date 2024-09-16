@@ -43,3 +43,38 @@ export function getTime(dateString){
     let day = parts[2].trim(); // 去除字符串两端的空格
     return `${year}-${month}-${day}`;
 }
+
+/**
+ * 根据传入的日期计算出，距离现在有多少时间
+ * @param {String|Date} date 传入时间
+ * @returns 距离现在有多少时间的中文文本
+ */
+export function dateToDistanceTime(date){
+    const pastTime = new Date(date).getTime()
+    const nowTime = new Date().getTime()
+    const passMinute = Number.parseInt((nowTime - pastTime) / (1000.0 * 60.0))
+    // 不足一小时，直接返回是多少分钟前
+    if(passMinute < 60){
+        return `${passMinute}分钟前`
+    }
+    const passHour = Number.parseInt(passMinute / 60.0)
+    // 不足一天，返回小时
+    if(passHour < 24){
+        // 余出来的分钟不足30分钟，只返回整数部分
+        if(passMinute % 60 < 30){
+            return `${passHour}小时前`
+        }
+        return `${passHour}.5小时前`
+    }
+    const passDay = Number.parseInt(passHour / 24.0)
+    // 不足一个月，返回多少天
+    if(passDay < 30){
+        return `${passDay}天前`
+    }
+    const passMonth = Number.parseInt(passDay / 30.0)
+    // 不足360天，返回月份
+    if(passMonth < 12){
+        return `${passMonth}个月前`
+    }
+    return `${Number.parseInt(passMonth / 12.0)}年前`
+}

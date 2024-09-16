@@ -5,6 +5,7 @@ import request from '@/utils/request.js'
 import {
     DISPLAYED_MSG,
     READ_MSG,
+    COMMON_MSG_MODE,
 } from '@/utils/service/staticData'
 
 
@@ -28,9 +29,11 @@ export function getAllMyMsg(type = null, mode = null){
  */
 export function updateIsDisplayed(id = -1, isDisplayed = DISPLAYED_MSG){
     return request({
-        url: `/msg/tips/${id}/${isDisplayed}`
+        url: `/msg/tip/isDisplayed?id=${id}&isDisplayed=${isDisplayed}`,
+        method: 'PUT'
     })
 }
+
 /**
  * 修改某条消息的已读状态
  * @param {Number|String} id 该条消息的id
@@ -39,6 +42,19 @@ export function updateIsDisplayed(id = -1, isDisplayed = DISPLAYED_MSG){
  */
 export function updateIsRead(id = -1, isRead = READ_MSG){
     return request({
-        url: `/msg/tips/${id}/${isRead}`
+        url: `/msg/tip/isRead?id=${id}&isRead=${isRead}`,
+        method: 'PUT'
+    })
+}
+
+/**
+ * 批量修改消息的已读状态
+ * @param {number} [mode=COMMON_MSG_MODE] 确定待批量修改的是普通消息还是评教消息
+ * @returns 
+ */
+export function batchUpdateIsRead(mode = COMMON_MSG_MODE){
+    return request({
+        url: `/msg/tips/${mode}`,
+        method: 'PUT'
     })
 }
