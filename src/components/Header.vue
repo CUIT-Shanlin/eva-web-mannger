@@ -53,11 +53,19 @@
         fit="cover"
       />
       <span class="name">{{ userInfo.name }}</span>
-      <i
-        :class="{ funChoose: true, iconfont: true, openAct: isChoose }"
-        @click="isChoose = !isChoose"
-        >&#xe656;</i
+      <el-dropdown placement="bottom" trigger="click"
+      @visible-change="handleMyClose"
       >
+        <i
+        :class="{ funChoose: true, iconfont: true, openAct: isChoose }"
+        >&#xe656;</i
+        >
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="myLogOut()">退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </span>
   </div>
 </template>
@@ -65,6 +73,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { getInfo } from "@/api/user";
+import { logOut } from '@/api/login';
 import {
   getAllMyMsg,
   updateIsDisplayed,
@@ -79,9 +88,19 @@ import {
   UNREAD_MSG,
 } from "@/utils/service/staticData";
 import { dateToDistanceTime } from "@/utils/dateUtil";
-import { useSuccessTip } from "@/utils/msgTip";
+import { 
+  removeToken,
+  getMyToken,
+} from '@/utils/auth'
+import { 
+  useSuccessTip,
+  useSimpleConfirm,
+} from "@/utils/msgTip";
 import ChooseSem from "./ChooseSem.vue";
 import { ElNotification } from "element-plus";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 
 // 存自己所有的消息
 const allMyMsgs = ref([]);
@@ -98,6 +117,22 @@ const userInfo = ref({ id: 0, avatarUrl: "" });
 
 // 控制消息页面的加载显示
 const isLoadingMsgs = ref(false);
+
+// 退出登录的总方法
+function myLogOut(){
+  useSimpleConfirm('你确定要退出登录吗？').then(async()=>{
+    // 发出请求，让token无效化
+    await logOut()
+    // TODO 清除浏览器token并跳转至登录页
+    removeToken()
+    useSuccessTip('成功退出登录~')
+    router.push('/login')
+  })
+}
+
+function handleMyClose(){
+  isChoose.value = !isChoose.value
+}
 
 const batchMyUpdateIsRead = async () => {
   // 清零记录的未读数目

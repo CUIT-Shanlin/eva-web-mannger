@@ -20,7 +20,8 @@ export function setToken(token){
 }
 
 export function removeToken(){
-    return Cookies.remove(TOKEN_KEY)
+    sessionStorage.removeItem(TOKEN_KEY)
+    Cookies.remove(TOKEN_KEY)
 }
 
 
