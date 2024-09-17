@@ -67,7 +67,7 @@
       <div class="dataShowOne" style="margin-right: 15px">
         <div class="dataTitle">
           <span>评教任务完成度</span>
-          <el-link type="primary">详情</el-link>
+          <el-link type="primary" @click="$router.push('/evaluation/task')">详情</el-link>
         </div>
         <div class="chartBox">
           <div class="circleBox">
@@ -112,7 +112,7 @@
       <div class="dataShowOne" style="margin-right: 15px">
         <div class="dataTitle">
           <span>分数情况统计</span>
-          <el-link type="primary">详情</el-link>
+          <!-- <el-link type="primary">详情</el-link> -->
         </div>
         <div class="chartBox">
           <div class="circleBox">

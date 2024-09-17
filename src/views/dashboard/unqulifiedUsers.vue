@@ -142,7 +142,7 @@ import { getAllDepartments } from "@/api/other";
 import{
   EVA_UNQUALIFIED_USER,
   UNQUALIFIED_USER,
-  EVA_MSG_MODE,
+  COMMON_MSG_MODE,
   REMINDER_MSG,
   allMsgTypes,
 }from '@/utils/service/staticData';
@@ -163,7 +163,7 @@ import pinia from '@/utils/pinia';
 const myMsg = ref({
   senderId: useUserStore(pinia).info.id,
   type: REMINDER_MSG,
-  mode: EVA_MSG_MODE,
+  mode: COMMON_MSG_MODE,
   isShowName: true,
   recipientId: -1,
   msg: ''

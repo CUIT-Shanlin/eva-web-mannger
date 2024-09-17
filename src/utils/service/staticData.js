@@ -179,3 +179,33 @@ export const DISPLAYED_MSG = 1 // 显示过的消息
  */
 export const UNREAD_MSG = 0 // 未读
 export const READ_MSG = 1 // 已读
+
+
+/**
+ * 确定评教任务的状态
+ */
+export const PENDING_TASK = 0 // 待办任务
+export const COMPLETED_TASK = 1 // 已完成的任务
+export const CANCELLED_TASK = 2 // 取消的任务
+export const allTaskStatus = [
+    {
+        label: '全部',
+        value: -1,
+        type: ''
+    },
+    {
+        label: '待完成',
+        value: PENDING_TASK,
+        type: 'primary'
+    },
+    {
+        label: '已完成',
+        value: COMPLETED_TASK,
+        type: 'success'
+    },
+    {
+        label: '已撤回',
+        value: CANCELLED_TASK,
+        type: 'danger'
+    },
+]
