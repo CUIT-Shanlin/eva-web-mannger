@@ -55,7 +55,8 @@ request.interceptors.response.use(
         useFailedTip('响应错误：' + error.message)
         if(!getMyToken()){
             useWarningConfirm('登录失效，即将跳转登录页，重新登录').then(()=>{
-                router.push('/login')
+                // router.push('/login')
+                window.location.reload()
             })
         }
         return Promise.reject(error)

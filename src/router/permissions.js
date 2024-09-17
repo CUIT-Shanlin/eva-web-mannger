@@ -15,11 +15,10 @@ import ParentView from "@/components/ParentView.vue";
 */
 
 router.beforeEach(async(to,from,next) => {
-    const myToken = useUserStore().token
     // 转到登录的路由直接放行
     if(to.path === '/login'){
         // 没有token => 跳转登录页
-        if(myToken){
+        if(getMyToken()){
             next('/home')
         }else next()
     }else{
