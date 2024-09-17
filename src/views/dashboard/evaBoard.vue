@@ -82,15 +82,17 @@
           <el-radio-button label="被评" :value="UNQUALIFIED_USER" />
         </el-radio-group>
       </div>
-      <div class="userOne" v-for="user in unqualifiedUsersInfo.dataArr" :key="user.id">
-        <div class="userInfo">
-          <el-avatar :src="user.avatarUrl" class="avatar"/>
-          <span class="txt">
-            <div class="name">{{user.name}}</div>
-            <span>{{user.department}}</span>
-          </span>
+      <div v-loading="isLoadingUsers">
+        <div class="userOne" v-for="user in unqualifiedUsersInfo.dataArr" :key="user.id">
+            <div class="userInfo">
+              <el-avatar :src="user.avatarUrl" class="avatar"/>
+              <span class="txt">
+                <div class="name">{{user.name}}</div>
+                <span>{{user.department}}</span>
+              </span>
+            </div>
+          <div class="numShow">{{user.num}}</div>
         </div>
-        <div class="numShow">{{user.num}}</div>
       </div>
       <div class="flexBetween bottomBox">
         <span class="totalFont">共{{unqualifiedUsersInfo.total}}人</span>
@@ -165,6 +167,9 @@ import { onMounted, ref } from 'vue'
 
 import * as echarts from "echarts";
 
+// 实现未达标用户切换时的加载显示
+const isLoadingUsers = ref(false)
+
 // 当前主要线状图颜色
 const myColor = ref('rgb(54,154,254)')
 
@@ -212,6 +217,7 @@ function flashUnqualifiedUsers(){
  * 获取未达标用户信息
  */
 const getMyUnqualifiedUsers = async()=>{
+  isLoadingUsers.value = true
   let res = await getUnqualifiedUsers(unqualifiedType.value, 5, getQulifiedStandards()[unqualifiedType.value])
   // 加载头像信息
   res.dataArr.forEach((user) => {
@@ -221,6 +227,7 @@ const getMyUnqualifiedUsers = async()=>{
     })
   })
   unqualifiedUsersInfo.value = res
+  isLoadingUsers.value = false
 }
 
 const initCharts = async()=>{
