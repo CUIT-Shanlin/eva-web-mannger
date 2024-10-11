@@ -223,7 +223,11 @@ import {
   REMINDER_MSG,
 } from "@/utils/service/staticData";
 import { removeSpace } from "@/utils/stringUtil";
-import { initSocket } from "@/utils/webSocketUtil";
+import {
+  initSocket,
+  sendMySocketMsg,
+  useMySocket
+} from "@/utils/webSocketUtil";
 import {
   getWeekByNum,
 } from '@/utils/numUtil';
@@ -298,19 +302,20 @@ function getCourseTime(time = {}){
  * 发送消息的具体操作
  */
 function sendMsg() {
-  try {
-    const socket = mySocket.value;
-    const state = socket.readyState;
-    if (state === WebSocket.CLOSED || !socket) {
-      useFailedTip("socket已关闭，发送失败，尝试重连~");
-      mySocket.value = initSocket();
-      return;
-    }
-    socket.send(JSON.stringify(myMsg.value));
-    useSuccessTip("发送成功~");
-  } catch (error) {
-    useFailedTip("发送失败");
-  }
+  sendMySocketMsg(mySocket.value, myMsg.value)
+  // try {
+  //   const socket = mySocket.value;
+  //   const state = socket.readyState;
+  //   if (state === WebSocket.CLOSED || !socket) {
+  //     useFailedTip("socket已关闭，发送失败，尝试重连~");
+  //     mySocket.value = initSocket();
+  //     return;
+  //   }
+  //   socket.send(JSON.stringify(myMsg.value));
+  //   useSuccessTip("发送成功~");
+  // } catch (error) {
+  //   useFailedTip("发送失败");
+  // }
 }
 
 /**
@@ -389,7 +394,9 @@ const getMyPageData = async () => {
 
 onMounted(() => {
   getMyPageData();
-  mySocket.value = initSocket();
+  // mySocket.value = initSocket();
+  mySocket.value = useMySocket();
+
 });
 </script>
     

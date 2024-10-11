@@ -81,7 +81,7 @@ import {
   batchUpdateIsRead,
 } from "@/api/msg";
 import { getMyAvatar } from "@/utils/service/userUtil";
-import { initSocket } from "@/utils/webSocketUtil";
+import { initSocket, useMySocket } from "@/utils/webSocketUtil";
 import {
   COMMON_MSG_MODE,
   NOT_DISPLAYED_MSG,
@@ -226,13 +226,19 @@ const initInfo = async () => {
 
 onMounted(() => {
   initInfo();
-  mySocket.value = initSocket();
-  // 实时接收消息
-  mySocket.value.onmessage = (event) => {
+  // mySocket.value = initSocket();
+  // 初始化消息 + 实时接收消息
+  mySocket.value = useMySocket((event) => {
     const msgData = JSON.parse(event.data);
     receiveMsg(msgData);
     unreadNum.value++;
-  };
+  });
+  // 实时接收消息
+  // mySocket.value.onmessage = (event) => {
+  //   const msgData = JSON.parse(event.data);
+  //   receiveMsg(msgData);
+  //   unreadNum.value++;
+  // };
   dealAllMyMsg();
 });
 </script>

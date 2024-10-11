@@ -113,7 +113,7 @@
 
       </el-form>
       <template #footer>
-        <el-button type="primary" @click="sendMsg()">发送</el-button>
+        <el-button type="primary" @click="sendMyMsg()">发送</el-button>
         <el-button @click="tipDialogVisible = false">取消</el-button>
       </template>
     </el-dialog>
@@ -151,7 +151,10 @@ import {
   getMyStandard,
 } from '@/utils/service/userUtil';
 import { removeSpace } from "@/utils/stringUtil";
-import { initSocket } from '@/utils/webSocketUtil';
+import {
+  useMySocket,
+  sendMySocketMsg
+} from '@/utils/webSocketUtil';
 import { 
   useFailedTip,
   useSuccessTip
@@ -206,21 +209,8 @@ const pageData = ref({
 /**
  * 发送消息的具体操作
  */
-function sendMsg(){
-  try {
-    const socket = mySocket.value
-    const state = socket.readyState
-    if(state === WebSocket.CLOSED || !socket){
-      useFailedTip('socket已关闭，发送失败，尝试重连~')
-      mySocket.value = initSocket()
-      return
-    }
-    socket.send(JSON.stringify(myMsg.value))
-    useSuccessTip('发送成功~')
-  } catch (error) {
-    useFailedTip('发送失败')
-  }
-
+function sendMyMsg(){
+  sendMySocketMsg(mySocket.value, myMsg.value)
 }
 
 /**
@@ -253,7 +243,8 @@ onMounted(() => {
   getAllDepartments().then((res) => {
     allDepartments.value = res;
   });
-  mySocket.value = initSocket()
+  // mySocket.value = initSocket()
+  mySocket.value = useMySocket()
 });
 </script>
     
