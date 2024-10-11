@@ -85,22 +85,3 @@ export function sendMySocketMsg(mySocket, msgObj = {}){
         console.log('发送失败', error)
     }
 }
-
-/**
- * 初始化socket
- */
-export function initSocket(){
-    if(typeof WebSocket === 'undefined'){
-        useFailedTip('您的浏览器或当前环境不支持socket')
-        return
-    }
-    try{
-        const socket = new WebSocket(WSS_ADDRESS)
-        socket.onerror = ()=>{
-            useFailedTip('socket连接失败，可能导致消息发送异常')
-        }
-        return socket
-    }catch{
-        useFailedTip('连接失败, 无法连接到服务端地址')
-    }
-}
