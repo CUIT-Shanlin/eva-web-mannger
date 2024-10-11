@@ -28,7 +28,7 @@ request.interceptors.request.use(
             return Promise.reject(new Error('登录异常，Token 未找到，请求被取消'));
         }
         // 在请求头设置token
-        config.headers.set('token',token)
+        config.headers.set('Authorization',token)
 
         return config
     },
