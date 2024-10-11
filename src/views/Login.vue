@@ -36,7 +36,7 @@
           <label for="box2">自动登录</label>
         </div>
 
-        <button class="btn" @click="useLogin()">立即登录</button>
+        <button class="btn" @click="useLogin()" v-loading="isLoadingBtn" :disabled="isLoadingBtn">立即登录</button>
       </div>
     </div>
     <img src="../assets/img/loginBack2.png" class="imgShow" />
@@ -53,6 +53,9 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+// 控制登录按钮的加载显示，防止多次登录
+const isLoadingBtn = ref(false)
+
 // 存输入的登录信息
 const userMsg = reactive({
   username: getUsername(),
@@ -64,12 +67,15 @@ const userMsg = reactive({
 });
 // 登录
 const useLogin = async () => {
+  isLoadingBtn.value = true
   if (isSpace(userMsg.username)) {
     useFailedTip("用户名不能为空");
+    isLoadingBtn.value = false
     return;
   }
   if (isSpace(userMsg.password)) {
     useFailedTip("密码不能为空或纯空格");
+    isLoadingBtn.value = false
     return;
   }
 
@@ -83,6 +89,7 @@ const useLogin = async () => {
   }
   useSuccessTip("登录成功");
   router.push("/home");
+//   isLoadingBtn.value = false
 };
 </script>
 
