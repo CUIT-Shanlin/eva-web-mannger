@@ -63,7 +63,7 @@ request.interceptors.response.use(
             }else{
                 useFailedTip(data.msg)
             }
-            return Promise.reject(data.data)
+            return Promise.reject(data)
         }
     },
     error=>{
