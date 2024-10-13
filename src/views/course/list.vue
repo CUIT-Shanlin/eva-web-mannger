@@ -86,6 +86,7 @@
         <template #default="scope">
           <el-link
             class="operation"
+            :disabled="!hasBtnPermission('course.tabulation.eva.query')"
             type="primary"
             @click="getThisEvaData(scope.row)"
           >
@@ -100,6 +101,7 @@
           </el-link>
           <el-link
             class="operation"
+            :disabled="!hasBtnPermission('course.tabulation.query')"
             type="primary"
             @click="initDialog(scope.row.id)"
           >
@@ -108,7 +110,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-button @click="batchUpdateVisible = true">批量修改课程模板</el-button>
+    <el-button @click="batchUpdateVisible = true" :disabled="!hasBtnPermission('course.template.update')">批量修改课程模板</el-button>
 
     <!-- 课程详情查看及修改弹窗 -->
     <el-dialog width="500" v-model="checkOrUpdateDialogVisible" append-to-body>
@@ -353,6 +355,7 @@ import { deepCopy } from "@/utils/objUtil";
 import { getChineseNum, getWeekByNum } from "@/utils/numUtil";
 import { removeSpace } from "@/utils/stringUtil";
 import { getTime } from "@/utils/dateUtil";
+import { hasBtnPermission } from '@/utils/btnPermission';
 import { useRouter } from "vue-router";
 
 const router = useRouter();
