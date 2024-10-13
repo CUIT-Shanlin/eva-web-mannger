@@ -35,3 +35,8 @@
     border: 0;
     background-color: transparent;
 }
+
+.banStyle[disabled]{
+    cursor: not-allowed;
+    pointer-events: none;
+}
