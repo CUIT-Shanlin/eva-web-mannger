@@ -17,12 +17,12 @@ const RECONNECTION_TIME = 3000
  * @param {Function} handleMessage 接收消息的方法
  * @returns 
  */
-export function useMySocket(handleMessage){
+export function useMySocket(handleMyMessage){
     if(typeof WebSocket === 'undefined'){
         useFailedTip('您的浏览器或当前环境不支持socket')
         return null
     }
-    const wss = new WebSocket(WSS_ADDRESS)
+    const wss = new WebSocket(`${WSS_ADDRESS}?Authorization=${getMyToken()}`)
 
     const init = ()=>{
         bindEvent()
@@ -39,8 +39,6 @@ export function useMySocket(handleMessage){
 
     function handleOpen(e){
         console.log('webSocket 开启', e)
-        // dkh: 第一次握手的时候，发送token进行认证
-        wss.send(`Authorization:${getMyToken()}`)
     }
 
     function handleClose(e){
@@ -51,6 +49,17 @@ export function useMySocket(handleMessage){
         console.log('webSocket 错误', e)
         useFailedTip('socket连接失败或中断，可能导致消息发送异常')
     }
+
+    function handleMessage(e){
+        let msgData = JSON.parse(e.data)
+        if(msgData.code + '' !== '200'){
+            useFailedTip(`接收消息失败，${msgData.msg}`)
+            return
+        }
+        console.log('收到服务器内容：' + msgData.data);
+        handleMyMessage(msgData.data)
+    }
+
     return wss
 }
 

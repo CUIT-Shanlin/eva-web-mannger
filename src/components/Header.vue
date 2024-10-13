@@ -227,9 +227,8 @@ const initInfo = async () => {
 onMounted(() => {
   initInfo();
   // 初始化消息 + 实时接收消息
-  mySocket.value = useMySocket((event) => {
-    const msgData = JSON.parse(event.data);
-    receiveMsg(msgData);
+  mySocket.value = useMySocket((data) => {
+    receiveMsg(data);
     unreadNum.value++;
   });
   dealAllMyMsg();
