@@ -6,7 +6,7 @@
       <div class="taskTypeAll">
         <div :class="{statusOne: true,chooseStatus: statusOne.value === pageReqData.queryObj.taskStatus}"
           v-for="statusOne in allTaskStatus" :key="statusOne.value"
-          @click="changeChooseStatus(statusOne)"  
+          @click="changeChooseStatus(statusOne)"
         >
           {{statusOne.label}}
         </div>
@@ -71,6 +71,7 @@
         <template #default="scope">
           <el-link
             class="iconfont operation"
+            :disabled="!hasBtnPermission('evaluate.task.query')"
             type="primary"
             @click="initDialog(scope.row)"
           >
@@ -87,6 +88,7 @@
           <el-link
             class="iconfont operation"
             type="danger"
+            :disabled="!hasBtnPermission('evaluate.task.cancel')"
             @click="cancelMyTask(scope.row)"
             v-if="scope.row.status === PENDING_TASK"
           >
@@ -230,6 +232,7 @@ import {
 import {
   getWeekByNum,
 } from '@/utils/numUtil';
+import { hasBtnPermission } from '@/utils/btnPermission';
 import { useUserStore } from "@/stores/userStore";
 import pinia from "@/utils/pinia";
 
