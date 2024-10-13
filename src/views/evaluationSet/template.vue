@@ -110,7 +110,7 @@
             <span>操作</span>
           </div>
           <div class="propAll">
-            <div class="propOne" v-for="(prop,index) in myProps" :key="prop"
+            <div class="propOne" v-for="(prop,index) in myProps" :key="index"
             :style="{marginBottom: index < myProps.length - 1 ? '30px' :''}">
                 <el-input v-model="myProps[index]" size="large" style="width: 450px;"
                 placeholder="请输入指标名称" @change="deelDuplicateName()"></el-input>
