@@ -45,7 +45,8 @@
           </div>
         </el-popover>
         <my-common-btn
-          class="addIco"
+          class="addIco banStyle"
+          :disabled="!hasBtnPermission('system.user.add')"
           txt="新建用户"
           :is-large="true"
           default-color="rgb(255,97,117)"
@@ -79,6 +80,8 @@
       <el-table-column label="状态" width="100">
         <template #default="scope">
           <el-switch
+            class="banStyle"
+            :disabled="!hasBtnPermission('system.user.update')"
             v-model="scope.row.info.status"
             :active-value="NORMAL_STATE"
             :inactive-value="DISABLED_STATE"
@@ -116,12 +119,16 @@
         <template #default="scope">
           <div class="operationBox">
             <my-common-btn
+              class="banStyle"
+              :disabled="!hasBtnPermission('system.user.query')"
               txt="查看"
               :default-color="getRandColor()"
               :is-large="true"
               @click="showFunDialog(scope.row, CHECK_MODE)"
             />
             <my-common-btn
+              class="banStyle"
+              :disabled="!hasBtnPermission('system.user.update')"
               txt="修改"
               :default-color="getRandColor()"
               :is-large="true"
@@ -134,16 +141,22 @@
               <div class="moreBox">
                 <div>
                   <el-link
+                    class="banStyle"
+                    :disabled="!hasBtnPermission('system.user.score.query')"
                     type="primary"
                     @click="showScoreMsg(scope.row)"
                     >评分查询</el-link>
                 </div>
                 <div>
                   <el-link type="info" @click="showAssignRole(scope.row)"
+                    class="banStyle"
+                    :disabled="!hasBtnPermission('system.user.assignRole')"
                     >分配角色</el-link>
                 </div>
                 <div>
                   <el-link type="danger" @click="deleteOneUser(scope.row.info)"
+                    class="banStyle"
+                    :disabled="!hasBtnPermission('system.user.delete')"
                     >删除用户</el-link>
                 </div>
               </div>
@@ -326,6 +339,7 @@ import { getRandomNumber } from "@/utils/randomUtil";
 import { useSimpleConfirm, useSuccessTip, useInfoTip } from "@/utils/msgTip.js";
 import { isSpace, removeSpace, isPhone, isEmail } from "@/utils/stringUtil";
 import { deepCopy } from '@/utils/objUtil';
+import { hasBtnPermission } from '@/utils/btnPermission';
 import MyDatePicker from "@/components/MyDatePicker.vue";
 import MyCommonBtn from "@/components/MyCommonBtn.vue";
 
