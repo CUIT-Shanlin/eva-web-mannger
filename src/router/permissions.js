@@ -84,6 +84,7 @@ async function loadModule(modulePath){
         return module.default;
     } catch (error) {
         // 返回默认组件Empty
+        console.error(error)
         return import('@/views/Empty.vue').then(m => m.default);
     }
 }

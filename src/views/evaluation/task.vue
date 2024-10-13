@@ -224,7 +224,6 @@ import {
 } from "@/utils/service/staticData";
 import { removeSpace } from "@/utils/stringUtil";
 import {
-  initSocket,
   sendMySocketMsg,
   useMySocket
 } from "@/utils/webSocketUtil";
