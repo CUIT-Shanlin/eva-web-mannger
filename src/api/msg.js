@@ -7,6 +7,7 @@ import {
     READ_MSG,
     COMMON_MSG_MODE,
 } from '@/utils/service/staticData'
+import { useUserStore } from '@/stores/userStore';
 
 
 /**
@@ -54,7 +55,7 @@ export function updateIsRead(id = -1, isRead = READ_MSG){
  */
 export function batchUpdateIsRead(mode = COMMON_MSG_MODE){
     return request({
-        url: `/msg/tips/${mode}`,
+        url: `/msg/tips/${mode}/${useUserStore().info.id}`,
         method: 'PUT'
     })
 }
