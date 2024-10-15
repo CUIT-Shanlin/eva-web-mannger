@@ -1,7 +1,7 @@
 import request from '@/utils/request.js'
 import axios from 'axios'
 import { getSemesterId } from '@/utils/service/semesterUtil';
-import { getMyToken } from '@/utils/auth';
+import { getToken } from '@/utils/auth';
 
 /**
  * 获取用户自己的信息
@@ -139,7 +139,7 @@ export function getUserAvatar(id = -1){
         method: 'get',
         responseType: 'blob', // 指示axios以Blob形式处理响应
         headers:{
-            Authorization: getMyToken()
+            Authorization: getToken()
         }
     })
 }

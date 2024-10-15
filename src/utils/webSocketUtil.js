@@ -2,7 +2,7 @@
  * webSocket的工具js
  */
 import { useFailedTip } from "@/utils/msgTip";
-import { getMyToken } from "@/utils/auth";
+import { getToken } from "@/utils/auth";
 
 
 // 后端socket的地址
@@ -22,7 +22,7 @@ export function useMySocket(handleMyMessage){
         useFailedTip('您的浏览器或当前环境不支持socket')
         return null
     }
-    const wss = new WebSocket(`${WSS_ADDRESS}?Authorization=${getMyToken()}`)
+    const wss = new WebSocket(`${WSS_ADDRESS}?Authorization=${getToken()}`)
 
     const init = ()=>{
         bindEvent()

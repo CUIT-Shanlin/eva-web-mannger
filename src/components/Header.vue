@@ -88,10 +88,7 @@ import {
   UNREAD_MSG,
 } from "@/utils/service/staticData";
 import { dateToDistanceTime } from "@/utils/dateUtil";
-import { 
-  removeToken,
-  getMyToken,
-} from '@/utils/auth'
+import { removeToken } from '@/utils/auth'
 import { 
   useSuccessTip,
   useSimpleConfirm,

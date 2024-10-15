@@ -32,7 +32,7 @@
           />
           <label for="box1">记住账号</label>
 
-          <input type="checkbox" id="box2" v-model="userMsg.fun.autoLogin" />
+          <input type="checkbox" id="box2" v-model="userMsg.rememberMe" />
           <label for="box2">自动登录</label>
         </div>
 
@@ -48,7 +48,7 @@ import { reactive, ref } from "vue";
 import { login } from "@/api/login";
 import { useFailedTip, useSuccessTip } from "@/utils/msgTip";
 import { isSpace } from "@/utils/stringUtil";
-import { setMyToken, getUsername, setUsername } from "@/utils/auth";
+import { setToken, getUsername, setUsername } from "@/utils/auth";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -60,9 +60,10 @@ const isLoadingBtn = ref(false)
 const userMsg = reactive({
   username: getUsername(),
   password: "",
+  rememberMe: true,
   fun: {
     rememberUsername: true,
-    autoLogin: true,
+    // autoLogin: true,
   },
 });
 // 登录
@@ -81,7 +82,7 @@ const useLogin = async () => {
 
   let res = await login(userMsg);
   // 登录成功,存token
-  setMyToken(res.token, userMsg.fun.autoLogin);
+  setToken(res.token);
 
   // 浏览器存用户名
   if (userMsg.fun.rememberUsername) {

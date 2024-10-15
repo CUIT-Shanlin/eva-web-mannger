@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {
-  getMyToken,
+  getToken,
   removeToken
 } from './auth';
 import { 
@@ -27,7 +27,7 @@ request.interceptors.request.use(
             return config
         }
 
-        const token = getMyToken()
+        const token = getToken()
         // TODO 没有token就取消请求，并提示
         if(!token){
             console.log('Token 未找到，取消请求');
@@ -68,7 +68,7 @@ request.interceptors.response.use(
     },
     error=>{
         useFailedTip('响应错误：' + error.message)
-        if(!getMyToken()){
+        if(!getToken()){
             useWarningConfirm('登录异常，即将跳转登录页，重新登录').then(()=>{
                 // router.push('/login')
                 window.location.reload()
