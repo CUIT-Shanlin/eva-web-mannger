@@ -77,7 +77,6 @@ import { logOut } from '@/api/login';
 import {
   getAllMyMsg,
   updateIsDisplayed,
-  updateIsRead,
   batchUpdateIsRead,
 } from "@/api/msg";
 import { getMyAvatar } from "@/utils/service/userUtil";

@@ -139,6 +139,7 @@ import { Search } from "@element-plus/icons-vue";
 import { ref, onMounted } from "vue";
 import { getUnqulifiedPageData } from '@/api/user';
 import { getAllDepartments } from "@/api/other";
+import { sendMsg } from "@/api/msg";
 import{
   EVA_UNQUALIFIED_USER,
   UNQUALIFIED_USER,
@@ -151,14 +152,7 @@ import {
   getMyStandard,
 } from '@/utils/service/userUtil';
 import { removeSpace } from "@/utils/stringUtil";
-import {
-  useMySocket,
-  sendMySocketMsg
-} from '@/utils/webSocketUtil';
-import { 
-  useFailedTip,
-  useSuccessTip
-} from "@/utils/msgTip";
+import { useSuccessTip } from "@/utils/msgTip";
 import { useUserStore } from '@/stores/userStore';
 import pinia from '@/utils/pinia';
 
@@ -172,8 +166,7 @@ const myMsg = ref({
   msg: ''
 })
 
-// 存socket对象
-const mySocket = ref({})
+
 
 // 确认当前选择的未达标用户是评教还是被评教
 const unqualifiedType = ref(EVA_UNQUALIFIED_USER)
@@ -209,8 +202,9 @@ const pageData = ref({
 /**
  * 发送消息的具体操作
  */
-function sendMyMsg(){
-  sendMySocketMsg(mySocket.value, myMsg.value)
+const sendMyMsg = async()=>{
+  await sendMsg(myMsg.value)
+  useSuccessTip('成功发送提醒')
 }
 
 /**
@@ -243,8 +237,6 @@ onMounted(() => {
   getAllDepartments().then((res) => {
     allDepartments.value = res;
   });
-  // mySocket.value = initSocket()
-  mySocket.value = useMySocket()
 });
 </script>
     
