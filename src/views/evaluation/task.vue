@@ -79,6 +79,7 @@
           </el-link>
           <el-link
             class="iconfont operation"
+            :disabled="!hasBtnPermission('msg.tips.send')"
             type="info"
             @click="initMsgDialog(scope.row)"
             v-if="scope.row.status === PENDING_TASK"
