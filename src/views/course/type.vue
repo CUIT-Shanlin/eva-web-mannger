@@ -3,7 +3,7 @@
   <PageTitle content="课程类型列表" />
   <div class="typeAllSty">
     <div class="funBar">
-      <el-button type="primary" @click="initDialog({}, ADD_MODE)">新建</el-button>
+      <el-button type="primary" @click="initDialog({}, ADD_MODE)" :disabled="!hasBtnPermission('course.type.add')">新建</el-button>
       <span class="iptFuns">
         <el-input
           v-model="pageReqData.queryObj.keyword"
@@ -66,6 +66,7 @@
         <template #default="scope">
           <el-link
             class="iconfont operation"
+            :disabled="!hasBtnPermission('course.type.delete')"
             type="primary"
             @click="initDialog(scope.row, UPDATE_MODE)"
           >
@@ -74,6 +75,7 @@
           </el-link>
           <el-link
             class="iconfont operation"
+            :disabled="!hasBtnPermission('course.type.delete')"
             type="primary"
             @click="removeOneType(scope.row)"
           >
@@ -83,7 +85,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-button @click="batchRemoveMyTypes()">批量删除</el-button>
+    <el-button @click="batchRemoveMyTypes()" :disabled="!hasBtnPermission('course.type.delete')">批量删除</el-button>
 
     <!-- 新建/修改弹窗 -->
     <teleport to="body">
@@ -156,6 +158,7 @@ import {
 } from "@/utils/service/staticData";
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
+import { hasBtnPermission } from '@/utils/btnPermission';
 import { useRouter } from "vue-router";
 
 const router = useRouter();

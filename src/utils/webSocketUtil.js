@@ -2,26 +2,60 @@
  * webSocket的工具js
  */
 import { useFailedTip } from "@/utils/msgTip";
+import { getToken } from "@/utils/auth";
 
 
-// 后端地址
-const SOCKET_SERVER_URL = 'https://apifoxmock.com/m1/4684209-4335706-default/socket'
+// 后端socket的地址
+const WSS_ADDRESS = 'wss://apifoxmock.com/m1/4684209-4335706-default:8080/send/msg'
 
 /**
- * 初始化socket
+ * 二次封装的webSocket
+ * @param {Function} handleMessage 接收消息的方法
+ * @returns 
  */
-export function initSocket(){
+export function useMySocket(handleMyMessage){
     if(typeof WebSocket === 'undefined'){
         useFailedTip('您的浏览器或当前环境不支持socket')
-        return
+        return null
     }
-    try{
-        const socket = new WebSocket(SOCKET_SERVER_URL)
-        socket.onerror = ()=>{
-            useFailedTip('socket连接失败，可能导致消息发送异常')
+
+    const wss = new WebSocket(`${WSS_ADDRESS}?Authorization=${getToken()}`)
+
+    const init = ()=>{
+        bindEvent()
+    }
+
+    function bindEvent (){
+        wss.addEventListener('open', handleOpen, false)
+        wss.addEventListener('close', handleClose, false)
+        wss.addEventListener('message', handleMessage, false)
+        wss.addEventListener('error', handleError, false)
+    }
+
+    init()
+
+    function handleOpen(e){
+        console.log('webSocket 开启', e)
+    }
+
+    function handleClose(e){
+        console.log('webSocket 关闭', e)
+    }
+
+    function handleError(e){
+        console.log('webSocket 错误', e)
+        useFailedTip('socket连接失败或中断，可能导致消息接收异常')
+    }
+
+    function handleMessage(e){
+        let msgData = JSON.parse(e.data)
+        if(msgData.code + '' !== '200'){
+            useFailedTip(`接收消息失败，${msgData.msg}`)
+            return
         }
-        return socket
-    }catch{
-        useFailedTip('连接失败, 无法连接到服务端地址')
+        console.log('收到服务器内容：' + msgData.data);
+        handleMyMessage(msgData.data)
     }
+
+    return wss
 }

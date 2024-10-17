@@ -4,7 +4,7 @@
     <div class="assignAllSty">
         <div class="funMode">
             <el-button @click="goBackPage()" >退出</el-button>
-            <el-button @click="save()" type="primary" :loading="isLoadingBtn">保存</el-button>
+            <el-button class="banStyle" :disabled="!hasBtnPermission('system.role.assignPerm')" @click="save()" type="primary" :loading="isLoadingBtn">保存</el-button>
             <el-tree
             ref="tree"
             :data="menuTreeList"
@@ -26,7 +26,7 @@ import { ref, onMounted } from "vue";
 import{ useSuccessTip } from '@/utils/msgTip'
 import { getTreeMenus, getMenuIdListByRoleId } from '@/api/menu'
 import { doAssignForRole } from '@/api/role'
-
+import { hasBtnPermission } from '@/utils/btnPermission';
 
 // 确定按钮是否是loading状态
 const isLoadingBtn = ref(false)

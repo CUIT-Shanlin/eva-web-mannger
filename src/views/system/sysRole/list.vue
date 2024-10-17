@@ -2,7 +2,7 @@
   <PageTitle content="角色列表" />
   <div class="roleAllSty">
     <div class="funBar">
-      <el-button type="primary" @click="initDialog({}, ADD_MODE)">新建</el-button>
+      <el-button class="banStyle" :disabled="!hasBtnPermission('system.role.add')" type="primary" @click="initDialog({}, ADD_MODE)">新建</el-button>
       <span class="iptFuns">
         <el-input
         v-model="pageReqData.queryObj.keyword"
@@ -51,6 +51,8 @@
       <el-table-column label="状态" width="100">
         <template #default="scope">
           <el-switch
+          class="banStyle"
+          :disabled="!hasBtnPermission('system.role.update')"
           v-model="scope.row.status"
           :active-value="NORMAL_STATE"
           :inactive-value="DISABLED_STATE"
@@ -62,24 +64,28 @@
       <el-table-column prop="updateTime" label="修改日期" width="200" sortable/>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, UPDATE_MODE)">
+          <el-link class="iconfont operation banStyle" type="primary" @click="initDialog(scope.row, UPDATE_MODE)"
+            :disabled="!hasBtnPermission('system.role.update')"
+          >
             <span class="ico">&#xe8cf;&nbsp;</span>
             修改
           </el-link>
-          <el-link class="iconfont operation" type="primary"
-          @click="removeOneRole(scope.row)">
+          <el-link class="iconfont operation banStyle" type="primary"
+            :disabled="!hasBtnPermission('system.role.delete')"
+            @click="removeOneRole(scope.row)">
             <span class="ico">&#xe610;&nbsp;</span>
             删除
           </el-link>
-          <el-link class="iconfont operation" type="primary"
-          @click="$router.push(`/assignPerm?id=${scope.row.id}&roleName=${scope.row.roleName}`)">
+          <el-link class="iconfont operation banStyle" type="primary"
+            :disabled="!hasBtnPermission('system.role.assignPerm')"
+            @click="$router.push(`/assignPerm?id=${scope.row.id}&roleName=${scope.row.roleName}`)">
             <span class="ico">&#xe603;&nbsp;</span>
             分配权限
           </el-link>
         </template>
       </el-table-column>
     </el-table>
-    <el-button @click="batchRemoveMyRoles()">批量删除</el-button>
+    <el-button class="banStyle" @click="batchRemoveMyRoles()" :disabled="!hasBtnPermission('system.role.delete')">批量删除</el-button>
 
     <!-- 新建/修改弹窗 -->
     <teleport to="body">
@@ -132,6 +138,7 @@ import {
   NORMAL_STATE,
   DISABLED_STATE
 } from "@/utils/service/staticData";
+import { hasBtnPermission } from '@/utils/btnPermission';
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
 import { useRouter } from "vue-router";

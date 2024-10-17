@@ -77,21 +77,17 @@ import { logOut } from '@/api/login';
 import {
   getAllMyMsg,
   updateIsDisplayed,
-  updateIsRead,
   batchUpdateIsRead,
 } from "@/api/msg";
 import { getMyAvatar } from "@/utils/service/userUtil";
-import { initSocket } from "@/utils/webSocketUtil";
+import { useMySocket } from "@/utils/webSocketUtil";
 import {
   COMMON_MSG_MODE,
   NOT_DISPLAYED_MSG,
   UNREAD_MSG,
 } from "@/utils/service/staticData";
 import { dateToDistanceTime } from "@/utils/dateUtil";
-import { 
-  removeToken,
-  getMyToken,
-} from '@/utils/auth'
+import { removeToken } from '@/utils/auth'
 import { 
   useSuccessTip,
   useSimpleConfirm,
@@ -226,13 +222,11 @@ const initInfo = async () => {
 
 onMounted(() => {
   initInfo();
-  mySocket.value = initSocket();
-  // 实时接收消息
-  mySocket.value.onmessage = (event) => {
-    const msgData = JSON.parse(event.data);
-    receiveMsg(msgData);
+  // 初始化消息 + 实时接收消息
+  mySocket.value = useMySocket((data) => {
+    receiveMsg(data);
     unreadNum.value++;
-  };
+  });
   dealAllMyMsg();
 });
 </script>

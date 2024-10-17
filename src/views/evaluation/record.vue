@@ -67,7 +67,7 @@
       <div class="dataShowOne" style="margin-right: 15px">
         <div class="dataTitle">
           <span>评教任务完成度</span>
-          <el-link type="primary" @click="$router.push('/evaluation/task')">详情</el-link>
+          <el-link type="primary" @click="$router.push('/evaluation/task')" :disabled="!hasBtnPermission('evaluate.task.query')">详情</el-link>
         </div>
         <div class="chartBox">
           <div class="circleBox">
@@ -205,10 +205,14 @@
         <el-table-column prop="averScore" label="综合评分"/>
         <el-table-column label="操作">
           <template #default="scope">
-            <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row)">
+            <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row)"
+            :disabled="!hasBtnPermission('evaluate.record.query')"
+            >
               详情
             </el-link>
-            <el-link class="iconfont operation" type="primary" @click="removeOneRecord(scope.row)">
+            <el-link class="iconfont operation" type="primary" @click="removeOneRecord(scope.row)"
+            :disabled="!hasBtnPermission('evaluate.record.delete')"
+            >
               删除
             </el-link>
           </template>
@@ -262,6 +266,7 @@ import { removeSpace, replaceStr } from "@/utils/stringUtil";
 import { isEmptyArr, isEmptyObj } from "@/utils/objUtil";
 import { useSimpleConfirm, useSuccessTip, useFailedTip } from "@/utils/msgTip";
 import { getShowNum } from '@/utils/numUtil';
+import { hasBtnPermission } from '@/utils/btnPermission';
 import { onMounted, ref } from "vue";
 import { useRoute } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'

@@ -3,7 +3,8 @@
   <PageTitle content="菜单列表" />
   <div class="roleAllSty">
     <div class="funBar">
-      <el-button type="primary" @click="initDialog({}, ADD_MODE)">新建</el-button>
+      <el-button type="primary" @click="initDialog({}, ADD_MODE)"
+        :disabled="!hasBtnPermission('system.menu.add')">新建</el-button>
       <span class="iptFuns">
         <el-input
           v-model="treeReqData.keyword"
@@ -54,15 +55,20 @@
       <el-table-column prop="createTime" label="创建时间" sortable=""></el-table-column>
       <el-table-column label="操作" width="250">
         <template #default="scope">
-          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, UPDATE_MODE)">
+          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, UPDATE_MODE)"
+          :disabled="!hasBtnPermission('system.menu.update')"
+          >
             <span class="ico">&#xe8cf;&nbsp;</span>
             修改
           </el-link>
-          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, ADD_MODE)">
+          <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, ADD_MODE)"
+          :disabled="!hasBtnPermission('system.menu.add')"
+          >
             <span class="ico">&#xe611;&nbsp;</span>
             新增
           </el-link>
           <el-link class="iconfont operation" type="primary"
+          :disabled="!hasBtnPermission('system.menu.delete')"
           @click="removeOneMenu(scope.row)">
             <span class="ico">&#xe610;&nbsp;</span>
             删除
@@ -72,7 +78,7 @@
       </el-table-column>
     </el-table>
     
-    <el-button @click="batchRemoveMyMenus()">批量删除</el-button>
+    <el-button @click="batchRemoveMyMenus()" :disabled="!hasBtnPermission('system.menu.delete')">批量删除</el-button>
 
     <!-- 新建/修改弹窗 -->
     <teleport to="body">
@@ -183,6 +189,7 @@ import {
   NORMAL_STATE,
   DISABLED_STATE
 } from '@/utils/service/staticData.js';
+import { hasBtnPermission } from '@/utils/btnPermission';
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -279,7 +286,7 @@ function initDialog(menu = {}, fun = UPDATE_MODE) {
  * @param {Object} menu 待删除菜单
  */
 function removeOneMenu(menu) {
-  useSimpleConfirm(`你确定要删除菜单 “${menu.name}” 吗？`).then(
+  useSimpleConfirm(`你确定要删除菜单 “${menu.name}” 及其所有子菜单吗？`).then(
     async () => {
       let res = await removeOne(menu);
       useSuccessTip(`成功删除菜单 “${menu.name}”`);

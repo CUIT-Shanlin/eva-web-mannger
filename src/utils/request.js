@@ -1,6 +1,12 @@
 import axios from 'axios'
-import { getMyToken } from './auth';
-import { useWarningConfirm,useFailedTip } from './msgTip';
+import {
+  getToken,
+  removeToken
+} from './auth';
+import { 
+  useWarningConfirm,
+  useFailedTip
+} from './msgTip';
 import router from '@/router/permissions'
 
 /**
@@ -21,14 +27,14 @@ request.interceptors.request.use(
             return config
         }
 
-        const token = getMyToken()
+        const token = getToken()
         // TODO 没有token就取消请求，并提示
         if(!token){
             console.log('Token 未找到，取消请求');
             return Promise.reject(new Error('登录异常，Token 未找到，请求被取消'));
         }
         // 在请求头设置token
-        config.headers.set('token',token)
+        config.headers.set('Authorization',token)
 
         return config
     },
@@ -42,19 +48,28 @@ request.interceptors.request.use(
 request.interceptors.response.use(
     response=>{
         let {data} = response
-        if(data.code === 200){
+        if(data.code + '' === '200'){
             // useSuccessTip(data.msg)
             return Promise.resolve(data.data)
         }else{
             // useSuccessTip(data.msg)
-            useFailedTip(data.msg)
-            return Promise.reject(data.data)
+            if(data.code + '' === '401'){ // authorized，token过期或token异常等的返回码
+                useWarningConfirm('登录过期或异常，即将跳转登录页，重新登录').then(()=>{
+                    removeToken()
+                    window.location.reload()
+                })
+            }else if(data.code + '' === '403'){ // 没有权限的情况
+                useFailedTip("您没有权限进行该操作！")
+            }else{
+                useFailedTip(data.msg)
+            }
+            return Promise.reject(data)
         }
     },
     error=>{
         useFailedTip('响应错误：' + error.message)
-        if(!getMyToken()){
-            useWarningConfirm('登录失效，即将跳转登录页，重新登录').then(()=>{
+        if(!getToken()){
+            useWarningConfirm('登录异常，即将跳转登录页，重新登录').then(()=>{
                 // router.push('/login')
                 window.location.reload()
             })

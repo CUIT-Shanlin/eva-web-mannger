@@ -6,7 +6,7 @@
       <div class="taskTypeAll">
         <div :class="{statusOne: true,chooseStatus: statusOne.value === pageReqData.queryObj.taskStatus}"
           v-for="statusOne in allTaskStatus" :key="statusOne.value"
-          @click="changeChooseStatus(statusOne)"  
+          @click="changeChooseStatus(statusOne)"
         >
           {{statusOne.label}}
         </div>
@@ -71,6 +71,7 @@
         <template #default="scope">
           <el-link
             class="iconfont operation"
+            :disabled="!hasBtnPermission('evaluate.task.query')"
             type="primary"
             @click="initDialog(scope.row)"
           >
@@ -87,6 +88,7 @@
           <el-link
             class="iconfont operation"
             type="danger"
+            :disabled="!hasBtnPermission('evaluate.task.cancel')"
             @click="cancelMyTask(scope.row)"
             v-if="scope.row.status === PENDING_TASK"
           >
@@ -135,7 +137,7 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button type="primary" @click="sendMsg()">发送</el-button>
+        <el-button type="primary" @click="sendMyMsg()">发送</el-button>
         <el-button @click="msgDialogVisible = false">取消</el-button>
       </template>
     </el-dialog>
@@ -205,6 +207,7 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { Search } from "@element-plus/icons-vue";
 import { ref, onMounted } from "vue";
+import { sendMsg } from '@/api/msg';
 import { 
   getPageData,
   cancelOneTask,
@@ -223,18 +226,12 @@ import {
   REMINDER_MSG,
 } from "@/utils/service/staticData";
 import { removeSpace } from "@/utils/stringUtil";
-import { initSocket } from "@/utils/webSocketUtil";
 import {
   getWeekByNum,
 } from '@/utils/numUtil';
+import { hasBtnPermission } from '@/utils/btnPermission';
 import { useUserStore } from "@/stores/userStore";
 import pinia from "@/utils/pinia";
-
-// 确定当前选中的显示状态
-const chooseTaskStatus = ref(-1)
-
-// 存socket对象
-const mySocket = ref({});
 
 // 消息对象
 const myMsg = ref({
@@ -280,7 +277,10 @@ const pageData = ref({
 // 存创建日期对应数组
 const createTimeArr = ref([]);
 
-
+/**
+ * 改变任务状态
+ * @param {*} statusOne 
+ */
 function changeChooseStatus(statusOne){
   pageReqData.value.queryObj.taskStatus = statusOne.value
   getMyPageData()
@@ -297,20 +297,9 @@ function getCourseTime(time = {}){
 /**
  * 发送消息的具体操作
  */
-function sendMsg() {
-  try {
-    const socket = mySocket.value;
-    const state = socket.readyState;
-    if (state === WebSocket.CLOSED || !socket) {
-      useFailedTip("socket已关闭，发送失败，尝试重连~");
-      mySocket.value = initSocket();
-      return;
-    }
-    socket.send(JSON.stringify(myMsg.value));
-    useSuccessTip("发送成功~");
-  } catch (error) {
-    useFailedTip("发送失败");
-  }
+const sendMyMsg = async()=>{
+  await sendMsg(myMsg.value)
+  useSuccessTip('成功发送提醒')
 }
 
 /**
@@ -389,7 +378,6 @@ const getMyPageData = async () => {
 
 onMounted(() => {
   getMyPageData();
-  mySocket.value = initSocket();
 });
 </script>
     

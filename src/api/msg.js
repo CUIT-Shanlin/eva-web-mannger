@@ -58,3 +58,15 @@ export function batchUpdateIsRead(mode = COMMON_MSG_MODE){
         method: 'PUT'
     })
 }
+
+/**
+ * 发送消息接口，主要用于管理员向用户发消息
+ * @param {Object} msgObj 消息对象
+ */
+export function sendMsg(msgObj = {}){
+    return request({
+        url: '/msg/tips/send',
+        data: msgObj,
+        method: 'POST'
+    })
+}

@@ -96,7 +96,8 @@
       </div>
       <div class="flexBetween bottomBox">
         <span class="totalFont">共{{unqualifiedUsersInfo.total}}人</span>
-        <el-link class="moreShow" @click="$router.push('/dashboard/evaBoard/unqulifiedUsers')">
+        <el-link class="moreShow banStyle" @click="$router.push('/dashboard/evaBoard/unqulifiedUsers')"
+        :disabled="!hasBtnPermission('evaluate.board.query')">
           <strong>查看全部</strong>
           <i class="iconfont ico">&#xeb08;</i>
         </el-link>
@@ -156,6 +157,7 @@ import {
   getShowNum,
   formatNumberToOneDecimalPlace,
 } from '@/utils/numUtil';
+import { hasBtnPermission } from '@/utils/btnPermission';
 import {
   useInfoTip,
 } from '@/utils/msgTip';

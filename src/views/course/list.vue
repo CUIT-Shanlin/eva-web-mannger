@@ -20,6 +20,7 @@
           v-model="pageReqData.queryObj.departmentName"
           placeholder="请选择课程所在的学院名"
           @change="getMyPageData"
+          style="width: 280px"
         >
           <el-option
             v-for="department in allDepartments"
@@ -28,7 +29,7 @@
             :value="department"
           />
         </el-select>
-        <el-select
+        <!-- <el-select
           clearable
           v-model="pageReqData.queryObj.templateId"
           placeholder="请选择课程模板"
@@ -40,7 +41,7 @@
             :label="template.name"
             :value="template.id"
           />
-        </el-select>
+        </el-select> -->
         <el-date-picker
           v-model="createTimeArr"
           type="daterange"
@@ -49,7 +50,7 @@
           end-placeholder="结束创建时间"
           :shortcuts="shortcuts"
           @change="getMyPageData()"
-          style="width: 240px"
+          style="max-width: 260px"
         />
 
         <el-date-picker
@@ -58,7 +59,7 @@
           range-separator="到"
           start-placeholder="开始修改时间"
           end-placeholder="结束修改时间"
-          style="width: 240px"
+          style="max-width: 260px"
           :shortcuts="shortcuts"
           @change="getMyPageData()"
         />
@@ -86,6 +87,7 @@
         <template #default="scope">
           <el-link
             class="operation"
+            :disabled="!hasBtnPermission('course.tabulation.eva.query')"
             type="primary"
             @click="getThisEvaData(scope.row)"
           >
@@ -100,6 +102,7 @@
           </el-link>
           <el-link
             class="operation"
+            :disabled="!hasBtnPermission('course.tabulation.query')"
             type="primary"
             @click="initDialog(scope.row.id)"
           >
@@ -108,7 +111,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-button @click="batchUpdateVisible = true">批量修改课程模板</el-button>
+    <el-button @click="batchUpdateVisible = true" :disabled="!hasBtnPermission('course.template.update')">批量修改课程模板</el-button>
 
     <!-- 课程详情查看及修改弹窗 -->
     <el-dialog width="500" v-model="checkOrUpdateDialogVisible" append-to-body>
@@ -353,6 +356,7 @@ import { deepCopy } from "@/utils/objUtil";
 import { getChineseNum, getWeekByNum } from "@/utils/numUtil";
 import { removeSpace } from "@/utils/stringUtil";
 import { getTime } from "@/utils/dateUtil";
+import { hasBtnPermission } from '@/utils/btnPermission';
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -684,9 +688,11 @@ onMounted(() => {
     @include flex-center-y;
     justify-content: space-between;
     .iptFuns {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      column-gap: 10px;
+      // display: grid;
+      // grid-template-columns: repeat(5, 1fr);
+      // column-gap: 10px;
+      width: 100%;
+      @include flex-between;
     }
   }
   .tableBox {
