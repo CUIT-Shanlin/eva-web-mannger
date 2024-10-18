@@ -46,9 +46,16 @@
       class="tableBox"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="50" />
+      <el-table-column type="selection" width="50" :selectable="isNotDefaultType"/>
       <el-table-column prop="name" label="类型名称" width="200" />
       <el-table-column prop="description" label="描述" width="350" />
+
+      <el-table-column label="是否为默认类型" width="170">
+        <template #default="scope">
+          <span>{{getIsDefaultText(scope.row.isDefault)}}类型</span>
+        </template>
+      </el-table-column>
+
 
       <el-table-column
         prop="createTime"
@@ -155,6 +162,8 @@ import {
 import {
   UPDATE_MODE,
   ADD_MODE,
+  NOT_DEFAULT,
+  allDefaultData
 } from "@/utils/service/staticData";
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
@@ -197,6 +206,24 @@ const updateTimeArr = ref([]);
 // 存创建日期对应数组
 const createTimeArr = ref([]);
 
+
+/**
+ * 获取是否是默认模板的文本
+ * @param {Number|String} isDefault 
+ */
+ function getIsDefaultText(isDefault = -1){
+  return allDefaultData.find(data => data.value + '' === isDefault + '').label
+}
+
+
+/**
+ * 确认是否不是类型模板
+ * @param {Obeject} data 传入的类型对象
+ */
+ function isNotDefaultType (data){
+  return data.isDefault + '' === NOT_DEFAULT + ''
+}
+
 /**
  * 修改和新建的总方法
  */
@@ -231,6 +258,13 @@ function initDialog(type = {}, fun = UPDATE_MODE) {
  * @param {Object} type 待删除课程类型
  */
 function removeOneType(type) {
+  // TODO 确定该类型是否允许被删除
+  if (!isNotDefaultType(type)) {
+    useWarningConfirm(
+      "默认类型不允许被删除！"
+    );
+    return;
+  }
   useSimpleConfirm(`你确定要删除课程类型 “${type.name}” 吗？`).then(
     async () => {
       let res = await removeOne(type);
