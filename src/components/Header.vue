@@ -47,11 +47,18 @@
         </template>
       </el-dropdown>
       <el-avatar
-        class="avatar"
         :src="userInfo.avatarUrl"
-        :size="40"
         fit="cover"
-      />
+        :size="40"
+        class="avatar"
+        @error="() => true"
+      >
+        <img
+          :src="ERROR_AVATAR_URL"
+        />
+      </el-avatar>
+
+
       <span class="name">{{ userInfo.name }}</span>
       <el-dropdown placement="bottom" trigger="click"
       @visible-change="handleMyClose"
@@ -87,6 +94,7 @@ import {
   COMMON_MSG_MODE,
   NOT_DISPLAYED_MSG,
   UNREAD_MSG,
+  ERROR_AVATAR_URL
 } from "@/utils/service/staticData";
 import { dateToDistanceTime } from "@/utils/dateUtil";
 import { removeToken } from '@/utils/auth'

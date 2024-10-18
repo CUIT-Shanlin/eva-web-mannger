@@ -87,7 +87,7 @@
             <div class="userInfo">
               <el-avatar :src="user.avatarUrl" class="avatar" @error="() => true">
                 <img
-                  src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
+                  :src="ERROR_AVATAR_URL"
                 />
               </el-avatar>
               <span class="txt">
@@ -157,6 +157,7 @@ import {
 import{
   EVA_UNQUALIFIED_USER,
   UNQUALIFIED_USER,
+  ERROR_AVATAR_URL
 }from '@/utils/service/staticData';
 import {
   setQulifiedStandards,

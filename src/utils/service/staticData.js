@@ -234,7 +234,7 @@ export const allDefaultData = [
 
 
 /**
- * 默认头像url
+ * 头像url
  */
-
-export const DEFAULT_AVATAR_URL = 'https://picture.gptkong.com/20241018/195251f57dcf66425fa5317ecc8bf83d03.png'
+export const DEFAULT_AVATAR_URL = 'https://picture.gptkong.com/20241018/195251f57dcf66425fa5317ecc8bf83d03.png' // 默认头像
+export const ERROR_AVATAR_URL = 'https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png' // 头像加载失败之后展示的回退图片

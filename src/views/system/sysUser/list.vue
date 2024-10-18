@@ -71,7 +71,14 @@
               :size="40"
               fit="cover"
               :src="scope.row.info.avatarUrl"
-            />
+              @error="() => true"
+            >
+              <img
+                :src="ERROR_AVATAR_URL"
+              />
+            </el-avatar>
+
+
             {{ scope.row.info.name }}
           </div>
         </template>
@@ -342,7 +349,8 @@ import {
   ADD_MODE,
   CHECK_MODE,
   NORMAL_STATE,
-  DISABLED_STATE
+  DISABLED_STATE,
+  ERROR_AVATAR_URL
 } from "@/utils/service/staticData";
 import { getRandomNumber } from "@/utils/randomUtil";
 import { useSimpleConfirm, useSuccessTip, useInfoTip } from "@/utils/msgTip.js";
