@@ -148,7 +148,7 @@ export function importFile(type, semester = { id: 0, period: 0, startYear: "", e
     formData.append('semester', JSON.stringify(semester))
     return request({
         headers: {
-            'Content-Type': 'multipart/form-data; boundary=<在发送请求时计算>'
+            'Content-Type': 'multipart/form-data;'
          },
         url: `/course/import/${type}`,
         method: 'PUT',
