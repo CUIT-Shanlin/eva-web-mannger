@@ -47,7 +47,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="visible = false">取消</el-button>
-          <el-button type="primary" @click="importFiles">导入</el-button>
+          <el-button type="primary" @click="importFiles" :disabled="!hasBtnPermission('course.table.import')">导入</el-button>
         </span>
       </template>
       <!-- 确认覆盖对话框 -->
@@ -63,7 +63,7 @@
       </p>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="executeOverwrite">确认</el-button>
+          <el-button type="primary" @click="executeOverwrite" :disabled="!hasBtnPermission('course.table.import')">确认</el-button>
           <el-button @click="showConfirmOverwriteDialog = false">取消</el-button>
         </span>
       </template>
@@ -81,7 +81,7 @@
       </p>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="executeImport">确认</el-button>
+          <el-button type="primary" @click="executeImport" :disabled="!hasBtnPermission('course.table.import')">确认</el-button>
           <el-button @click="showConfirmImportDialog = false">取消</el-button>
         </span>
       </template>
