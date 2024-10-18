@@ -231,3 +231,10 @@ export const allDefaultData = [
         label: '非默认'
     },
 ]
+
+
+/**
+ * 默认头像url
+ */
+
+export const DEFAULT_AVATAR_URL = 'https://picture.gptkong.com/20241018/195251f57dcf66425fa5317ecc8bf83d03.png'

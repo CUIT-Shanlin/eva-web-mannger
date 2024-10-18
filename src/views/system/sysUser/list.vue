@@ -324,7 +324,17 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { ref, watch, onMounted } from "vue";
 import { formatDate } from "@/utils/dateUtil";
-import { getPageData, removeOne, doAssign, getScoreMsg, isExistUsername, updateUser, updateUserStatus, addUser } from "@/api/user";
+import {
+  getPageData,
+  removeOne,
+  doAssign,
+  getScoreMsg,
+  isExistUsername,
+  updateUser,
+  updateUserStatus,
+  addUser,
+  getUserAvatar
+} from "@/api/user";
 import { getAllRoles } from "@/api/role";
 import { getAllDepartments } from '@/api/other';
 import {
@@ -334,7 +344,6 @@ import {
   NORMAL_STATE,
   DISABLED_STATE
 } from "@/utils/service/staticData";
-import { getMyAvatar } from "@/utils/service/userUtil";
 import { getRandomNumber } from "@/utils/randomUtil";
 import { useSimpleConfirm, useSuccessTip, useInfoTip } from "@/utils/msgTip.js";
 import { isSpace, removeSpace, isPhone, isEmail } from "@/utils/stringUtil";
@@ -636,8 +645,9 @@ const getMyPageData = async () => {
  */
 const initAvatarOne = async(userInfo)=>{
   isLoadingTable.value = true
-  let res = await getMyAvatar(userInfo.id)
+  let res = await getUserAvatar(userInfo.id)
   userInfo.avatarUrl = res
+  console.log(userInfo.avatarUrl)
   isLoadingTable.value = false
 }
 /**

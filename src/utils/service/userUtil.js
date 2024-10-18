@@ -16,7 +16,7 @@ import {
  */
 export async function getMyAvatar(userId = -1){
     // 默认头像地址
-    const DEFAULT_AVATAR_URL = '/src/assets/img/default_avatar.png'
+    const DEFAULT_AVATAR_URL2 = '/src/assets/img/default_avatar.png'
     try{
         let res = await getUserAvatar(userId)
         // if(!res instanceof Blob){
@@ -24,15 +24,15 @@ export async function getMyAvatar(userId = -1){
         // }
         const avatar = URL.createObjectURL(res);
         if(isSpace(avatar) || res.status + '' === '404'){
-            return DEFAULT_AVATAR_URL;
+            return DEFAULT_AVATAR_URL2;
         }
         return avatar
     }catch{
-        return DEFAULT_AVATAR_URL;
+        return DEFAULT_AVATAR_URL2;
     }
 }
 
-export const DEFAULT_AVATAR_URL = '/src/assets/img/default_avatar.png'
+export const DEFAULT_AVATAR_URL2 = '/src/assets/img/default_avatar.png'
 
 
 // TODO 操作评教和被评教的达标要求设置

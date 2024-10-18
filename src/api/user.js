@@ -2,6 +2,8 @@ import request from '@/utils/request.js'
 import axios from 'axios'
 import { getSemesterId } from '@/utils/service/semesterUtil';
 import { getToken } from '@/utils/auth';
+import { DEFAULT_AVATAR_URL } from '@/utils/service/staticData';
+
 
 /**
  * 获取用户自己的信息
@@ -129,22 +131,6 @@ export function getAllBaseUser(){
 }
 
 /**
- * 获取用户的头像
- * @param {Number} id 用户id
- * @returns 
- */
-export function getUserAvatar(id = -1){
-    return axios({
-        url: `/devApi/user/avatar/${id}`,
-        method: 'get',
-        responseType: 'blob', // 指示axios以Blob形式处理响应
-        headers:{
-            Authorization: getToken()
-        }
-    })
-}
-
-/**
  * 获取指定数目未达标的用户信息
  * @param {Number|String} type 0：获取 评教 未达标的用户、1：获取 被评教 次数未达标的用户
  * @param {Number|String} num 加载前几个用户数据
@@ -171,5 +157,39 @@ export function getUnqulifiedPageData(type = 0, target = 2, reqData = {page: 0,s
         url: `/users/unqualified/${type}/${target}`,
         method: 'POST',
         data: reqData
+    })
+}
+
+
+/**
+ * 获取用户的头像
+ * @param {Number} id 用户id
+ * @returns 
+ */
+export function getUserAvatar(id = -1){
+    return new Promise((resolve, reject)=>{
+        axios({
+            url: `/devApi/user/avatar/${id}`,
+            method: 'GET',
+            responseType: 'blob', // 指示axios以Blob形式处理响应
+            headers:{
+                Authorization: getToken()
+            }
+        })
+        .then(response => {
+            // 创建一个表示Blob数据的URL
+            const url = URL.createObjectURL(new Blob([response.data], { type: 'image/jpeg' }));
+            // resolve(url); // HTTP 200时解析出URL并resolve
+            resolve(DEFAULT_AVATAR_URL)
+        })
+        .catch(error => {
+            if (error.response && error.response.status === 404) {
+                // 如果是404错误，则resolve一个默认URL
+                resolve(DEFAULT_AVATAR_URL);
+            } else {
+                // 其他情况则reject，并传递错误信息
+                reject(error.response || error);
+            }
+        })
     })
 }
