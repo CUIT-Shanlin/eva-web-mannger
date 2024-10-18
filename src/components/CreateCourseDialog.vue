@@ -209,7 +209,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="handleClose">取消</el-button>
-          <el-button type="primary" @click="createCourse" :disabled="!hasBtnPermission('course.table.add')">确认</el-button>
+          <el-button type="primary" @click="createCourse" :disabled="!checkPermission('course.table.add')">确认</el-button>
         </span>
       </template>
     </el-dialog>
@@ -442,6 +442,9 @@
             ElMessage.error('创建失败');
         }
       };
+      const checkPermission=(permission = '')=> {
+      return hasBtnPermission(permission);
+    };
   
       onMounted(() => {
         fetchAllCourses();
@@ -470,7 +473,8 @@
         fetchTeachers,
         addTimeSlot,
         removeTimeSlot,
-        createCourse
+        createCourse,
+        checkPermission
       };
     }
   };

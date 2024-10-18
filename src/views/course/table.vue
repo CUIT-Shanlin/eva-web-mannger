@@ -12,8 +12,8 @@
             @change="updateWeek"
           />
           <div class="clickBtn">
-            <el-button type="primary" @click="showImportDialog = true" :disabled="!hasBtnPermission('course.table.import')">批量导入</el-button>
-            <el-button type="primary" @click="showCreateCourseDialog = true" :disabled="!hasBtnPermission('course.table.add')">创建课程</el-button>
+            <el-button type="primary" @click="showImportDialog = true" :disabled="!checkPermission('course.table.import')">批量导入</el-button>
+            <el-button type="primary" @click="showCreateCourseDialog = true" :disabled="!checkPermission('course.table.add')">创建课程</el-button>
           </div>
         </div>
         <div class="right-section">
@@ -222,6 +222,9 @@ export default {
       console.log('创建课程成功');
       showCreateCourseDialog.value = false;
     };
+    const checkPermission=(permission = '')=> {
+      return hasBtnPermission(permission);
+    };
 
     onMounted(async () => {
       await getStarDay();
@@ -258,7 +261,8 @@ export default {
       showCreateCourseDialog,
       handleImportSuccess,
       handleCreateSuccess,
-      disabledDate
+      disabledDate,
+      checkPermission
     };
   }
 };

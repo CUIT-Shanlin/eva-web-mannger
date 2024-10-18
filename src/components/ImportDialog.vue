@@ -47,7 +47,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="visible = false">取消</el-button>
-          <el-button type="primary" @click="importFiles" :disabled="!hasBtnPermission('course.table.import')">导入</el-button>
+          <el-button type="primary" @click="importFiles" :disabled="!checkPermission('course.table.import')">导入</el-button>
         </span>
       </template>
       <!-- 确认覆盖对话框 -->
@@ -63,7 +63,7 @@
       </p>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="executeOverwrite" :disabled="!hasBtnPermission('course.table.import')">确认</el-button>
+          <el-button type="primary" @click="executeOverwrite" :disabled="!checkPermission('course.table.import')">确认</el-button>
           <el-button @click="showConfirmOverwriteDialog = false">取消</el-button>
         </span>
       </template>
@@ -81,7 +81,7 @@
       </p>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="executeImport" :disabled="!hasBtnPermission('course.table.import')">确认</el-button>
+          <el-button type="primary" @click="executeImport" :disabled="!checkPermission('course.table.import')">确认</el-button>
           <el-button @click="showConfirmImportDialog = false">取消</el-button>
         </span>
       </template>
@@ -95,6 +95,7 @@
   import { importFile, getSemesterisImported } from '../api/courseTable.js';
   import { allCourseNature, THEORY_COURSE, LAB_COURSE, OTHER_COURSE } from '../utils/service/staticData.js';
   import { getAllSemester } from '../api/semester.js';
+  import { hasBtnPermission  } from '@/utils/btnPermission';
   
   export default {
     components: {
@@ -337,6 +338,9 @@
           showConfirmImportDialog.value = false;
         }
       };
+      const checkPermission=(permission = '')=> {
+      return hasBtnPermission(permission);
+    };
   
       onMounted(() => {
         fetchSemesters();
@@ -370,7 +374,8 @@
         handleSemesterChange,
         importFiles,
         executeOverwrite,
-        executeImport
+        executeImport,
+        checkPermission
       };
     }
   };

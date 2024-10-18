@@ -3,11 +3,11 @@
     <h3 class="title">课程信息</h3>
     <div v-if="selectedBox" class="selected-date">
       <div v-if="selectedBox.num<=9">
-      <p><strong>已选中于{{ selectedDate }}的第{{selectedBox.num }},{{String(Number(selectedBox.num)+1)}}节课开始的课程</strong></p>
-    </div>
-    <div v-else>
-      <p><strong>已选中于{{ selectedDate }}的第{{selectedBox.num }}节课开始的课程</strong></p>
-    </div>
+        <p><strong>已选中于{{ selectedDate }}的第{{selectedBox.num }},{{String(Number(selectedBox.num)+1)}}节课开始的课程</strong></p>
+      </div>
+      <div v-else>
+        <p><strong>已选中于{{ selectedDate }}的第{{selectedBox.num }}节课开始的课程</strong></p>
+      </div>
     </div>
     <div v-if="hasCourses">
       <div v-for="(course, index) in selectedBox.courses" :key="index" class="course-module">
@@ -19,8 +19,8 @@
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item :command="{ action: 'edit', course }" :disabled="!hasBtnPermission('course.tabulation.update')">编辑</el-dropdown-item>
-                <el-dropdown-item :command="{ action: 'delete', course }" :disabled="!hasBtnPermission('course.table.delete')">删除</el-dropdown-item>
+                <el-dropdown-item :command="{ action: 'edit', course }" :disabled="!checkPermission('course.tabulation.update')">编辑</el-dropdown-item>
+                <el-dropdown-item :command="{ action: 'delete', course }" :disabled="!checkPermission('course.table.delete')">删除</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -58,7 +58,7 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="confirmDelete" :disabled="!hasBtnPermission('course.table.delete')">删除</el-button>
+          <el-button type="primary" @click="confirmDelete" :disabled="!checkPermission('course.table.delete')">删除</el-button>
           <el-button @click="showDeleteDialog = false">取消</el-button>
         </span>
       </template>
@@ -78,7 +78,7 @@
       </p>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="executeDelete" :disabled="!hasBtnPermission('course.table.delete')">确认删除</el-button>
+          <el-button type="primary" @click="executeDelete" :disabled="!checkPermission('course.table.delete')">确认删除</el-button>
           <el-button @click="showConfirmDeleteDialog = false">取消</el-button>
         </span>
       </template>
@@ -117,7 +117,7 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="confirmEdit" :disabled="!hasBtnPermission('course.tabulation.update')">确认</el-button>
+          <el-button type="primary" @click="confirmEdit" :disabled="!checkPermission('course.tabulation.update')">确认</el-button>
           <el-button @click="showEditDialog = false">取消</el-button>
         </span>
       </template>
@@ -137,7 +137,7 @@
       </p>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="executeEdit" :disabled="!hasBtnPermission('course.tabulation.update')">确认</el-button>
+          <el-button type="primary" @click="executeEdit" :disabled="!checkPermission('course.tabulation.update')">确认</el-button>
           <el-button @click="showConfirmEditDialog = false">取消</el-button>
         </span>
       </template>
@@ -148,7 +148,7 @@
 <script>
 import { getClassDay, delClassData, changeClass } from '../api/courseTable.js';
 import { ElMessage } from 'element-plus';
-import { hasBtnPermission } from '@/utils/btnPermission';
+import { hasBtnPermission  } from '@/utils/btnPermission';
 
 export default {
   props: {
@@ -322,6 +322,9 @@ export default {
           done();
         })
         .catch(_ => {});
+    },
+    checkPermission(permission = '') {
+      return hasBtnPermission(permission);
     }
   }
 };
