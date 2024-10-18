@@ -1,7 +1,6 @@
 <!-- 评教看板页面 -->
 <template>
   <PageTitle content="评教看板" />
-  <el-button @click="show()">点我</el-button>
   <div class="boardAll">
     <div class="commonBox commonLineBox" v-for="(it,i) in moreCounts" :key="i">
       <div class="txtBox flexUpDown">
@@ -220,11 +219,6 @@ function flashUnqualifiedUsers(){
     useInfoTip('成功修改达标要求')
   })
 }
-
-function show(){
-  console.log(unqualifiedUsersInfo.value)
-}
-
 
 /**
  * 获取未达标用户信息
