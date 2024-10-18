@@ -7,8 +7,8 @@
       :before-close="handleClose"
     >
       <el-radio-group v-model="createType">
-        <el-radio label="new">创建新课程</el-radio>
-        <el-radio label="existing">创建已有课程</el-radio>
+        <el-radio label="new">在新课程中添加</el-radio>
+        <el-radio label="existing">在已有课程添加</el-radio>
       </el-radio-group>
       <div v-if="createType === 'new'">
         <!-- 创建新课程的表单 -->
@@ -70,15 +70,15 @@
             </el-select>
           </el-form-item>
           <el-form-item label="课程类型">
-            <el-select v-model="newCourseForm.courseTypeId">
-              <el-option
-                v-for="type in courseTypes"
-                :key="type.id"
-                :label="type.name"
-                :value="type.id"
-              />
-            </el-select>
-          </el-form-item>
+          <el-select v-model="newCourseForm.courseTypeIds" multiple>
+            <el-option
+              v-for="type in courseTypes"
+              :key="type.id"
+              :label="type.name"
+              :value="type.id"
+            />
+          </el-select>
+        </el-form-item>
           <el-form-item label="时段">
             <div v-for="(timeSlot, index) in existingCourseForm.timeSlots" :key="index">
               <el-form-item label="周数">
@@ -209,7 +209,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="handleClose">取消</el-button>
-          <el-button type="primary" @click="createCourse">确认</el-button>
+          <el-button type="primary" @click="createCourse" :disabled="!hasBtnPermission('course.table.add')">确认</el-button>
         </span>
       </template>
     </el-dialog>
@@ -224,7 +224,7 @@
   import { getAllType } from '../api/courseType.js';
   import { getAllTemplates } from '../api/template.js';
   import { allCourseNature, THEORY_COURSE, LAB_COURSE, OTHER_COURSE } from '../utils/service/staticData.js';
-  
+  import { hasBtnPermission } from '@/utils/btnPermission';
   export default {
     components: {
       ElDialog,
@@ -253,7 +253,7 @@
         teacherId: '',
         courseNature: '',
         templateId: '',
-        courseTypeId: '',
+        courseTypeId: [],
         startTime: '',
         endTime: '',
         location: ''
@@ -411,7 +411,7 @@
                 nature: newCourseForm.value.courseNature
               },
               templateId: newCourseForm.value.templateId,
-              typeIdList: [newCourseForm.value.courseTypeId]
+              typeIdList: newCourseForm.value.courseTypeIds
             };
   
             const dateArr = existingCourseForm.value.timeSlots.map(slot => ({

@@ -12,8 +12,8 @@
             @change="updateWeek"
           />
           <div class="clickBtn">
-            <el-button type="primary" @click="showImportDialog = true">批量导入</el-button>
-            <el-button type="primary" @click="showCreateCourseDialog = true">创建课程</el-button>
+            <el-button type="primary" @click="showImportDialog = true" :disabled="!hasBtnPermission('course.table.import')">批量导入</el-button>
+            <el-button type="primary" @click="showCreateCourseDialog = true" :disabled="!hasBtnPermission('course.table.add')">创建课程</el-button>
           </div>
         </div>
         <div class="right-section">
@@ -71,6 +71,7 @@ import ImportDialog from '../../components/ImportDialog.vue';
 import CreateCourseDialog from '../../components/CreateCourseDialog.vue';
 import { ArrowLeftBold, ArrowRightBold } from '@element-plus/icons-vue';
 import { getWeekData, getClassTable, getClassDay } from '../../api/courseTable.js';
+import { hasBtnPermission } from '@/utils/btnPermission';
 
 const startTimes = ["8:20", "9:15", "10:20", "11:15", "14:00", "14:55", "16:00", "16:55", "19:30", "20:25", "21:20"];
 const endTimes = ["9:05", "10:00", "11:05", "12:00", "14:45", "15:40", "16:45", "17:40", "20:15", "21:10", "22:05"];
@@ -263,7 +264,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr); 
