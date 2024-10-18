@@ -1,6 +1,7 @@
 <!-- 评教看板页面 -->
 <template>
   <PageTitle content="评教看板" />
+  <el-button @click="show()">点我</el-button>
   <div class="boardAll">
     <div class="commonBox commonLineBox" v-for="(it,i) in moreCounts" :key="i">
       <div class="txtBox flexUpDown">
@@ -85,7 +86,11 @@
       <div v-loading="isLoadingUsers">
         <div class="userOne" v-for="user in unqualifiedUsersInfo.dataArr" :key="user.id">
             <div class="userInfo">
-              <el-avatar :src="user.avatarUrl" class="avatar"/>
+              <el-avatar :src="user.avatarUrl" class="avatar" @error="() => true">
+                <img
+                  src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
+                />
+              </el-avatar>
               <span class="txt">
                 <div class="name">{{user.name}}</div>
                 <span>{{user.department}}</span>
@@ -216,19 +221,24 @@ function flashUnqualifiedUsers(){
   })
 }
 
+function show(){
+  console.log(unqualifiedUsersInfo.value)
+}
+
+
 /**
  * 获取未达标用户信息
  */
 const getMyUnqualifiedUsers = async()=>{
   isLoadingUsers.value = true
   let res = await getUnqualifiedUsers(unqualifiedType.value, 5, getQulifiedStandards()[unqualifiedType.value])
+  unqualifiedUsersInfo.value = res
   // 加载头像信息
-  res.dataArr.forEach((user) => {
+  unqualifiedUsersInfo.value.dataArr.forEach((user) => {
     getUserAvatar(user.id).then(url=>{
       user.avatarUrl = url
     })
   })
-  unqualifiedUsersInfo.value = res
   isLoadingUsers.value = false
 }
 
