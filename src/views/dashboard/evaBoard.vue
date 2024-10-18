@@ -142,21 +142,22 @@ import {
   getMonthEvaNum,
   getAllMyDetailEvaData,
 } from '@/api/evaBoard';
-import { getUnqualifiedUsers } from '@/api/user';
+import {
+  getUnqualifiedUsers,
+  getUserAvatar
+} from '@/api/user';
+import { 
+  getShowNum,
+  formatNumberToOneDecimalPlace,
+} from '@/utils/numUtil';
 import{
   EVA_UNQUALIFIED_USER,
   UNQUALIFIED_USER,
 }from '@/utils/service/staticData';
 import {
-  getMyAvatar,
-  DEFAULT_AVATAR_URL2,
   setQulifiedStandards,
   getQulifiedStandards,
 } from '@/utils/service/userUtil'
-import { 
-  getShowNum,
-  formatNumberToOneDecimalPlace,
-} from '@/utils/numUtil';
 import { hasBtnPermission } from '@/utils/btnPermission';
 import {
   useInfoTip,
@@ -223,9 +224,8 @@ const getMyUnqualifiedUsers = async()=>{
   let res = await getUnqualifiedUsers(unqualifiedType.value, 5, getQulifiedStandards()[unqualifiedType.value])
   // 加载头像信息
   res.dataArr.forEach((user) => {
-    user.avatarUrl = DEFAULT_AVATAR_URL2
-    getMyAvatar(user.id).then(avatarUrl => {
-      user.avatarUrl = avatarUrl
+    getUserAvatar(user.id).then(url=>{
+      user.avatarUrl = url
     })
   })
   unqualifiedUsersInfo.value = res

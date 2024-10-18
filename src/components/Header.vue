@@ -72,14 +72,16 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import { getInfo } from "@/api/user";
+import {
+  getInfo,
+  getUserAvatar
+} from "@/api/user";
 import { logOut } from '@/api/login';
 import {
   getAllMyMsg,
   updateIsDisplayed,
   batchUpdateIsRead,
 } from "@/api/msg";
-import { getMyAvatar } from "@/utils/service/userUtil";
 import { useMySocket } from "@/utils/webSocketUtil";
 import {
   COMMON_MSG_MODE,
@@ -216,7 +218,7 @@ function receiveMsg(msgData = {}) {
 const initInfo = async () => {
   let { info } = await getInfo();
   userInfo.value = info;
-  let res = await getMyAvatar(userInfo.value.id);
+  let res = await getUserAvatar(userInfo.value.id);
   userInfo.value.avatarUrl = res;
 };
 
