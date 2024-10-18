@@ -179,8 +179,8 @@ export function getUserAvatar(id = -1){
         .then(response => {
             // 创建一个表示Blob数据的URL
             const url = URL.createObjectURL(new Blob([response.data], { type: 'image/jpeg' }));
-            // resolve(url); // HTTP 200时解析出URL并resolve
-            resolve(DEFAULT_AVATAR_URL)
+            resolve(url); // HTTP 200时解析出URL并resolve
+            // resolve(DEFAULT_AVATAR_URL)
         })
         .catch(error => {
             if (error.response && error.response.status === 404) {

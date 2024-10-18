@@ -655,7 +655,6 @@ const initAvatarOne = async(userInfo)=>{
   isLoadingTable.value = true
   let res = await getUserAvatar(userInfo.id)
   userInfo.avatarUrl = res
-  console.log(userInfo.avatarUrl)
   isLoadingTable.value = false
 }
 /**
