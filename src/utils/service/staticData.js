@@ -209,3 +209,25 @@ export const allTaskStatus = [
         type: 'danger'
     },
 ]
+
+
+/**
+ * 确认默认情况
+ */
+export const THEORY_DEFAULT = 0 // 理论课默认数据
+export const LAB_DEFAULT = 1 // 实验课默认数据
+export const NOT_DEFAULT = -1 // 非默认数据
+export const allDefaultData = [
+    {
+        value: THEORY_DEFAULT,
+        label: '理论课默认'
+    },
+    {
+        value: LAB_COURSE,
+        label: '实验课默认'
+    },
+    {
+        value: NOT_DEFAULT,
+        label: '非默认'
+    },
+]

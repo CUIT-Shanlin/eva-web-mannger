@@ -46,9 +46,14 @@
       class="tableBox"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="50" />
+      <el-table-column type="selection" width="50" :selectable="isNotDefaultTemplate"/>
       <el-table-column prop="name" label="模板名称" width="200" />
-      <el-table-column prop="description" label="描述" width="450" />
+      <el-table-column prop="description" label="描述" width="400" />
+      <el-table-column label="是否为默认模板" width="170">
+        <template #default="scope">
+          <span>{{getIsDefaultText(scope.row.isDefault)}}模板</span>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="createTime"
         label="创建日期"
@@ -156,6 +161,8 @@ import {
 import {
   UPDATE_MODE,
   ADD_MODE,
+  NOT_DEFAULT,
+  allDefaultData
 } from "@/utils/service/staticData";
 import { isEmptyArr, deepCopy, addSuffixToDuplicates, removeSpaceStrToArr } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
@@ -200,6 +207,21 @@ const createTimeArr = ref([]);
 // 当前正在操作的指标
 const myProps = ref([])
 
+/**
+ * 确认是否不是默认模板
+ * @param {Obeject} data 传入的模板对象
+ */
+function isNotDefaultTemplate (data){
+  return data.isDefault + '' === NOT_DEFAULT + ''
+}
+
+/**
+ * 获取是否是默认模板的文本
+ * @param {Number|String} isDefault 
+ */
+function getIsDefaultText(isDefault = -1){
+  return allDefaultData.find(data => data.value + '' === isDefault + '').label
+}
 
 /**
  * 移除一个指标（仅作用于页面数据）
@@ -266,9 +288,9 @@ function initDialog(template = {}, fun = UPDATE_MODE) {
  */
 function removeOneTemplate(template) {
   // TODO 确定该模板是否允许被删除
-  if (template.isPreventRemove) {
+  if (!isNotDefaultTemplate(template)) {
     useWarningConfirm(
-      "该模板已被分配在课程中或已经有用户使用过该模板进行评教，不允许被删除！"
+      "默认模板不允许被删除！"
     );
     return;
   }
