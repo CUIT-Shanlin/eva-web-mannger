@@ -158,6 +158,7 @@ import {
   useSimpleConfirm,
   useSuccessTip,
   useFailedTip,
+  useWarningConfirm
 } from "@/utils/msgTip.js";
 import {
   UPDATE_MODE,
