@@ -53,6 +53,15 @@
           @click="showFunDialog({info:{}}, ADD_MODE)"
           ico="&#xe712;"
         />
+        <my-common-btn
+          class="addIco banStyle"
+          :disabled="!hasBtnPermission('system.user.add')"
+          txt="同步ldap用户"
+          :is-large="true"
+          default-color="rgb(255,97,117)"
+          :plain="true"
+          @click="showFunDialog({info:{}}, ADD_MODE)"
+        />
       </div>
     </div>
     <el-table
