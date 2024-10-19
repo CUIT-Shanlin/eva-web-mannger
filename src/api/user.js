@@ -160,6 +160,15 @@ export function getUnqulifiedPageData(type = 0, target = 2, reqData = {page: 0,s
     })
 }
 
+/**
+ * 同步LDAP用户
+ */
+export function syncLdap(){
+    return request({
+        url: '/user/sync',
+        method: 'POST'
+    })
+}
 
 /**
  * 获取用户的头像

@@ -54,13 +54,13 @@
           ico="&#xe712;"
         />
         <my-common-btn
-          class="addIco banStyle"
-          :disabled="!hasBtnPermission('system.user.add')"
+          class="addIco"
+          :disabled="!hasBtnPermission('system.user.sync')"
           txt="同步ldap用户"
           :is-large="true"
           default-color="rgb(255,97,117)"
           :plain="true"
-          @click="showFunDialog({info:{}}, ADD_MODE)"
+          @click="syncMyLdap()"
         />
       </div>
     </div>
@@ -349,7 +349,8 @@ import {
   updateUser,
   updateUserStatus,
   addUser,
-  getUserAvatar
+  getUserAvatar,
+  syncLdap
 } from "@/api/user";
 import { getAllRoles } from "@/api/role";
 import { getAllDepartments } from '@/api/other';
@@ -428,6 +429,16 @@ const pageReqData = ref({
     endCreateTime: null,
   },
 });
+
+/**
+ * 同步ldap用户
+ */
+function syncMyLdap(){
+  useSimpleConfirm('你确定要同步ldap中的用户吗？（注：不会覆盖已存在的用户（用户名相同的情况），也不会删除原来的任何用户）').then(async()=>{
+    await syncLdap()
+    useSuccessTip('同步ldap用户成功')
+  })
+}
 
 /**
  * 修改用户的状态

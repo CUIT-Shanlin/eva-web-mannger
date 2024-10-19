@@ -98,6 +98,9 @@ $default-color: v-bind(defaultColor);
     color: #FFF;
     padding: 5px 15px;
     border-radius: 5px;
+    &:disabled{
+        cursor: not-allowed;
+    }
 }
 .btn{
     background: $default-color;
@@ -109,7 +112,6 @@ $default-color: v-bind(defaultColor);
     }
     &:disabled{
         background: v-bind(getDisabledColor());
-        cursor: not-allowed;
     }
     .ico{
         font-size: v-bind(icoSize);
@@ -122,6 +124,9 @@ $default-color: v-bind(defaultColor);
     color: $default-color;
     &:hover{
         background: v-bind(getPlainHoverColor());
+    }
+    &:disabled{
+        background: #F5F5F5;
     }
 }
 .largeBtn{
