@@ -307,7 +307,7 @@
         <el-button
           type="primary"
           @click="batchUpdateMyTemplate()"
-          :disabled="changeTemplateId == null"
+          :disabled="changeTemplateId == null || !handleCourseIds || handleCourseIds.length === 0"
           >保存</el-button
         >
         <el-button @click="batchUpdateVisible = false">取消</el-button>
