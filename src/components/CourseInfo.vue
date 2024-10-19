@@ -160,7 +160,7 @@
       ></el-transfer>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="confirmAssign" :disabled="!checkPermission('course.table.assignEva')">确认分配</el-button>
+          <el-button type="primary"  @click="confirmAssign"  :disabled="!checkPermission('course.table.assignEva') || isArrayEmpty" >确认分配</el-button>
           <el-button @click="showAssignDialog = false">取消</el-button>
         </span>
       </template>
@@ -249,7 +249,10 @@ export default {
   computed: {
     hasCourses() {
       return this.selectedBox && this.selectedBox.courses && this.selectedBox.day && this.selectedBox.courses.length > 0;
-    }
+    },
+    isArrayEmpty() {
+      return this.selectedTeachers.length === 0;
+    },
   },
   watch: {
     selectedBox: {
