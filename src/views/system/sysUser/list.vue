@@ -445,7 +445,7 @@ function syncMyLdap(){
  * @param info 用户信息
  */
 const updateThisUserStatus = async(info)=>{
-  let res = updateUserStatus(info.id, info.status)
+  let res = await updateUserStatus(info.id, info.status)
   if(info.status === NORMAL_STATE){
     useSuccessTip(`成功启用用户 “${info.name}”`)
   }else{
