@@ -322,9 +322,8 @@ const getMyTreeData = async () => {
   isLoadingTable.value = true;
   // 去除输入关键字中的空格
   treeReqData.value.keyword = removeSpace(treeReqData.value.keyword)
-  let {menuTree} = await getTreeMenus(treeReqData.value);
+  let menuTree = await getTreeMenus(treeReqData.value);
   treeData.value = menuTree;
-  // console.log(menuTree)
   isLoadingTable.value = false;
 };
 
