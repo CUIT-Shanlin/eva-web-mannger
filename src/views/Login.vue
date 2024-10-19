@@ -39,7 +39,7 @@
         <button class="btn" @click="useLogin()" v-loading="isLoadingBtn" :disabled="isLoadingBtn">立即登录</button>
       </div>
     </div>
-    <img src="../assets/img/loginBack2.png" class="imgShow" />
+    <img :src="getAssetsFile('loginBack2.png')" class="imgShow" />
   </div>
 </template>
 
@@ -48,6 +48,7 @@ import { reactive, ref } from "vue";
 import { login } from "@/api/login";
 import { useFailedTip, useSuccessTip } from "@/utils/msgTip";
 import { isSpace } from "@/utils/stringUtil";
+import { getAssetsFile } from '@/utils/pubUse';
 import { setToken, getUsername, setUsername } from "@/utils/auth";
 import { useRouter } from "vue-router";
 
