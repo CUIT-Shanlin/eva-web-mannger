@@ -437,6 +437,7 @@ function syncMyLdap(){
   useSimpleConfirm('你确定要同步ldap中的用户吗？（注：不会覆盖已存在的用户（用户名相同的情况），也不会删除原来的任何用户）').then(async()=>{
     await syncLdap()
     useSuccessTip('同步ldap用户成功')
+    getMyPageData()
   })
 }
 
