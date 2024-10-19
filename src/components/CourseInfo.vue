@@ -21,6 +21,7 @@
               <el-dropdown-menu>
                 <el-dropdown-item :command="{ action: 'edit', course }" :disabled="!checkPermission('course.tabulation.update')">编辑</el-dropdown-item>
                 <el-dropdown-item :command="{ action: 'delete', course }" :disabled="!checkPermission('course.table.delete')">删除</el-dropdown-item>
+                <el-dropdown-item :command="{ action: 'assigned', course }" :disabled="!checkPermission('course.table.assignEva')">分配听课</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -142,11 +143,52 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog
+      title="分配听课"
+      v-model="showAssignDialog"
+      append-to-body
+      width="50%"
+      :before-close="handleClose"
+    >
+      <el-transfer
+        v-model="selectedTeachers"
+        :data="allTeachers"
+        :titles="['所有教师', '已选教师']"
+        :filterable="true"
+        filter-placeholder="搜索教师"
+        @change="handleTransferChange"
+      ></el-transfer>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="confirmAssign" :disabled="!checkPermission('course.table.assignEva')">确认分配</el-button>
+          <el-button @click="showAssignDialog = false">取消</el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog
+      title="确认分配"
+      v-model="showConfirmAssignDialog"
+      append-to-body
+      width="30%"
+      :before-close="handleClose"
+    >
+      <p>
+        是否将<strong>{{ selectedTeachersNames.join(', ') }}</strong>分配至<strong>{{ selectedCourse.name }}</strong>课程？
+      </p>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="executeAssign" :disabled="!checkPermission('course.table.assignEva')">确认分配</el-button>
+          <el-button @click="showConfirmAssignDialog = false">取消</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </el-aside>
 </template>
 
+
 <script>
-import { getClassDay, delClassData, changeClass } from '../api/courseTable.js';
+import { getClassDay, delClassData, changeClass, assignedTeacher } from '../api/courseTable.js';
+import { getAllBaseUser } from '../api/user.js';
 import { ElMessage } from 'element-plus';
 import { hasBtnPermission  } from '@/utils/btnPermission';
 
@@ -196,7 +238,12 @@ export default {
         day: 1,
         startTime: 1,
         endTime: 1
-      }
+      },
+      showAssignDialog: false,
+      showConfirmAssignDialog: false,
+      allTeachers: [],
+      selectedTeachers: [],
+      selectedTeachersNames: []
     };
   },
   computed: {
@@ -224,6 +271,10 @@ export default {
         this.deleteForm.startWeek = this.currentWeek;
         this.deleteForm.endWeek = this.currentWeek;
         this.showDeleteDialog = true;
+      } else if (action === 'assigned') {
+        this.selectedCourse = course;
+        this.fetchAllTeachers();
+        this.showAssignDialog = true;
       }
     },
     openEditDialog(course) {
@@ -325,6 +376,49 @@ export default {
     },
     checkPermission(permission = '') {
       return hasBtnPermission(permission);
+    },
+    async fetchAllTeachers() {
+      try {
+        const response = await getAllBaseUser();
+        this.allTeachers = response.map(teacher => ({
+          key: teacher.id,
+          label: teacher.name
+        }));
+      } catch (error) {
+        console.error('获取所有教师信息失败:', error);
+        ElMessage.error('获取教师信息失败');
+      }
+    },
+    handleTransferChange(value, direction, movedKeys) {
+      if (direction === 'right') {
+        this.selectedTeachersNames = this.allTeachers
+          .filter(teacher => value.includes(teacher.key))
+          .map(teacher => teacher.label);
+      }
+    },
+    confirmAssign() {
+      this.showAssignDialog = false;
+      this.showConfirmAssignDialog = true;
+    },
+    async executeAssign() {
+      try {
+        await assignedTeacher({
+          id: this.selectedCourse.id,
+          evaTeacherIdList: this.selectedTeachers
+        });
+        this.showConfirmAssignDialog = false;
+        ElMessage({
+          message: '分配成功',
+          type: 'success',
+        });
+        this.selectedTeachers = [];
+        this.selectedTeachersNames = [];
+      } catch (error) {
+        console.error('分配听课失败:', error);
+        ElMessage.error('分配失败');
+        this.selectedTeachers = [];
+        this.selectedTeachersNames = [];
+      }
     }
   }
 };

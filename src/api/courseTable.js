@@ -190,3 +190,18 @@ export function createNewClass(techerId,courseInfo = {
         }
     })
 }
+
+/**
+ * 分配听课/评教老师
+ *  @param {Number} id 课程详情id
+ *  @param {Array|Number} evaTeacherIdList 评教老师的id集合
+ * @returns 详细信息
+ */
+
+export function assignedTeacher(teacher={id:1,evaTeacherIdList:[]}){
+    return request({
+        url: `/course/table/one/eva?semId=${getSemesterId()}`,
+        method: 'PUT',
+        data:teacher
+    })
+}
