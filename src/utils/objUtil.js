@@ -90,3 +90,13 @@ export function addSuffixToDuplicates(arr) {
 export function removeSpaceStrToArr(arr = []){
     return arr.filter(item => !isSpace(item))
 }
+
+
+/**
+ * 判断一个对象是否是空对象或者null或者undefined
+ * @param {Object} obj 传入对象
+ */
+export function isEmptyOrNullOrUndefined(obj) {
+  return  (obj === null || obj === undefined) || 
+(Object.keys(obj).length === 0 && obj.constructor === Object);
+}

@@ -47,7 +47,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="visible = false">取消</el-button>
-          <el-button type="primary" @click="importFiles" :disabled="!checkPermission('course.table.import')">导入</el-button>
+          <el-button type="primary" @click="importFiles" :disabled="!checkPermission('course.table.import') || !isChecked()">导入</el-button>
         </span>
       </template>
       <!-- 确认覆盖对话框 -->
@@ -96,7 +96,9 @@
   import { allCourseNature, THEORY_COURSE, LAB_COURSE, OTHER_COURSE } from '../utils/service/staticData.js';
   import { getAllSemester } from '../api/semester.js';
   import { hasBtnPermission  } from '@/utils/btnPermission';
-  
+  import { isSpace } from '@/utils/stringUtil';
+  import { isEmptyOrNullOrUndefined } from '@/utils/objUtil';
+
   export default {
     components: {
       ElDialog,
@@ -140,6 +142,16 @@
       const showConfirmOverwriteDialog = ref(false);
       const showConfirmImportDialog = ref(false);
   
+      /**
+       * 用于确认是否可以提交表单
+       */
+      const isChecked = ()=>{
+        const formValue = importForm.value
+        return !isSpace(formValue.startDate) && !isSpace(formValue.startYear) && !isSpace(formValue.endYear)
+        && !isEmptyOrNullOrUndefined(formValue.file)
+      }
+
+
       const handleClose = () => {
         visible.value = false;
         emit('update:modelValue', false);
@@ -164,6 +176,7 @@
               acc.push({
                 id: semester.id,
                 label: `${semester.startYear}-${semester.endYear}`,
+                startDate: semester.startDate,
                 children: [
                   {
                     id: semester.id,
@@ -215,6 +228,7 @@
           }
   
           semesterOptions.value = semesters;
+          // console.log(semesters)
         } catch (error) {
           console.error('获取学期数据失败:', error);
         }
@@ -231,6 +245,7 @@
               importForm.value.period = semester.period;
               importForm.value.startYear = selectedSemester.label.split('-')[0];
               importForm.value.endYear = selectedSemester.label.split('-')[1];
+              importForm.value.startDate = selectedSemester.startDate
             }
           }
         } else {
@@ -375,7 +390,8 @@
         importFiles,
         executeOverwrite,
         executeImport,
-        checkPermission
+        checkPermission,
+        isChecked
       };
     }
   };
