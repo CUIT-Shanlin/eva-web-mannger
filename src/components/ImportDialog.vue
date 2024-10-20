@@ -170,25 +170,25 @@
               existingYear.children.push({
                 id: semester.id,
                 label: semester.period === 0 ? '上学期' : '下学期',
-                period: semester.period
+                period: semester.period,
+                startDate: semester.startDate,
               });
             } else {
               acc.push({
                 id: semester.id,
                 label: `${semester.startYear}-${semester.endYear}`,
-                startDate: semester.startDate,
                 children: [
                   {
                     id: semester.id,
                     label: semester.period === 0 ? '上学期' : '下学期',
-                    period: semester.period
+                    period: semester.period,
+                    startDate: semester.startDate,
                   }
                 ]
               });
             }
             return acc;
           }, []);
-  
           // 计算新学期
           if (semesters.length > 0) {
             const lastSemester = semesters[semesters.length - 1];
@@ -226,9 +226,7 @@
               });
             }
           }
-  
           semesterOptions.value = semesters;
-          // console.log(semesters)
         } catch (error) {
           console.error('获取学期数据失败:', error);
         }
@@ -245,7 +243,7 @@
               importForm.value.period = semester.period;
               importForm.value.startYear = selectedSemester.label.split('-')[0];
               importForm.value.endYear = selectedSemester.label.split('-')[1];
-              importForm.value.startDate = selectedSemester.startDate
+              importForm.value.startDate = semester.startDate
             }
           }
         } else {
