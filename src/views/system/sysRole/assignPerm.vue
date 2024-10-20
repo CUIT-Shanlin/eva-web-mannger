@@ -79,7 +79,7 @@ const getMyMenuIds = async()=>{
 
 // 获取到所有的树型菜单列表
 const getTreeMenusList = async()=>{
-    let {menuTree} = await getTreeMenus()
+    let menuTree = await getTreeMenus()
     menuTreeList.value = menuTree
     // console.log(menuTree)
 }
