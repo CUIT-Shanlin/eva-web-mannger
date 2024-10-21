@@ -12,9 +12,15 @@
       </el-radio-group>
       <div v-if="createType === 'new'">
         <!-- 创建新课程的表单 -->
-        <el-form :model="newCourseForm">
+        <el-form :model="newCourseForm" label-width="80px">
           <el-form-item label="课程名称">
-            <el-select
+            <el-autocomplete
+              v-model="newCourseForm.subjectName"
+              :fetch-suggestions="fetchSubjects"
+              placeholder="请输入关键词"
+              :loading="loading"
+            />
+            <!-- <el-select
               v-model="newCourseForm.subjectId"
               filterable
               remote
@@ -29,7 +35,7 @@
                 :label="subject.name"
                 :value="subject.id"
               />
-            </el-select>
+            </el-select> -->
           </el-form-item>
           <el-form-item label="教师名称">
             <el-select
@@ -134,7 +140,7 @@
       </div>
       <div v-else>
         <!-- 创建已有课程的表单 -->
-        <el-form :model="existingCourseForm">
+        <el-form :model="existingCourseForm" label-width="60px">
           <el-form-item label="课程名">
             <el-select
               v-model="existingCourseForm.courseId"
@@ -253,6 +259,7 @@
       const createType = ref('new');
       const newCourseForm = ref({
         subjectId: '',
+        subjectName: '',
         teacherId: '',
         courseNature: '',
         templateId: '',
@@ -334,21 +341,18 @@
         }
       };
   
-      const fetchSubjects = async (query) => {
-        if (query !== '') {
-          loading.value = true;
-          try {
-            const response = await getAllBaseSubject();
-            subjects.value = response.filter(subject => {
-              return subject.name.includes(query);
-            });
-          } catch (error) {
-            console.error('过滤学科失败:', error);
-          } finally {
-            loading.value = false;
-          }
-        } else {
-          subjects.value = [];
+      const fetchSubjects = async (query, cb) => {
+        loading.value = true;
+        try {
+          const response = await getAllBaseSubject();
+          subjects.value = isSpace(query) ? response : response.filter(subject => {
+            return subject.name.includes(query);
+          });
+          cb(subjects.value.map(subject=>{return {value: subject.name}}))
+        } catch (error) {
+          console.error('过滤学科失败:', error);
+        } finally {
+          loading.value = false;
         }
       };
   
@@ -406,17 +410,17 @@
         try {
             if (createType.value === 'new') {
                 const id = newCourseForm.value.subjectId;
-                const techerId = newCourseForm.value.teacherId; 
+                const techerId = newCourseForm.value.teacherId;
               const courseInfo = {
               id:id,
               subjectMsg: {
-                name: subjects.value.find(subject => subject.id === newCourseForm.value.subjectId)?.name || '',
+                name: newCourseForm.value.subjectName || subjects.value.find(subject => subject.id === newCourseForm.value.subjectId)?.name,
                 nature: newCourseForm.value.courseNature
               },
               templateId: newCourseForm.value.templateId,
               typeIdList: newCourseForm.value.courseTypeIds
             };
-  
+
             const dateArr = existingCourseForm.value.timeSlots.map(slot => ({
               weeks: slot.weeks,
               day: slot.day,
@@ -424,23 +428,27 @@
               endTime: slot.endTime,
               classroom: slot.classroom
             }));
-            console.log(techerId == null)
-            if(techerId == null || isSpace(courseInfo.subjectMsg.name) || !courseInfo.subjectMsg.nature){
+            if(techerId == null || isSpace(courseInfo.subjectMsg.name) || courseInfo.subjectMsg.nature == null){
               useFailedTip('完整填写信息后,才能提交')
               return
             }
             await createNewClass(techerId, courseInfo, dateArr);
-           ElMessage({
-            message: '创建成功',
-            type: 'success',
-          });
+            ElMessage({
+              message: '创建成功',
+              type: 'success',
+            });
           } else {
             const { courseId, timeSlots } = existingCourseForm.value;
+            console.log(courseId)
+            if(courseId == null || isSpace(courseId)){
+              useFailedTip('完整填写信息后,才能提交')
+              return
+            }
             await createClass(courseId, timeSlots);
             ElMessage({
-            message: '创建成功',
-            type: 'success',
-          });
+              message: '创建成功',
+              type: 'success',
+            });
           }
           emit('create-success');
           handleClose();
