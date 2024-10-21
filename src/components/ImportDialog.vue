@@ -81,7 +81,7 @@
       </p>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="executeImport" :disabled="!checkPermission('course.table.import')">确认</el-button>
+          <el-button type="primary" @click="executeImport" :disabled="!checkPermission('course.table.import')" :loading="isLoadingBtn">确认</el-button>
           <el-button @click="showConfirmImportDialog = false">取消</el-button>
         </span>
       </template>
@@ -142,6 +142,9 @@
       const showConfirmOverwriteDialog = ref(false);
       const showConfirmImportDialog = ref(false);
   
+      const isLoadingBtn = ref(false)
+
+
       /**
        * 用于确认是否可以提交表单
        */
@@ -316,6 +319,7 @@
       };
   
       const executeImport = async () => {
+        isLoadingBtn.value = true
         const id = importForm.value.id;
         const period = importForm.value.period;
         const startYear = importForm.value.startYear;
@@ -349,11 +353,12 @@
           ElMessage.error('导入失败');
         } finally {
           showConfirmImportDialog.value = false;
+          isLoadingBtn.value = false
         }
       };
       const checkPermission=(permission = '')=> {
-      return hasBtnPermission(permission);
-    };
+        return hasBtnPermission(permission);
+      };
   
       onMounted(() => {
         fetchSemesters();
@@ -375,6 +380,7 @@
       });
   
       return {
+        isLoadingBtn,
         visible,
         importForm,
         semesterOptions,

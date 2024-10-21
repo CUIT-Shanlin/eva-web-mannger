@@ -138,7 +138,7 @@
       </p>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="executeEdit" :disabled="!checkPermission('course.tabulation.update')">确认</el-button>
+          <el-button type="primary" :loading="isLoadingUpdateBtn" @click="executeEdit" :disabled="!checkPermission('course.tabulation.update')">确认</el-button>
           <el-button @click="showConfirmEditDialog = false">取消</el-button>
         </span>
       </template>
@@ -177,7 +177,7 @@
       </p>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="executeAssign" :disabled="!checkPermission('course.table.assignEva')">确认分配</el-button>
+          <el-button type="primary" @click="executeAssign" :disabled="!checkPermission('course.table.assignEva')" :loading="isLoadingAssignBtn">确认分配</el-button>
           <el-button @click="showConfirmAssignDialog = false">取消</el-button>
         </span>
       </template>
@@ -209,6 +209,8 @@ export default {
   },
   data() {
     return {
+      isLoadingUpdateBtn: false, // 修改课程的弹窗按钮的loading状态确认
+      isLoadingAssignBtn: false, // 分配教师的弹窗按钮的loading状态确认
       showAddCourseDialog: false,
       dialogMode: 'add',
       courseForm: {
@@ -297,6 +299,7 @@ export default {
       this.showConfirmEditDialog = true;
     },
     async executeEdit() {
+      this.isLoadingUpdateBtn = true
       try {
         await changeClass({
           id: this.selectedCourse.id,
@@ -326,6 +329,7 @@ export default {
         console.error('修改课程失败:', error);
         ElMessage.error('修改失败');
       }
+      this.isLoadingUpdateBtn = false
     },
     deleteCourse(course) {
       this.$emit('delete-course', course);
@@ -404,6 +408,7 @@ export default {
       this.showConfirmAssignDialog = true;
     },
     async executeAssign() {
+      this.isLoadingAssignBtn = true
       try {
         await assignedTeacher({
           id: this.selectedCourse.id,
@@ -422,6 +427,7 @@ export default {
         this.selectedTeachers = [];
         this.selectedTeachersNames = [];
       }
+      this.isLoadingAssignBtn = false
     }
   }
 };

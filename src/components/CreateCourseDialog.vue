@@ -215,7 +215,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="handleClose">取消</el-button>
-          <el-button type="primary" @click="createCourse" :disabled="!checkPermission('course.table.add')">确认</el-button>
+          <el-button type="primary" @click="createCourse" :loading="isLoadingBtn" :disabled="!checkPermission('course.table.add')">确认</el-button>
         </span>
       </template>
     </el-dialog>
@@ -279,7 +279,9 @@
       const templates = ref([]);
       const courseTypes = ref([]);
       const loading = ref(false);
-  
+      const isLoadingBtn = ref(false)
+
+
       const weeks = Array.from({ length: 20 }, (_, i) => i + 1);
       const days = [
         { value: 1, label: '星期一' },
@@ -407,6 +409,7 @@
       };
   
       const createCourse = async () => {
+        isLoadingBtn.value = true
         try {
             if (createType.value === 'new') {
                 const id = newCourseForm.value.subjectId;
@@ -430,6 +433,7 @@
             }));
             if(techerId == null || isSpace(courseInfo.subjectMsg.name) || courseInfo.subjectMsg.nature == null){
               useFailedTip('完整填写信息后,才能提交')
+              isLoadingBtn.value = false
               return
             }
             await createNewClass(techerId, courseInfo, dateArr);
@@ -439,9 +443,9 @@
             });
           } else {
             const { courseId, timeSlots } = existingCourseForm.value;
-            console.log(courseId)
             if(courseId == null || isSpace(courseId)){
               useFailedTip('完整填写信息后,才能提交')
+              isLoadingBtn.value = false
               return
             }
             await createClass(courseId, timeSlots);
@@ -456,6 +460,7 @@
             console.error('创建课程失败:', error);
             ElMessage.error('创建失败');
         }
+        isLoadingBtn.value = false
       };
       const checkPermission=(permission = '')=> {
       return hasBtnPermission(permission);
@@ -478,6 +483,7 @@
         templates,
         courseTypes,
         loading,
+        isLoadingBtn,
         weeks,
         days,
         times,
