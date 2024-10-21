@@ -17,7 +17,9 @@ axios.defaults.withCredentials = true;
 
 const request = axios.create({
     // baseURL: '/devApi'
-    baseURL: import.meta.env.VITE_APP_BASE_URL
+    baseURL: '/api'
+    // baseURL: import.meta.env.VITE_APP_BASE_URL
+    
 })
 
 // 添加请求拦截-token处理
