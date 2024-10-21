@@ -239,6 +239,7 @@
           v-if="funMode === UPDATE_MODE"
           type="primary"
           @click="updateMyCourse()"
+          :loading="isLoadingBtn"
           >保存</el-button
         >
         <el-button @click="checkOrUpdateDialogVisible = false">关闭</el-button>
@@ -361,6 +362,10 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+// 判断修改表单的按钮是否是loading状态
+const isLoadingBtn = ref(false)
+
+
 // 用于确定当前弹窗的模式，修改还是查看
 const funMode = ref(CHECK_MODE);
 
@@ -439,10 +444,12 @@ const createTimeArr = ref([]);
  * 进行修改课程信息
  */
 const updateMyCourse = async () => {
-  let res = await updateCourse(updatedCourse.value);
+  isLoadingBtn.value = true
+  await updateCourse(updatedCourse.value);
   useSuccessTip("成功修改课程信息");
   checkOrUpdateDialogVisible.value = false;
   getMyPageData()
+  isLoadingBtn.value = false
 };
 
 /**

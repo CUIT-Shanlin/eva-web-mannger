@@ -122,7 +122,7 @@
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button type="primary" @click="updateOrAddType()">保存</el-button>
+          <el-button type="primary" @click="updateOrAddType()" :loading="isLoadingBtn">保存</el-button>
           <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
         </template>
       </el-dialog>
@@ -171,7 +171,7 @@ import { removeSpace } from "@/utils/stringUtil";
 import { hasBtnPermission } from '@/utils/btnPermission';
 import { useRouter } from "vue-router";
 
-const router = useRouter();
+const isLoadingBtn = ref(false)
 
 // 当前正在操作的课程类型
 const checkedType = ref({});
@@ -229,6 +229,7 @@ const createTimeArr = ref([]);
  * 修改和新建的总方法
  */
 const updateOrAddType = async () => {
+  isLoadingBtn.value = true
   const type = checkedType.value;
   let msg = "";
   if (funMode.value === UPDATE_MODE) {
@@ -241,6 +242,7 @@ const updateOrAddType = async () => {
   getMyPageData(); // 刷新页面
   updateOrAddDialogVisible.value = false;
   useSuccessTip(msg);
+  isLoadingBtn.value = false
 };
 
 /**

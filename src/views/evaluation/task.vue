@@ -138,7 +138,7 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button type="primary" @click="sendMyMsg()">发送</el-button>
+        <el-button type="primary" @click="sendMyMsg()" :loading="isLoadingBtn">发送</el-button>
         <el-button @click="msgDialogVisible = false">取消</el-button>
       </template>
     </el-dialog>
@@ -234,6 +234,8 @@ import { hasBtnPermission } from '@/utils/btnPermission';
 import { useUserStore } from "@/stores/userStore";
 import pinia from "@/utils/pinia";
 
+
+const isLoadingBtn = ref(false)
 // 消息对象
 const myMsg = ref({
   senderId: useUserStore(pinia).info.id,
@@ -299,8 +301,10 @@ function getCourseTime(time = {}){
  * 发送消息的具体操作
  */
 const sendMyMsg = async()=>{
+  isLoadingBtn.value = true
   await sendMsg(myMsg.value)
   useSuccessTip('成功发送提醒')
+  isLoadingBtn.value = false
 }
 
 /**

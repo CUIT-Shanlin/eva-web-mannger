@@ -127,7 +127,7 @@
         <button class="addBtn" type="button" @click="addNewRow()">＋</button>
       </el-form>
       <template #footer>
-        <el-button type="primary" @click="updateOrAddRole()">保存</el-button>
+        <el-button type="primary" @click="updateOrAddRole()" :loading="isLoadingBtn" :disabled="!isChecked()">保存</el-button>
         <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
       </template>
     </el-dialog>
@@ -165,12 +165,13 @@ import {
   allDefaultData
 } from "@/utils/service/staticData";
 import { isEmptyArr, deepCopy, addSuffixToDuplicates, removeSpaceStrToArr } from "@/utils/objUtil";
-import { removeSpace } from "@/utils/stringUtil";
+import { isSpace, removeSpace } from "@/utils/stringUtil";
 import { hasBtnPermission } from '@/utils/btnPermission';
 
 
+const isLoadingBtn = ref(false)
 // 当前正在操作的评教模板
-const checkedTemplate = ref({});
+const checkedTemplate = ref({props: JSON.stringify([]), name: ''});
 // 控制弹窗功能 0: 修改，1：新建
 const funMode = ref(UPDATE_MODE);
 // 控制弹窗的开启
@@ -206,6 +207,23 @@ const createTimeArr = ref([]);
 
 // 当前正在操作的指标
 const myProps = ref([])
+
+/**
+ * 确认当前是否可以提交新建表单
+ * @returns false: 不能提交; true: 可以提交
+ */
+function isChecked(){
+  if(funMode.value === UPDATE_MODE){
+    return true
+  }
+  try {
+    const thisProps = myProps.value
+    return !(isSpace(checkedTemplate.value.name) || isEmptyArr(thisProps) || isSpace(thisProps[0]))
+  } catch (error) {
+    return false
+  }
+}
+
 
 /**
  * 确认是否不是默认模板
@@ -250,20 +268,23 @@ function deelDuplicateName(){
  * 修改和新建的总方法
  */
 const updateOrAddRole = async () => {
+  isLoadingBtn.value = true
   const template = checkedTemplate.value;
   let msg = "";
   // 去除空白指标
   checkedTemplate.value.props = JSON.stringify(removeSpaceStrToArr(myProps.value))
   if (funMode.value === UPDATE_MODE) {
-    let res = await updateTemplate(template);
+    await updateTemplate(template);
     msg = `成功修改模板 “${template.name}”`;
   } else {
-    let res = await addTemplate(template);
+    console.log(template)
+    await addTemplate(template);
     msg = "成功新建模板";
   }
   getMyPageData(); // 刷新页面
   updateOrAddDialogVisible.value = false;
   useSuccessTip(msg);
+  isLoadingBtn.value = false
 };
 
 /**
@@ -271,7 +292,7 @@ const updateOrAddRole = async () => {
  * @param {Object} template 操作的评教模板
  * @param {Number} fun 弹窗功能 0：修改，1：新建
  */
-function initDialog(template = {}, fun = UPDATE_MODE) {
+function initDialog(template = {props: JSON.stringify([]), name: ''}, fun = UPDATE_MODE) {
   funMode.value = fun;
   try{
     myProps.value = JSON.parse(template.props)
