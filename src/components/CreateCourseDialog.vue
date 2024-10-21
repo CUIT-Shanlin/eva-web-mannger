@@ -224,6 +224,9 @@
   import { getAllType } from '../api/courseType.js';
   import { getAllTemplates } from '../api/template.js';
   import { allCourseNature, THEORY_COURSE, LAB_COURSE, OTHER_COURSE } from '../utils/service/staticData.js';
+  import { useFailedTip } from '@/utils/msgTip';
+  import { isEmptyOrNullOrUndefined } from '@/utils/objUtil';
+  import { isSpace } from '@/utils/stringUtil';
   import { hasBtnPermission } from '@/utils/btnPermission';
   export default {
     components: {
@@ -421,7 +424,11 @@
               endTime: slot.endTime,
               classroom: slot.classroom
             }));
-  
+            console.log(techerId == null)
+            if(techerId == null || isSpace(courseInfo.subjectMsg.name) || !courseInfo.subjectMsg.nature){
+              useFailedTip('完整填写信息后,才能提交')
+              return
+            }
             await createNewClass(techerId, courseInfo, dateArr);
            ElMessage({
             message: '创建成功',
