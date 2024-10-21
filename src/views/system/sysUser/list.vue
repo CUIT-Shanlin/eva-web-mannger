@@ -212,7 +212,7 @@
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button type="primary" @click="doMyAssign()">保存</el-button>
+          <el-button type="primary" @click="doMyAssign()" :loading="isLoadingAssignBtn">保存</el-button>
           <el-button @click="assignDialogOpen = false">取消</el-button>
         </template>
       </el-dialog>
@@ -315,7 +315,7 @@
           </el-form-item>
         </el-form>
         <template #footer v-if="updateOrAddProp.fun !== CHECK_MODE">
-          <el-button type="primary" :disabled="!totalCheck()" @click="updateOrAddThisUser()">保存</el-button>
+          <el-button type="primary" :disabled="!totalCheck()" @click="updateOrAddThisUser()" :loading="isLoadingBtn">保存</el-button>
           <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
         </template>
       </el-dialog>
@@ -372,6 +372,9 @@ import MyCommonBtn from "@/components/MyCommonBtn.vue";
 
 const iptDate = ref([null, null]);
 const isChooseDate = ref(false);
+
+const isLoadingAssignBtn = ref(false)
+const isLoadingBtn = ref(false)
 
 // 是否正在加载表格
 const isLoadingTable = ref(false);
@@ -461,6 +464,7 @@ const updateOrAddThisUser = async()=>{
   if(!totalCheck()){
     return
   }
+  isLoadingBtn.value = true
   const fun = updateOrAddProp.value.fun
   let tipMsg = ''
   if(fun === 0){
@@ -472,6 +476,7 @@ const updateOrAddThisUser = async()=>{
   }
   updateOrAddDialogVisible.value = false
   useSuccessTip(tipMsg)
+  isLoadingBtn.value = false
 }
 
 /**
@@ -602,6 +607,7 @@ const showScoreMsg = async(user)=>{
  * 为对应用户分配角色
  */
 const doMyAssign = async () => {
+  isLoadingAssignBtn.value = true
   const assighVo = {
     userId: checkedUser.value.id,
     roleIdList: userRoleIds,
@@ -610,6 +616,7 @@ const doMyAssign = async () => {
   assignDialogOpen.value = false;
   useSuccessTip("分配角色成功");
   getMyPageData();
+  isLoadingAssignBtn.value = false
 };
 
 /**

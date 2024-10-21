@@ -158,7 +158,7 @@
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button type="primary" @click="updateOrAddMenu()">保存</el-button>
+          <el-button type="primary" @click="updateOrAddMenu()" :loading="isLoadingBtn">保存</el-button>
           <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
         </template>
       </el-dialog>
@@ -190,9 +190,8 @@ import {
   DISABLED_STATE
 } from '@/utils/service/staticData.js';
 import { hasBtnPermission } from '@/utils/btnPermission';
-import { useRouter } from "vue-router";
 
-const router = useRouter();
+const isLoadingBtn = ref(false)
 
 // 当前正在操作的菜单
 const checkedMenu = ref({
@@ -219,6 +218,11 @@ const allTreeData = ref([])
 // 确定根目录名称
 const ROOT_NAME = '根目录'
 
+
+function isChecked(){
+  return funMode.value === ADD_MODE && (isSpace())
+}
+
 // 使用计算属性来获取带根节点的树型数据
 const rootTree = computed(() => {
   return [{
@@ -242,18 +246,20 @@ function handleNodeClick(data){
  * 修改和新建的总方法
  */
 const updateOrAddMenu = async () => {
+  isLoadingBtn.value = true
   const menu = checkedMenu.value;
   let msg = "";
   if (funMode.value === UPDATE_MODE) {
-    let res = await updateMenu(menu);
+    await updateMenu(menu);
     msg = `成功修改菜单 “${menu.name}”`;
   } else {
-    let res = await addMenu(menu);
+    await addMenu(menu);
     msg = "成功新建菜单";
   }
   getMyTreeData(); // 刷新页面
   updateOrAddDialogVisible.value = false;
   useSuccessTip(msg);
+  isLoadingBtn.value = false
 };
 
 /**

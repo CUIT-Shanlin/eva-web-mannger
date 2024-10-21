@@ -105,7 +105,7 @@
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button type="primary" @click="updateOrAddRole()">保存</el-button>
+          <el-button type="primary" @click="updateOrAddRole()" :loading="isLoadingBtn" :disabled="isChecked()">保存</el-button>
           <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
         </template>
       </el-dialog>
@@ -140,10 +140,10 @@ import {
 } from "@/utils/service/staticData";
 import { hasBtnPermission } from '@/utils/btnPermission';
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
-import { removeSpace } from "@/utils/stringUtil";
+import { isSpace, removeSpace } from "@/utils/stringUtil";
 import { useRouter } from "vue-router";
 
-const router = useRouter()
+const isLoadingBtn = ref(false)
 
 // 当前正在操作的角色
 const checkedRole = ref({})
@@ -180,21 +180,30 @@ const updateTimeArr = ref([])
 const createTimeArr = ref([])
 
 /**
+ * 确认是否可以提交表单
+ */
+function isChecked(){
+  return funMode.value === ADD_MODE && isSpace(checkedRole.value.roleName)
+}
+
+/**
  * 修改和新建的总方法
  */
 const updateOrAddRole = async()=>{
+  isLoadingBtn.value = true
   const role = checkedRole.value
   let msg = ''
   if(funMode.value === UPDATE_MODE){
-    let res = await updateRole(role)
+    await updateRole(role)
     msg = `成功修改角色 “${role.roleName}”`
   }else{
-    let res = await addRole(role)
+    await addRole(role)
     msg = '成功新建角色'
   }
   getMyPageData()// 刷新页面
   updateOrAddDialogVisible.value = false
   useSuccessTip(msg)
+  isLoadingBtn.value = false
 }
 
 /**
