@@ -113,7 +113,7 @@
 
       </el-form>
       <template #footer>
-        <el-button type="primary" @click="sendMyMsg()">发送</el-button>
+        <el-button type="primary" @click="sendMyMsg()" :loading="isLoadingBtn">发送</el-button>
         <el-button @click="tipDialogVisible = false">取消</el-button>
       </template>
     </el-dialog>
@@ -166,7 +166,7 @@ const myMsg = ref({
   msg: ''
 })
 
-
+const isLoadingBtn = ref(false)
 
 // 确认当前选择的未达标用户是评教还是被评教
 const unqualifiedType = ref(EVA_UNQUALIFIED_USER)
@@ -203,8 +203,10 @@ const pageData = ref({
  * 发送消息的具体操作
  */
 const sendMyMsg = async()=>{
+  isLoadingBtn.value = true
   await sendMsg(myMsg.value)
   useSuccessTip('成功发送提醒')
+  isLoadingBtn.value = false
 }
 
 /**
