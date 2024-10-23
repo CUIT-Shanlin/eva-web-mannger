@@ -245,6 +245,7 @@ onMounted(() => {
 @import url("/src/assets/font/iconfont.css");
 @import "/src/styles/globalPage.scss";
 @import "/src/styles/commonFlexStyles.scss";
+@import "/src/styles/common.scss";
 
 $box-padding-y: 13px;
 $box-padding-x: 12px;
@@ -252,6 +253,8 @@ $box-padding-x: 12px;
   width: 400px;
   box-sizing: border-box;
   overflow-x: hidden;
+  max-height: 420px;
+  @include myScrollbar;
   & > * {
     padding: $box-padding-y $box-padding-x;
   }
