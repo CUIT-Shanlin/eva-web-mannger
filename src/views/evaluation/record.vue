@@ -51,7 +51,7 @@
       <el-select
         clearable
         v-model="pageReqData.queryObj.departmentName"
-        placeholder="请选择课程所在的学院名"
+        placeholder="请选择授课老师的专业"
         @change="getMyPageData"
       >
         <el-option
@@ -279,7 +279,7 @@ const allUserMsg = ref([]);
 // 存所有课程的基础信息
 const allCourseMsg = ref([]);
 
-// 存所有学院名
+// 存所有专业名
 const allDepartments = ref([]);
 
 // 存评教任务完成情况信息

@@ -18,7 +18,7 @@
         <el-select
           clearable
           v-model="pageReqData.queryObj.departmentName"
-          placeholder="请选择课程所在的学院名"
+          placeholder="请选择授课老师的专业"
           @change="getMyPageData"
           style="width: 280px"
         >
@@ -76,7 +76,7 @@
       <el-table-column prop="name" label="课程名称" width="200" />
       <el-table-column prop="teacherMsg.name" label="教学老师" width="120" />
       <el-table-column prop="templateMsg.name" label="评教模板" width="250" />
-      <el-table-column prop="teacherMsg.department" label="学院" width="200" />
+      <el-table-column prop="teacherMsg.department" label="专业" width="200" />
       <el-table-column label="创建日期" width="220" sortable>
         <template #default="scope">
           {{ getTime(scope.row.createTime) }}
@@ -389,7 +389,7 @@ const allCourseMsg = ref([]);
 // 存所有课程类型的信息
 const allTypes = ref([]);
 
-// 存所有学院名
+// 存所有专业名
 const allDepartments = ref([]);
 
 // 存所有评教模板的基础信息

@@ -59,7 +59,7 @@ export function getClassDay(week,day){
 
 /**
  * 获取某个指定时间段的课程
- * @param {String} departmentName 学院名称
+ * @param {String} departmentName 专业名称
  * @param {String} keyword 查询关键字
  * @param {Number} sort 0: 选过次数升序；1：时间升序；2：时间降序
  * @param {String} startDay 开始日期

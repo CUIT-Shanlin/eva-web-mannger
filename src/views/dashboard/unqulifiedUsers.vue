@@ -22,7 +22,7 @@
         <el-select
           clearable
           v-model="pageReqData.queryObj.departmentName"
-          placeholder="请选择用户所在的学院名"
+          placeholder="请选择用户所在的专业名"
           @change="getMyPageData"
         >
           <el-option
@@ -41,7 +41,7 @@
       class="tableBox"
     >
       <el-table-column prop="name" label="用户姓名" width="300"/>
-      <el-table-column prop="department" label="学院名称" width="350"/>
+      <el-table-column prop="department" label="专业名称" width="350"/>
 
       <el-table-column
         prop="num"
@@ -171,7 +171,7 @@ const isLoadingBtn = ref(false)
 // 确认当前选择的未达标用户是评教还是被评教
 const unqualifiedType = ref(EVA_UNQUALIFIED_USER)
 
-// 存所有学院名
+// 存所有专业名
 const allDepartments = ref([]);
 
 // 当前正在操作的用户

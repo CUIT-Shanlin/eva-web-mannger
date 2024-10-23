@@ -92,7 +92,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="info.department" label="学院" width="200" />
+      <el-table-column prop="info.department" label="专业" width="200" />
       <el-table-column label="状态" width="100">
         <template #default="scope">
           <el-switch
@@ -269,11 +269,11 @@
             @change="checkAgainPwd(updateOrAddProp.againPwd)" type="password" show-password></el-input>
             <div class="tipMsg">{{updateOrAddProp.againPwdMsg}}</div>
           </el-form-item>
-          <el-form-item label="学院">
+          <el-form-item label="专业">
             <el-select
             v-model="checkedUser.info.department"
             filterable
-            placeholder="请输入学院名称"
+            placeholder="请输入专业名称"
             :disabled="updateOrAddProp.fun === CHECK_MODE"
             >
             <el-option
@@ -403,7 +403,7 @@ const scoreMsg = ref([])
 const assignDialogOpen = ref(false);
 // 存所有的角色
 const allRoles = ref([]);
-// 存所有的学院名
+// 存所有的专业名
 const departments = ref([]);
 // 当前正在操作的用户
 const checkedUser = ref({info: {}});
@@ -640,7 +640,7 @@ function handleCheckAllChange() {
 }
 
 /**
- * 初始化学院信息
+ * 初始化专业信息
  */
 const initDepartments = async()=>{
   let res = await getAllDepartments()
