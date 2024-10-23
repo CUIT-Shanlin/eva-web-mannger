@@ -238,9 +238,17 @@ const getMyUnqualifiedUsers = async()=>{
 }
 
 const initCharts = async()=>{
-  // TODO 生成两个一般大小的线型图
+  // dkh 生成两个一般大小的线型图
   const getLineOption = (res = {},mode = 0) => {
     let lineColors = mode === 0 ? ['rgb(54,154,254)','rgb(224,239,255)'] : ['rgb(255,200,0)','rgb(255,243,199)']
+    let xDataArr = []
+    for(let i = 0;i < res.evaNumArr.length;i++){
+      let prefix = ''
+      if(i > 0){
+        prefix = `${res.evaNumArr[i-1].time}到`
+      }
+      xDataArr.push(`${prefix}${res.evaNumArr[i].time}期间的次数`)
+    }
     return {
       grid: {
         top: '30%',
@@ -251,7 +259,8 @@ const initCharts = async()=>{
       },
       xAxis: {
         type: 'category',
-        data: res.evaNumArr.map(item => `上个时间点到${item.time}期间的次数`),
+        // data: res.evaNumArr.map(item => `上个时间点到${item.time}期间的次数`),
+        data: xDataArr,
         boundaryGap: false,
         splitLine: { show: false },
         axisLabel: { show: false },
