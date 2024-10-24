@@ -284,12 +284,12 @@
             />
             </el-select>
           </el-form-item>
-          <el-form-item label="性别">
+          <!-- <el-form-item label="性别">
             <el-radio-group v-model="checkedUser.info.sex" :disabled="updateOrAddProp.fun === CHECK_MODE">
               <el-radio :value="1" >男</el-radio>
               <el-radio :value="0">女</el-radio>
             </el-radio-group>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="电话号码">
             <el-input v-model="checkedUser.info.phone" placeholder="请输入电话号码"
             :disabled="updateOrAddProp.fun === CHECK_MODE"></el-input>
