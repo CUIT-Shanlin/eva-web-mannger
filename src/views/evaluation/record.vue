@@ -228,13 +228,13 @@
       >
         <div class="propOne" v-for="(prop, i) in JSON.parse(checkedRecord.formPropsValues)" :key="i">
           <span>{{prop.prop}}</span>
-          <el-input v-model="prop.score" class="myIpt"></el-input>
+          <el-input :model-value="prop.score" class="myIpt"></el-input>
         </div>
         <p>评价：</p>
-        <el-input type="textarea" :rows="5" v-model="checkedRecord.textValue"></el-input>
+        <el-input type="textarea" :rows="5" :model-value="checkedRecord.textValue"></el-input>
         <div class="propOne">
           <span>综合评分</span>
-          <el-input v-model="checkedRecord.averScore" class="myIpt"></el-input>
+          <el-input :model-value="checkedRecord.averScore" class="myIpt"></el-input>
         </div>
     </el-dialog>
     
