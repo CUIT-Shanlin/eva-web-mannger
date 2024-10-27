@@ -111,8 +111,8 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-button @click="batchUpdateVisible = true" :disabled="!hasBtnPermission('course.template.update')">批量修改课程模板</el-button>
-
+    <el-button @click="initBatchDialog(0)" :disabled="!hasBtnPermission('course.template.update')">批量修改课程模板</el-button>
+    <el-button @click="initBatchDialog(1)" :disabled="!hasBtnPermission('course.tabulation.update')">批量修改课程类型</el-button>
     <!-- 课程详情查看及修改弹窗 -->
     <el-dialog width="500" v-model="checkOrUpdateDialogVisible" append-to-body>
       <template #header="{ titleId, titleClass }">
@@ -264,11 +264,11 @@
       </template>
     </el-dialog>
 
-    <!-- 批量修改评教模板的弹窗 -->
+    <!-- 批量修改的弹窗 -->
     <el-dialog
       v-model="batchUpdateVisible"
       append-to-body
-      title="批量修改课程模板中"
+      :title="batchFunMode === 0 ? '批量修改课程模板中' : '批量修改课程类型中'"
     >
       <div class="chooseBox">
         <el-select
@@ -276,12 +276,29 @@
           v-model="changeTemplateId"
           placeholder="请选择要改成的课程模板"
           class="myChoose"
+          v-if="batchFunMode === 0"
         >
           <el-option
             v-for="template in allTemplates"
             :key="template.id"
             :label="template.name"
             :value="template.id"
+          />
+        </el-select>
+
+        <el-select
+          clearable
+          multiple
+          v-model="changeTypes"
+          placeholder="请选择要改成的课程类型"
+          class="myChoose"
+          v-else
+        >
+        <el-option
+            v-for="type in allTypes"
+            :value="type.id"
+            :label="type.name"
+            :key="type.id"
           />
         </el-select>
       </div>
@@ -295,20 +312,20 @@
         :props="{
           key: 'id',
         }"
-        :titles="['不进行修改的课程', '待修改模板的课程']"
+        :titles="['不进行修改的课程', '待修改的课程']"
         @change="handleChange"
         style="display: flex; justify-content: center; align-items: center"
       >
         <template #default="{ option }">
-          <span>{{ option.name }} - {{ option.teacherName }}</span>
+          <span>{{ option.name }} - {{ option.teacherName }} | {{allCourseNature.find(natureObj => natureObj.value === option.nature).name}}</span>
         </template>
       </el-transfer>
 
       <template #footer>
         <el-button
           type="primary"
-          @click="batchUpdateMyTemplate()"
-          :disabled="changeTemplateId == null || !handleCourseIds || handleCourseIds.length === 0"
+          @click="batchUpdate()"
+          :disabled="(batchFunMode === 0 && changeTemplateId == null) || (batchFunMode === 1 && (!changeTypes || !changeTypes.length)) || !handleCourseIds || handleCourseIds.length === 0"
           >保存</el-button
         >
         <el-button @click="batchUpdateVisible = false">取消</el-button>
@@ -348,6 +365,7 @@ import {
   batchUpdateTemplate,
   getAllBaseCourse,
   updateCourse,
+  batchUpdateType
 } from "@/api/courseList";
 import { getAllType } from "@/api/courseType";
 import { getAllDepartments } from "@/api/other";
@@ -365,6 +383,9 @@ const router = useRouter();
 // 判断修改表单的按钮是否是loading状态
 const isLoadingBtn = ref(false)
 
+const changeTypes = ref([])
+
+const batchFunMode = ref(0) // 确定批量修改的弹窗的类型是批量修改模板(0)还是类型(1)
 
 // 用于确定当前弹窗的模式，修改还是查看
 const funMode = ref(CHECK_MODE);
@@ -440,6 +461,13 @@ const updateTimeArr = ref([]);
 // 存创建日期对应数组
 const createTimeArr = ref([]);
 
+
+function initBatchDialog(batchMode = 0){
+  batchFunMode.value = batchMode;
+  batchUpdateVisible.value = true
+}
+
+
 /**
  * 进行修改课程信息
  */
@@ -507,6 +535,34 @@ function handleSelectionChange(courses = []) {
   handleCourseIds.value = courses.map((course) => course.id);
 }
 
+
+/**
+ * 批量修改操作的总操作
+ */
+function batchUpdate(){
+  if(batchFunMode.value === 0){
+    batchUpdateMyTemplate()
+  }else{
+    batchUpdateMyType()
+  }
+}
+
+/**
+ * 批量修改课程的类型
+ */
+function batchUpdateMyType() {
+  useSimpleConfirm("你确定要修改所有待修改课程的类型吗？").then(
+    async () => {
+      const idList = handleCourseIds.value;
+      await batchUpdateType(idList, changeTypes.value);
+      batchUpdateVisible.value = false;
+      useSuccessTip("成功修改所有待修改课程的课程类型");
+      getMyPageData();
+    }
+  );
+}
+
+
 /**
  * 批量修改课程的评教模板
  */
@@ -514,7 +570,7 @@ function batchUpdateMyTemplate() {
   useSimpleConfirm("你确定要修改所有待修改课程的评教模板吗？").then(
     async () => {
       const idList = handleCourseIds.value;
-      let res = await batchUpdateTemplate(idList, changeTemplateId.value.id);
+      await batchUpdateTemplate(idList, changeTemplateId.value.id);
       batchUpdateVisible.value = false;
       useSuccessTip("成功修改所有待修改课程的评教模板");
       getMyPageData();

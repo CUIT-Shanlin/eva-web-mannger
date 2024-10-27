@@ -44,9 +44,9 @@
         <el-option
           v-for="course in allCourseMsg"
           :key="course.id"
-          :label="course.name"
           :value="course.id"
-        />
+          :label="getMyCourseLabel(course)"
+       />
       </el-select>
       <el-select
         clearable
@@ -267,6 +267,7 @@ import { isEmptyArr, isEmptyObj } from "@/utils/objUtil";
 import { useSimpleConfirm, useSuccessTip, useFailedTip } from "@/utils/msgTip";
 import { getShowNum } from '@/utils/numUtil';
 import { hasBtnPermission } from '@/utils/btnPermission';
+import { allCourseNature } from "@/utils/service/staticData";
 import { onMounted, ref } from "vue";
 import { useRoute } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
@@ -334,6 +335,11 @@ const weeks = ['一','二','三','四','五','六','日']
 
 const lenArr = [20,7,11,11]
 const strArr = ['第|周','星期|','第|节课开始','第|节课结束']
+
+function getMyCourseLabel(course = {}){
+  return `${course.name} - ${allCourseNature.find(natureObj => natureObj.value === course.nature).name}`
+}
+
 /**
  * 生成级联选择器的选项
  * @param {Number} level 当前递归层数

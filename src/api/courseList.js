@@ -60,7 +60,7 @@ export function getOneCourseDetail(id = -1){
 
 /**
  * 批量修改课程的评教模板
- *@param {number[]} [courseIdList=[]] 待修改评教模板的课程的id数组
+ * @param {number[]} [courseIdList=[]] 待修改评教模板的课程的id数组
  * @param {Number | string} templateId 评教模板的id 
  * @returns 
  */
@@ -85,5 +85,22 @@ export function updateCourse(course = {}){
         url: '/course',
         method: 'PUT',
         data: course
+    })
+}
+
+/**
+ * 批量修改课程的课程类型
+ * @param {number[]} [courseIdList=[]] 待修改类型的课程的id数组
+ * @param {number[]} [typeIdList=[]] 待修改成类型的id数组
+ * @returns 
+ */
+ export function batchUpdateType(courseIdList = [], typeIdList = []){
+    return request({
+        url: `/courses/type`,
+        method: 'PUT',
+        data:{
+            courseIdList,
+            typeIdList
+        }
     })
 }
