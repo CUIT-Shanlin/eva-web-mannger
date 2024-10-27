@@ -104,3 +104,16 @@ export function updateCourse(course = {}){
         }
     })
 }
+
+
+/**
+ * 删除一门课程，并删除课表中所有该课程的排课
+ * @param {Number} courseId 待删除的课程的id 
+ * @returns 
+ */
+export function removeOne(courseId = -1){
+    return request({
+        url: `/course?courseId=${courseId}&semId=${getSemesterId()}`,
+        method: 'DELETE'
+    })
+}

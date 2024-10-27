@@ -75,9 +75,9 @@
       <el-table-column type="selection" width="50" />
       <el-table-column prop="name" label="课程名称" width="200" />
       <el-table-column prop="teacherMsg.name" label="教学老师" width="120" />
-      <el-table-column prop="templateMsg.name" label="评教模板" width="250" />
-      <el-table-column prop="teacherMsg.department" label="专业" width="200" />
-      <el-table-column label="创建日期" width="220" sortable>
+      <el-table-column prop="templateMsg.name" label="评教模板" width="200" />
+      <el-table-column prop="teacherMsg.department" label="专业" width="250" />
+      <el-table-column label="创建日期" width="180" sortable>
         <template #default="scope">
           {{ getTime(scope.row.createTime) }}
         </template>
@@ -107,6 +107,14 @@
             @click="initDialog(scope.row.id)"
           >
             课程详情
+          </el-link>
+          <el-link
+            class="operation"
+            :disabled="!hasBtnPermission('course.tabulation.delete')"
+            type="primary"
+            @click="removeMyCourse(scope.row)"
+          >
+            删除课程
           </el-link>
         </template>
       </el-table-column>
@@ -365,7 +373,8 @@ import {
   batchUpdateTemplate,
   getAllBaseCourse,
   updateCourse,
-  batchUpdateType
+  batchUpdateType,
+  removeOne
 } from "@/api/courseList";
 import { getAllType } from "@/api/courseType";
 import { getAllDepartments } from "@/api/other";
@@ -461,7 +470,23 @@ const updateTimeArr = ref([]);
 // 存创建日期对应数组
 const createTimeArr = ref([]);
 
+/**
+ * 删除一门课程及其下面的每节课
+ * @param {Object} course 待删除的课程的信息
+ */
+function removeMyCourse(course = {}){
+  useSimpleConfirm(`你确定要删除课程："${course.name}"及其下面的每节课吗？`).then(async()=>{
+    await removeOne(course.id)
+    getMyPageData()
+    useSuccessTip('成功删除课程')
+  })
+}
 
+
+/**
+ * 初始化批量修改的弹窗
+ * @param {Number} batchMode 批量修改的模式 
+ */
 function initBatchDialog(batchMode = 0){
   batchFunMode.value = batchMode;
   batchUpdateVisible.value = true
