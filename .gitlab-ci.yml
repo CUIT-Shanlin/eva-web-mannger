@@ -18,7 +18,7 @@
 
 variables:
   DOCKER_TLS_CERTDIR: ""
-  EVA_VERSION: 1.19-SNAPSHOT
+  EVA_VERSION: 1.20-SNAPSHOT
 
 stages:          # List of stages for jobs, and their order of execution
   - build
@@ -64,7 +64,7 @@ publish:      # This job runs in the deploy stage.
     - if: $CI_COMMIT_BRANCH == 'master'
 
 recreate:
-  image: $HARBOR_URL/library/busybox:1.37.0
+  image: $HARBOR_URL/library/curl:8.9.1
   stage: recreate
   script:
     - curl -X POST $PORTAINER_UPDATE_URL
