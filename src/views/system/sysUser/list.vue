@@ -417,7 +417,7 @@ const checkAll = ref(false);
 // 存分页获取的数据
 const pageData = ref({
   total: 0,
-  size: 0,
+  size: 10,
   current: 1,
   records: [],
 });

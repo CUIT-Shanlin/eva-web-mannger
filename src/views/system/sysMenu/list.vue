@@ -311,7 +311,7 @@ function batchRemoveMyMenus() {
   useSimpleConfirm("你确定要删除选中的所有菜单吗？").then(async () => {
     const idList = handleMenus.value.map((menu) => menu.id);
     // console.log(idList);
-    let res = await batchRemove(idList);
+    await batchRemove(idList);
     useSuccessTip("成功删除选中的所有菜单");
     getMyTreeData();
   });

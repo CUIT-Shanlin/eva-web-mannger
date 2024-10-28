@@ -185,7 +185,7 @@ const isLoadingTable = ref(false);
 const handleTypes = ref([]);
 // 存分页请求数据
 const pageReqData = ref({
-  size: 0,
+  size: 10,
   page: 1,
   queryObj: {
     keyword: "",
