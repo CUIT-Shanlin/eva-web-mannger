@@ -385,7 +385,7 @@ const isLoadingTable = ref(false);
 const updateOrAddProp = ref({
   fun: UPDATE_MODE,// 确定弹窗的功能，0：修改 1：增加 2：查看
   isUsername: true,// 用户名是否合法
-  isUpdatePwd: 0,
+  isUpdatePwd: false,
   againPwd: '',
   pwdMsg: '',
   againPwdMsg: '',

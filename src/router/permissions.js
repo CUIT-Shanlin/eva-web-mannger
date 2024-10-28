@@ -36,7 +36,6 @@ router.beforeEach(async(to,from,next) => {
         let {menus} = useUserStore(pinia)
         if(menus.length < 1 || router.getRoutes().length <= 4){
             changeMenusToRouters(menus)
-            console.log(menus)
             menus.forEach(menu=>{
                 try {
                     router.addRoute(menu)
@@ -45,7 +44,7 @@ router.beforeEach(async(to,from,next) => {
                 }
             })
             let lastRou = {
-                path: '/:catchAll(.*)', // 使用参数匹配和正则表达式来捕获所有路径  
+                path: '/:catchAll(.*)', // 使用参数匹配和正则表达式来捕获所有路径
                 component: ()=>import('../views/404.vue')
             }
             router.addRoute(lastRou)
@@ -110,6 +109,7 @@ function changeMenusToRouters(routers = []){
             }
         }
         if(isSpace(route.path)){
+            route.path = ''
             continue
         }
         // 处理组件
@@ -118,8 +118,11 @@ function changeMenusToRouters(routers = []){
         }else if(route.component === 'ParentView'){
             route.component = ParentView
         }else if(typeof route.component === 'string'){
-            // route.path = route.component
-            route.component = loadModule(route.component)
+            if(isSpace(route.component)){
+                route.component = ''
+            }else{
+                route.component = loadModule(route.component)
+            }
         }
         // 有子路由就递归继续处理
         if(route.children != null && route.children.length > 0){
