@@ -606,17 +606,21 @@ const showScoreMsg = async(user)=>{
 /**
  * 为对应用户分配角色
  */
-const doMyAssign = async () => {
+function doMyAssign(){
   isLoadingAssignBtn.value = true
   const assighVo = {
-    userId: checkedUser.value.id,
-    roleIdList: userRoleIds,
+    userId: checkedUser.value.info.id,
+    roleIdList: userRoleIds.value,
   };
-  let res = await doAssign(assighVo);
-  assignDialogOpen.value = false;
-  useSuccessTip("分配角色成功");
-  getMyPageData();
-  isLoadingAssignBtn.value = false
+  console.log(assighVo)
+  doAssign(assighVo).then(()=>{
+    assignDialogOpen.value = false;
+    useSuccessTip("分配角色成功");
+    isLoadingAssignBtn.value = false
+    getMyPageData();
+  }).catch(()=>{
+    isLoadingAssignBtn.value = false
+  })
 };
 
 /**
