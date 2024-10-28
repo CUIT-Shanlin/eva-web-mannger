@@ -18,11 +18,12 @@
 
 variables:
   DOCKER_TLS_CERTDIR: ""
-  EVA_VERSION: 1.18-SNAPSHOT
+  EVA_VERSION: 1.19-SNAPSHOT
 
 stages:          # List of stages for jobs, and their order of execution
   - build
   - publish
+  - recreate
 
 build:       # This job runs in the build stage, which runs first.
   stage: build
@@ -59,5 +60,13 @@ publish:      # This job runs in the deploy stage.
     - docker push $HARBOR_URL/eva-system/eva-management-frontend:$EVA_VERSION
     - docker tag eva-management-frontend:$EVA_VERSION $HARBOR_URL/eva-system/eva-management-frontend
     - docker push $HARBOR_URL/eva-system/eva-management-frontend
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
+
+recreate:
+  image: $HARBOR_URL/library/busybox:1.37.0
+  stage: recreate
+  script:
+    - curl -X POST $PORTAINER_UPDATE_URL
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
