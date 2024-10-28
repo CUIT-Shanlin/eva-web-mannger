@@ -150,8 +150,8 @@ const fetchAllLogs = async () => {
 
 // 获取操作类型标签
 const getTypeLabel = (type) => {
-  const labels = ['查询','新增',  '修改', '删除','导出', '导入','其他'];
-  return labels[type] || '未知';
+  const labels = ['查询', '新增', '修改', '删除', '导出', '导入', '其他'];
+  return labels[type - 1] || '未知';
 };
 
 // 处理分页变化
