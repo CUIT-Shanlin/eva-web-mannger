@@ -16,7 +16,8 @@ axios.defaults.withCredentials = true;
 
 const request = axios.create({
     // baseURL: '/devApi'
-    baseURL: import.meta.env.NODE_ENV === 'development' ? '/api' : import.meta.env.VITE_APP_BASE_URL
+    baseURL: '/api'
+    // baseURL: import.meta.env.NODE_ENV === 'development' ? '/api' : import.meta.env.VITE_APP_BASE_URL
     // baseURL: import.meta.env.VITE_APP_BASE_URL
 })
 
