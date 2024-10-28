@@ -118,6 +118,7 @@
               :content="scope.row.info.phone"
               placement="top"
               effect="light"
+              v-if="!isSpace(scope.row.info.phone)"
             >
               <div class="iconfont linkIco">&#xe862;</div>
             </el-tooltip>
@@ -125,6 +126,7 @@
               :content="scope.row.info.email"
               placement="top"
               effect="light"
+              v-if="!isSpace(scope.row.info.email)"
             >
               <div class="iconfont linkIco">&#xe697;</div>
             </el-tooltip>
@@ -383,7 +385,7 @@ const isLoadingTable = ref(false);
 const updateOrAddProp = ref({
   fun: UPDATE_MODE,// 确定弹窗的功能，0：修改 1：增加 2：查看
   isUsername: true,// 用户名是否合法
-  isUpdatePwd: 0,
+  isUpdatePwd: false,
   againPwd: '',
   pwdMsg: '',
   againPwdMsg: '',
@@ -417,7 +419,7 @@ const checkAll = ref(false);
 // 存分页获取的数据
 const pageData = ref({
   total: 0,
-  size: 0,
+  size: 10,
   current: 1,
   records: [],
 });
@@ -606,17 +608,21 @@ const showScoreMsg = async(user)=>{
 /**
  * 为对应用户分配角色
  */
-const doMyAssign = async () => {
+function doMyAssign(){
   isLoadingAssignBtn.value = true
   const assighVo = {
-    userId: checkedUser.value.id,
-    roleIdList: userRoleIds,
+    userId: checkedUser.value.info.id,
+    roleIdList: userRoleIds.value,
   };
-  let res = await doAssign(assighVo);
-  assignDialogOpen.value = false;
-  useSuccessTip("分配角色成功");
-  getMyPageData();
-  isLoadingAssignBtn.value = false
+  console.log(assighVo)
+  doAssign(assighVo).then(()=>{
+    assignDialogOpen.value = false;
+    useSuccessTip("分配角色成功");
+    isLoadingAssignBtn.value = false
+    getMyPageData();
+  }).catch(()=>{
+    isLoadingAssignBtn.value = false
+  })
 };
 
 /**

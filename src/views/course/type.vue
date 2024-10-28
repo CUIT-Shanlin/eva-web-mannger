@@ -169,7 +169,6 @@ import {
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { removeSpace } from "@/utils/stringUtil";
 import { hasBtnPermission } from '@/utils/btnPermission';
-import { useRouter } from "vue-router";
 
 const isLoadingBtn = ref(false)
 
@@ -185,7 +184,7 @@ const isLoadingTable = ref(false);
 const handleTypes = ref([]);
 // 存分页请求数据
 const pageReqData = ref({
-  size: 0,
+  size: 10,
   page: 1,
   queryObj: {
     keyword: "",
@@ -270,7 +269,7 @@ function removeOneType(type) {
   }
   useSimpleConfirm(`你确定要删除课程类型 “${type.name}” 吗？`).then(
     async () => {
-      let res = await removeOne(type);
+      await removeOne(type.id);
       useSuccessTip(`成功删除课程类型 “${type.name}”`);
       getMyPageData()
     }

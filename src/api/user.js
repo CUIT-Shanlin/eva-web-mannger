@@ -178,7 +178,7 @@ export function syncLdap(){
 export function getUserAvatar(id = -1){
     return new Promise((resolve, reject)=>{
         axios({
-            url: `/devApi/user/avatar/${id}`,
+            url: `/api/user/avatar/${id}`,
             method: 'GET',
             responseType: 'blob', // 指示axios以Blob形式处理响应
             headers:{

@@ -446,7 +446,7 @@ const checkOrUpdateDialogVisible = ref(false);
 const isLoadingTable = ref(false);
 // 存分页请求数据
 const pageReqData = ref({
-  size: 0,
+  size: 10,
   page: 1,
   queryObj: {
     keyword: "",
