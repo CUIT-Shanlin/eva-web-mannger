@@ -35,8 +35,13 @@ router.beforeEach(async(to,from,next) => {
         let {menus} = useUserStore(pinia)
         if(menus.length < 1 || router.getRoutes().length <= 4){
             changeMenusToRouters(menus)
+            console.log(menus)
             menus.forEach(menu=>{
-                router.addRoute(menu)
+                try {
+                    router.addRoute(menu)
+                } catch (error) {
+                    console.error(error)
+                }
             })
             let lastRou = {
                 path: '/:catchAll(.*)', // 使用参数匹配和正则表达式来捕获所有路径  

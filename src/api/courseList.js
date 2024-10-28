@@ -7,7 +7,7 @@ import { getSemesterId } from '@/utils/service/semesterUtil';
  */
 export function getAllBaseCourse(){
     return request({
-        url: `/courses/all?semId=${getSemesterId}`
+        url: `/courses/all?semId=${getSemesterId()}`
     })
 }
 
