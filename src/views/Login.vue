@@ -46,11 +46,14 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { login } from "@/api/login";
-import { useFailedTip, useSuccessTip } from "@/utils/msgTip";
+import { useFailedTip, useSuccessTip, useWarningConfirm } from "@/utils/msgTip";
 import { isSpace } from "@/utils/stringUtil";
 import { getAssetsFile } from '@/utils/pubUse';
 import { setToken, getUsername, setUsername } from "@/utils/auth";
 import { useRouter } from "vue-router";
+import pinia from '@/utils/pinia'
+import {useUserStore} from '@/stores/userStore'
+
 
 const router = useRouter();
 
@@ -82,6 +85,11 @@ function useLogin(){
   }
 
   login(userMsg).then(res=>{
+    if(!useUserStore(pinia).menus || useUserStore(pinia).menus.length === 0){
+      useWarningConfirm('非管理员无法登录')
+      isLoadingBtn.value = false
+      return
+    }
     // 登录成功,存token
     setToken(res.token);
 

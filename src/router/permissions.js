@@ -1,7 +1,6 @@
 import router from ".";
 import {useUserStore} from '@/stores/userStore'
 import { getInfo } from '@/api/user'
-import { deepCopy } from '@/utils/objUtil'
 import { isSpace } from '@/utils/stringUtil'
 import pinia from '@/utils/pinia'
 import { getToken } from "@/utils/auth";
