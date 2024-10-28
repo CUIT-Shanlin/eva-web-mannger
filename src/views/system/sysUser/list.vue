@@ -118,6 +118,7 @@
               :content="scope.row.info.phone"
               placement="top"
               effect="light"
+              v-if="!isSpace(scope.row.info.phone)"
             >
               <div class="iconfont linkIco">&#xe862;</div>
             </el-tooltip>
@@ -125,6 +126,7 @@
               :content="scope.row.info.email"
               placement="top"
               effect="light"
+              v-if="!isSpace(scope.row.info.email)"
             >
               <div class="iconfont linkIco">&#xe697;</div>
             </el-tooltip>
