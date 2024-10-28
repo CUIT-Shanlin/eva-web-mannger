@@ -68,7 +68,7 @@ const userMsg = reactive({
   },
 });
 // 登录
-const useLogin = async () => {
+function useLogin(){
   isLoadingBtn.value = true
   if (isSpace(userMsg.username)) {
     useFailedTip("用户名不能为空");
@@ -81,17 +81,19 @@ const useLogin = async () => {
     return;
   }
 
-  let res = await login(userMsg);
-  // 登录成功,存token
-  setToken(res.token);
+  login(userMsg).then(res=>{
+    // 登录成功,存token
+    setToken(res.token);
 
-  // 浏览器存用户名
-  if (userMsg.fun.rememberUsername) {
-    setUsername(userMsg.username);
-  }
-  useSuccessTip("登录成功");
-  router.push("/home");
-//   isLoadingBtn.value = false
+    // 浏览器存用户名
+    if (userMsg.fun.rememberUsername) {
+      setUsername(userMsg.username);
+    }
+    useSuccessTip("登录成功");
+    router.push("/home");
+  }).catch(()=>{
+    isLoadingBtn.value = false
+  })
 };
 </script>
 
