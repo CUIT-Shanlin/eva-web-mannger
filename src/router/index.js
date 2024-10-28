@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
+import Home from '@/views/Home.vue'
 
 let routes = [
   {
     path: '/login',
-    component: () => import('@/views/Login.vue')
+    component: () => import('../views/Login.vue')
   },
   {
     path: '/',
@@ -12,7 +12,8 @@ let routes = [
   },
   {
     path: '/home',
-    component: () => import('@/views/Home.vue')
+    component: Home
+    // component: () => import('../views/Home.vue')
   },
 ]
 

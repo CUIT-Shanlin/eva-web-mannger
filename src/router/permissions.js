@@ -4,10 +4,13 @@ import { getInfo } from '@/api/user'
 import { deepCopy } from '@/utils/objUtil'
 import { isSpace } from '@/utils/stringUtil'
 import pinia from '@/utils/pinia'
-import { getToken } from "@/utils/auth"; 
+import { getToken } from "@/utils/auth";
 
 import Home from '@/views/Home.vue'
 import ParentView from "@/components/ParentView.vue";
+
+
+// const _import = require('./router/_import_'+process.env.NODE_ENV) // 获取组件的方法
 
 /**
  * 处理路由守卫实现动态路由 + 获取权限
@@ -38,7 +41,7 @@ router.beforeEach(async(to,from,next) => {
             })
             let lastRou = {
                 path: '/:catchAll(.*)', // 使用参数匹配和正则表达式来捕获所有路径  
-                component: ()=>import('@/views/404.vue')
+                component: ()=>import('../views/404.vue')
             }
             router.addRoute(lastRou)
             useUserStore(pinia).menus = menus
@@ -81,14 +84,13 @@ const userInit = async()=>{
 async function loadModule(modulePath){
     try{
         const module = await import(`/src/views${modulePath}.vue`)
-        return module.default;
+        return module;
     } catch (error) {
         // 返回默认组件Empty
         console.error(error)
-        return import('@/views/Empty.vue').then(m => m.default);
+        return import('./../views/Empty.vue').then(m => m.default);
     }
 }
-
 
 /**
  * 将后端传过来的原始路由格式转成真正的路由数组

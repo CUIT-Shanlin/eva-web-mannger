@@ -7,7 +7,6 @@ import {
   useWarningConfirm,
   useFailedTip
 } from './msgTip';
-import router from '@/router/permissions'
 
 /**
  * 封装axios
@@ -17,9 +16,8 @@ axios.defaults.withCredentials = true;
 
 const request = axios.create({
     // baseURL: '/devApi'
-    baseURL: '/api'
+    baseURL: import.meta.env.NODE_ENV === 'development' ? '/api' : import.meta.env.VITE_APP_BASE_URL
     // baseURL: import.meta.env.VITE_APP_BASE_URL
-    
 })
 
 // 添加请求拦截-token处理
