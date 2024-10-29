@@ -88,7 +88,7 @@ export function getTimeClass(classquery={departmentName:"",keyword:"",sort:0,sta
 
 export function getSemesterisImported(type,imported={period:0,startYear:"",endYear:""}){
     return request({
-        url: `/course/table/isImported/type=${type}`,
+        url: `/course/table/isImported/${type}`,
         method: 'POST',
         data:imported
     }) 
