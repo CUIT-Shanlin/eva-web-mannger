@@ -92,7 +92,11 @@ const userInit = async()=>{
  */
 async function loadModule(modulePath){
     try{
-        const module = await import(`/src/views${modulePath}.vue`)
+        let url = `./../views${modulePath}.vue`
+        if(import.meta.env.VITE_APP_MODE === 'development'){
+            url = `/src/views${modulePath}.vue`
+        }
+        const module = await import(url)
         return module;
     } catch (error) {
         // 返回默认组件Empty
