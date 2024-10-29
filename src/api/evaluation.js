@@ -16,9 +16,9 @@ export function getEvaSituation(){
  * 获取评教分数统计基础信息
  * @returns 
  */
-export function getEvaScoreSituation(){
+export function getEvaScoreSituation(score = 95){
     return request({
-        url: `/evaluate/score/situation?semId=${getSemesterId()}`
+        url: `/evaluate/score/situation?semId=${getSemesterId()}&score=${score}`
     })
 }
 

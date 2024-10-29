@@ -97,7 +97,8 @@
   import { getAllSemester } from '../api/semester.js';
   import { hasBtnPermission  } from '@/utils/btnPermission';
   import { isSpace } from '@/utils/stringUtil';
-  import { isEmptyOrNullOrUndefined } from '@/utils/objUtil';
+  import { isEmptyOrNullOrUndefined, isEmptyArrOrNull } from '@/utils/objUtil';
+  import { getNewThisSemester } from '@/utils/service/semesterUtil';
 
   export default {
     components: {
@@ -221,7 +222,7 @@
                 label: `${newStartYear}-${newEndYear}`,
                 children: [
                   {
-                    id: `${newStartYear}-${newEndYear}`,
+                    id: null,
                     label: '上学期',
                     period: 0
                   }
@@ -230,7 +231,29 @@
             }
           }
           semesterOptions.value = semesters;
+          // dkh: 检验本学期有没有加入选项
+          let thisSemester = getNewThisSemester()
+          let flag = false
+          for(let i = 0;i < semesterOptions.value.length;i++){
+            const semesterOption = semesterOptions.value[i]
+            if(semesterOption.label === thisSemester.label){
+              flag = true
+              if(isEmptyArrOrNull(semesterOption.children)){
+                semesterOptions.value[i] = thisSemester
+              }
+              if(!semesterOption.children.find(child=>{child.period === thisSemester.children[0].period})){
+                semesterOption.children.push(thisSemester.children[0])
+              }
+              break;
+            }
+          }
+
+          if(!flag){
+            semesterOptions.value.push(thisSemester)
+          }
+
         } catch (error) {
+          semesterOptions.value.push(getNewThisSemester())
           console.error('获取学期数据失败:', error);
         }
       };
@@ -260,8 +283,8 @@
       const importFiles = async () => {
         try {
           const { id, period, startYear, endYear, startDate, file, courseNature } = importForm.value;
-          // 确保学期ID、学期、学年开始年份和学年结束年份都不为空
-          if (!id || period === null || !startYear || !endYear) {
+          // 确保学期、学年开始年份和学年结束年份都不为空
+          if (period === null || !startYear || !endYear) {
             ElMessage.error('请选择正确的学期');
             return;
           }

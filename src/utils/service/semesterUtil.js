@@ -19,7 +19,7 @@ export function setSemesterId(semId){
  * @returns 当前的学期id
  */
 export function getSemesterId(){
-    return sessionStorage.getItem(SEMESTER_KEY);
+    return sessionStorage.getItem(SEMESTER_KEY) | -1;
 }
 
 /**
@@ -47,4 +47,29 @@ export function getDistinctSemsters(originArr = []){
  */
 export function isCommonYear(sem1 = {},sem2 = {}){
     return sem1.startYear === sem2.startYear && sem1.endYear === sem2.endYear
+}
+
+/**
+ * 获取新生成的本学期的学期数据
+ * @returns 新生成的本学期数据
+ */
+export function getNewThisSemester(){
+    // 确认上下学期(上：7-1月；下1-7月)
+    const thisMonth = new Date().getMonth() + 1
+    const period = thisMonth >= 1 && thisMonth <= 7 ? 1 : 0
+
+    const thisYear = new Date().getFullYear()
+    const newStartYear = period === 0 ? thisYear : thisYear - 1
+    const newEndYear = newStartYear + 1
+    return {
+        id: null,
+        label: `${newStartYear}-${newEndYear}`,
+        children: [
+            {
+                id: null,
+                label: period === 0 ? '上学期' : '下学期',
+                period: period
+            }
+        ]
+    }
 }
