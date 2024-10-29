@@ -500,7 +500,7 @@ function initCharts() {
   let circle2 = echarts.init(document.getElementById("circle2"));
   let line1 = echarts.init(document.getElementById("line1"));
   let line2 = echarts.init(document.getElementById("line2"));
-  // TODO 初始化第一个图形区
+  // dkh: 初始化第一个图形区
   getEvaTaskMsg().then(()=>{
     circle1.setOption(getCircleOption("评教任务完成情况", [
       {
@@ -514,8 +514,8 @@ function initCharts() {
     ]));
     line1.setOption(getLineOption(evaTaskCompleteMsg.value.evaNumArr));
   })
-  // TODO 初始化第二个图形区
-  getEvaScoreMsg().then(()=>{
+  // dkh: 初始化第二个图形区
+  getEvaScoreMsg(95).then(()=>{
     circle2.setOption(getCircleOption("分数统计情况", [
       {
         name: '低于95分的评教数目',
