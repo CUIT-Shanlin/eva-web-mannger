@@ -97,7 +97,8 @@
   import { getAllSemester } from '../api/semester.js';
   import { hasBtnPermission  } from '@/utils/btnPermission';
   import { isSpace } from '@/utils/stringUtil';
-  import { isEmptyOrNullOrUndefined } from '@/utils/objUtil';
+  import { isEmptyOrNullOrUndefined, isEmptyArrOrNull } from '@/utils/objUtil';
+  import { getNewThisSemester } from '@/utils/service/semesterUtil';
 
   export default {
     components: {
@@ -230,7 +231,29 @@
             }
           }
           semesterOptions.value = semesters;
+          // dkh: 检验本学期有没有加入选项
+          let thisSemester = getNewThisSemester()
+          let flag = false
+          for(let i = 0;i < semesterOptions.value.length;i++){
+            const semesterOption = semesterOptions.value[i]
+            if(semesterOption.label === thisSemester.label){
+              flag = true
+              if(isEmptyArrOrNull(semesterOption.children)){
+                semesterOptions.value[i] = thisSemester
+              }
+              if(!semesterOption.children.find(child=>{child.period === thisSemester.children[0].period})){
+                semesterOption.children.push(thisSemester.children[0])
+              }
+              break;
+            }
+          }
+
+          if(!flag){
+            semesterOptions.value.push(thisSemester)
+          }
+
         } catch (error) {
+          semesterOptions.value.push(getNewThisSemester())
           console.error('获取学期数据失败:', error);
         }
       };

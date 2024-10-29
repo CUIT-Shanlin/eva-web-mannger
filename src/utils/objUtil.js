@@ -42,6 +42,18 @@ export function isEmptyArr(arr = []){
     return arr === undefined || (Array.isArray(arr) && arr.length === 0);
 }
 
+
+/**
+ * 判断一个数组是不是空数组或者null
+ * @param {Array} arr 
+ * @returns 
+ */
+export function isEmptyArrOrNull(arr = []){
+  return arr === null || arr === undefined || (Array.isArray(arr) && arr.length === 0);
+}
+
+
+
 /**
  * 判断一个对象是不是空对象
  * @param {Object} obj 
