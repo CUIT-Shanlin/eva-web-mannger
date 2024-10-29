@@ -164,7 +164,7 @@ import {
   NOT_DEFAULT,
   allDefaultData
 } from "@/utils/service/staticData";
-import { isEmptyArr, deepCopy, addSuffixToDuplicates, removeSpaceStrToArr } from "@/utils/objUtil";
+import { isEmptyArr, deepCopy, addSuffixToDuplicates, removeSpaceStrToArr, isEmptyArrOrNull } from "@/utils/objUtil";
 import { isSpace, removeSpace } from "@/utils/stringUtil";
 import { hasBtnPermission } from '@/utils/btnPermission';
 
@@ -246,13 +246,16 @@ function getIsDefaultText(isDefault = -1){
  * @param {string} str 指标名称
  */
 function removeRow(str){
-    myProps.value = myProps.value.filter(item => item !== str)
+  myProps.value = myProps.value.filter(item => item !== str)
 }
 
 /**
  * 新建一个新的空指标
  */
 function addNewRow(){
+  if(isEmptyArrOrNull(myProps.value)){
+    myProps.value = []
+  }
     myProps.value.push('')
     deelDuplicateName()
 }

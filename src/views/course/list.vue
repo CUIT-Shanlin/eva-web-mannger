@@ -534,7 +534,7 @@ function changeCheckCourseToUpdateCourse(originData = {}) {
     typeIdList: [],
     isUpdate: false,
   };
-  // TODO 根据查看详情的数据模型中的数据 填充 用于修改的数据模型的数据
+  // dkh: 根据查看详情的数据模型中的数据 填充 用于修改的数据模型的数据
   updateCourse.typeIdList = originData.typeList.map((type) => type.id);
   updateCourse.templateId = originData.courseBaseMsg.templateMsg.id;
   updateCourse.subjectMsg.name = originData.courseBaseMsg.name;

@@ -31,7 +31,7 @@ export function getAllBaseSubject(){
  */
 export function getPageData(reqData = {page: 0,size: 0,queryObj: {}}){
     return request({
-        url: '/courses',
+        url: `/courses?semId=${getSemesterId()}`,
         method: 'POST',
         data: reqData
     })
