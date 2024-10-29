@@ -3,7 +3,7 @@ import {useUserStore} from '@/stores/userStore'
 import { getInfo } from '@/api/user'
 import { isSpace } from '@/utils/stringUtil'
 import pinia from '@/utils/pinia'
-import { getToken } from "@/utils/auth";
+import { getToken, removeToken } from "@/utils/auth";
 
 import Home from '@/views/Home.vue'
 import ParentView from "@/components/ParentView.vue";
@@ -33,6 +33,12 @@ router.beforeEach(async(to,from,next) => {
             await userInit()
         }
         let {menus} = useUserStore(pinia)
+        if(!menus || menus.length === 0){
+            useWarningConfirm('非管理员无法登录')
+            removeToken()
+            window.location.reload()
+            return
+        }
         if(menus.length < 1 || router.getRoutes().length <= 4){
             changeMenusToRouters(menus)
             menus.forEach(menu=>{

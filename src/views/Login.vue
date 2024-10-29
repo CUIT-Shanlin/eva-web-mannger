@@ -85,11 +85,6 @@ function useLogin(){
   }
 
   login(userMsg).then(res=>{
-    if(!useUserStore(pinia).menus || useUserStore(pinia).menus.length === 0){
-      useWarningConfirm('非管理员无法登录')
-      isLoadingBtn.value = false
-      return
-    }
     // 登录成功,存token
     setToken(res.token);
 
