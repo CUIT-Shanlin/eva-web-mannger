@@ -23,8 +23,10 @@
                     </div>
                     <div class="semPeriod">
                         <div :class="{periodOne: true, nowSty: checkedSemester.period === 0}"
+                        v-if="hasPeriod(0)"
                         @click="changePeriod(0)">上学期</div>
                         <div :class="{periodOne: true, nowSty: checkedSemester.period === 1}"
+                        v-if="hasPeriod(1)"
                         @click="changePeriod(1)">下学期</div>
                     </div>
                 </div>
@@ -52,6 +54,12 @@ const isChoose = ref(false)
 // 存所有的的学期信息
 const semesters = ref([])
 
+
+function hasPeriod(period = 0){
+    return semesters.value.find(semester => semester.period === period)
+}
+
+
 /**
  * 初始化学期信息
  */
@@ -59,10 +67,9 @@ const initSemesters = async()=>{
     // 获取所有的学期信息
     let data = await getAllSemester()
     semesters.value = data
-
-    // TODO 加载当前显示的学期，如果sessionStorage中存有学期id，就使用sessionStorage中的学期，没有就获取当前学期
+    // dkh: 加载当前显示的学期，如果sessionStorage中存有学期id，就使用sessionStorage中的学期，没有就获取当前学期
     let semId = getSemesterId()
-    if(semId){
+    if(semId && semId > 0){
         checkedSemester.value = data.find(sem => sem.id + '' === semId + '')
     }else{
         let res = await getNowSemester()
