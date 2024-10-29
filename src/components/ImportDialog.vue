@@ -222,7 +222,7 @@
                 label: `${newStartYear}-${newEndYear}`,
                 children: [
                   {
-                    id: `${newStartYear}-${newEndYear}`,
+                    id: null,
                     label: '上学期',
                     period: 0
                   }
@@ -283,8 +283,8 @@
       const importFiles = async () => {
         try {
           const { id, period, startYear, endYear, startDate, file, courseNature } = importForm.value;
-          // 确保学期ID、学期、学年开始年份和学年结束年份都不为空
-          if (!id || period === null || !startYear || !endYear) {
+          // 确保学期、学年开始年份和学年结束年份都不为空
+          if (period === null || !startYear || !endYear) {
             ElMessage.error('请选择正确的学期');
             return;
           }

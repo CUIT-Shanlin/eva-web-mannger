@@ -66,7 +66,7 @@ export function getNewThisSemester(){
         label: `${newStartYear}-${newEndYear}`,
         children: [
             {
-                id: `${newStartYear}-${newEndYear}`,
+                id: null,
                 label: period === 0 ? '上学期' : '下学期',
                 period: period
             }
