@@ -217,7 +217,6 @@ import {
 import {
   useSimpleConfirm,
   useSuccessTip,
-  useFailedTip,
 } from "@/utils/msgTip.js";
 import {
   PENDING_TASK,

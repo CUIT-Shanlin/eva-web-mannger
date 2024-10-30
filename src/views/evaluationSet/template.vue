@@ -166,6 +166,7 @@ import {
 } from "@/utils/service/staticData";
 import { isEmptyArr, deepCopy, addSuffixToDuplicates, removeSpaceStrToArr, isEmptyArrOrNull } from "@/utils/objUtil";
 import { isSpace, removeSpace } from "@/utils/stringUtil";
+import { formatDate } from '@/utils/dateUtil';
 import { hasBtnPermission } from '@/utils/btnPermission';
 
 
@@ -380,10 +381,10 @@ const getMyPageData = async () => {
   isLoadingTable.value = true;
   const queryObj = pageReqData.value.queryObj;
   queryObj.keyword = removeSpace(queryObj.keyword);
-  queryObj.startCreateTime = createTimeArr[0];
-  queryObj.endCreateTime = createTimeArr[1];
-  queryObj.startUpdateTime = updateTimeArr[0];
-  queryObj.endUpdateTime = updateTimeArr[1];
+  queryObj.startCreateTime = formatDate(createTimeArr.value[0]);
+  queryObj.endCreateTime = formatDate(createTimeArr.value[1]);
+  queryObj.startUpdateTime = formatDate(updateTimeArr.value[0]);
+  queryObj.endUpdateTime = formatDate(updateTimeArr.value[1]);
 
   pageReqData.value.size = pageData.value.size;
   pageReqData.value.page = pageData.value.current;

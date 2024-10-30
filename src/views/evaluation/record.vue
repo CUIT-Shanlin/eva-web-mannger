@@ -268,6 +268,7 @@ import { useSimpleConfirm, useSuccessTip, useFailedTip } from "@/utils/msgTip";
 import { getShowNum } from '@/utils/numUtil';
 import { hasBtnPermission } from '@/utils/btnPermission';
 import { allCourseNature } from "@/utils/service/staticData";
+import { formatDate } from '@/utils/dateUtil';
 import { onMounted, ref } from "vue";
 import { useRoute } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
@@ -442,8 +443,8 @@ const getMyPageData = async()=>{
   isLoadingTable.value = true
   const queryObj = pageReqData.value.queryObj
   queryObj.keyword = removeSpace(queryObj.keyword)
-  queryObj.startEvaluateTime = evaTimeArr[0]
-  queryObj.endEvaluateTime = evaTimeArr[1]
+  queryObj.startEvaluateTime = formatDate(evaTimeArr.value[0])
+  queryObj.endEvaluateTime = formatDate(evaTimeArr.value[1])
 
   pageReqData.value.size = pageData.value.size;
   pageReqData.value.page = pageData.value.current;

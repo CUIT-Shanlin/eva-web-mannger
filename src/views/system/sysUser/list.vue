@@ -341,7 +341,10 @@
 <script setup>
 import PageTitle from "@/components/PageTitle.vue";
 import { ref, watch, onMounted } from "vue";
-import { formatDate } from "@/utils/dateUtil";
+import {
+  formatDate,
+  formatDateNotTime
+} from "@/utils/dateUtil";
 import {
   getPageData,
   removeOne,
@@ -669,6 +672,10 @@ const getMyPageData = async () => {
   pageReqData.value.queryObj.keyword = removeSpace(
     pageReqData.value.queryObj.keyword
   );
+
+  pageReqData.value.queryObj.startCreateTime = formatDate(pageReqData.value.queryObj.startCreateTime)
+  pageReqData.value.queryObj.endCreateTime = formatDate(pageReqData.value.queryObj.endCreateTime)
+
   pageReqData.value.size = pageData.value.size;
   pageReqData.value.page = pageData.value.current;
 
@@ -736,9 +743,9 @@ function getChooseDateText() {
   if (iptDate.value[0] == null || iptDate.value[1] == null) {
     return "选择创建日期";
   }
-  return `${formatDate(
+  return `${formatDateNotTime(
     iptDate.value[0]
-  )}&nbsp&nbsp&nbsp到&nbsp&nbsp&nbsp ${formatDate(iptDate.value[1])}`;
+  )}&nbsp&nbsp&nbsp到&nbsp&nbsp&nbsp ${formatDateNotTime(iptDate.value[1])}`;
 }
 
 /**
@@ -751,8 +758,8 @@ watch(
       if (newValue[0] > newValue[1]) {
         newValue[1] = newValue[0];
       }
-      pageReqData.value.startCreateTime = newValue[0];
-      pageReqData.value.endCreateTime = newValue[1];
+      pageReqData.value.queryObj.startCreateTime = newValue[0];
+      pageReqData.value.queryObj.endCreateTime = newValue[1];
       getMyPageData();
     }
   },

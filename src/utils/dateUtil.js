@@ -38,6 +38,23 @@ export function formatDate(date) {
 }
 
 /**
+ * 将 Date对象 转成yyyy-MM-dd格式 
+ * @param {Date} date 原始Date对象 
+ * @returns 格式之后的date字符串
+ */
+export function formatDateNotTime(date) {
+    if(date == null){
+        return '';
+    }
+    // 获取日期
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, '0');
+    let day = String(date.getDate()).padStart(2, '0');
+    // 拼接成 yyyy-MM-dd格式
+    return `${year}-${month}-${day}`;
+}
+
+/**
  * 处理日期字符串 将完整日期字符串转成yyyy-MM-DD格式
  * @param {string} dateString 日期字符串
  * @returns 处理完之后的日期字符串
