@@ -234,8 +234,7 @@ onMounted(() => {
   initInfo();
   // 初始化消息 + 实时接收消息
   mySocket.value = useMySocket((data) => {
-    receiveMsg(data);
-    unreadNum.value++;
+    dealAllMyMsg();
   });
   dealAllMyMsg();
 });
