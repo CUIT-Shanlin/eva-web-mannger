@@ -141,7 +141,6 @@ import {
 import { hasBtnPermission } from '@/utils/btnPermission';
 import { isEmptyArr, deepCopy } from "@/utils/objUtil";
 import { isSpace, removeSpace } from "@/utils/stringUtil";
-import { useRouter } from "vue-router";
 
 const isLoadingBtn = ref(false)
 
@@ -170,7 +169,7 @@ const pageReqData = ref({
 // 存分页获取的数据
 const pageData = ref({
   total: 0,
-  size: 0,
+  size: 10,
   current: 1,
   records: [],
 });
@@ -300,6 +299,10 @@ const getMyPageData = async()=>{
   queryObj.endCreateTime = createTimeArr[1]
   queryObj.startUpdateTime = updateTimeArr[0]
   queryObj.endUpdateTime = updateTimeArr[1]
+
+  pageReqData.value.size = pageData.value.size;
+  pageReqData.value.page = pageData.value.current;
+
   let res = await getPageData(pageReqData.value)
   pageData.value = res
   isLoadingTable.value = false

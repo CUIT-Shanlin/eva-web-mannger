@@ -313,7 +313,7 @@ const pageReqData = ref({
 // 存分页获取的数据
 const pageData = ref({
   total: 0,
-  size: 0,
+  size: 10,
   current: 1,
   records: [],
 });
@@ -444,6 +444,10 @@ const getMyPageData = async()=>{
   queryObj.keyword = removeSpace(queryObj.keyword)
   queryObj.startEvaluateTime = evaTimeArr[0]
   queryObj.endEvaluateTime = evaTimeArr[1]
+
+  pageReqData.value.size = pageData.value.size;
+  pageReqData.value.page = pageData.value.current;
+
   let res = await getPageData(pageReqData.value)
   pageData.value = res
   isLoadingTable.value = false

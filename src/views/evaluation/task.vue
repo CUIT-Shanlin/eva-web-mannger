@@ -227,9 +227,8 @@ import {
   REMINDER_MSG,
 } from "@/utils/service/staticData";
 import { removeSpace } from "@/utils/stringUtil";
-import {
-  getWeekByNum,
-} from '@/utils/numUtil';
+import { getWeekByNum } from '@/utils/numUtil';
+import { formatDate } from '@/utils/dateUtil';
 import { hasBtnPermission } from '@/utils/btnPermission';
 import { useUserStore } from "@/stores/userStore";
 import pinia from "@/utils/pinia";
@@ -260,7 +259,7 @@ const isLoadingTable = ref(false);
 
 // 存分页请求数据
 const pageReqData = ref({
-  size: 0,
+  size: 10,
   page: 1,
   queryObj: {
     keyword: "",
@@ -373,9 +372,15 @@ const shortcuts = [
 const getMyPageData = async () => {
   isLoadingTable.value = true;
   const queryObj = pageReqData.value.queryObj;
+
   queryObj.keyword = removeSpace(queryObj.keyword);
-  queryObj.startCreateTime = createTimeArr[0];
-  queryObj.endCreateTime = createTimeArr[1];
+  queryObj.startCreateTime = formatDate(createTimeArr.value[0]);
+  queryObj.endCreateTime = formatDate(createTimeArr.value[1]);
+
+
+  pageReqData.value.size = pageData.value.size;
+  pageReqData.value.page = pageData.value.current;
+
   let res = await getPageData(pageReqData.value);
   pageData.value = res;
   isLoadingTable.value = false;

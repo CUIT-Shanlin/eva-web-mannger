@@ -93,9 +93,9 @@ const userInit = async()=>{
 async function loadModule(modulePath){
     try{
         let url = `./../views${modulePath}.vue`
-        if(import.meta.env.VITE_APP_MODE === 'development'){
-            url = `/src/views${modulePath}.vue`
-        }
+        // if(import.meta.env.VITE_APP_MODE === 'development'){
+        //     url = `/src/views${modulePath}.vue`
+        // }
         const module = await import(url)
         return module;
     } catch (error) {

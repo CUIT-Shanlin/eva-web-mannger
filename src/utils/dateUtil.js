@@ -15,7 +15,7 @@ export function choreDateStr(dateString){
 }
 
 /**
- * 将 Date对象 转成yyyy-MM-dd 格式 
+ * 将 Date对象 转成yyyy-MM-dd HH:mm:ss格式 
  * @param {Date} date 原始Date对象 
  * @returns 格式之后的date字符串
  */
@@ -23,12 +23,18 @@ export function formatDate(date) {
     if(date == null){
         return '';
     }
+    // 获取日期
     let year = date.getFullYear();
     let month = String(date.getMonth() + 1).padStart(2, '0');
-    // 获取日期
     let day = String(date.getDate()).padStart(2, '0');
-    // 拼接成 yyyy-MM-dd 格式
-    return `${year}-${month}-${day}`;
+
+    // 获取时间
+    let hour = String(date.getHours()).padStart(2, '0')
+    let minute = String(date.getMinutes()).padStart(2, '0')
+    let secend = String(date.getSeconds()).padStart(2, '0')
+
+    // 拼接成 yyyy-MM-dd HH:mm:ss格式
+    return `${year}-${month}-${day} ${hour}:${minute}:${secend}`;
 }
 
 /**
