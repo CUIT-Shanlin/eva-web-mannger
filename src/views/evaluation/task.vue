@@ -132,8 +132,8 @@
 
         <el-form-item label="是否匿名">
           <el-radio-group v-model="myMsg.isShowName">
-            <el-radio :value="false">是</el-radio>
-            <el-radio :value="true">否</el-radio>
+            <el-radio :value="0">是</el-radio>
+            <el-radio :value="1">否</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -239,7 +239,7 @@ const myMsg = ref({
   senderId: useUserStore(pinia).info.id,
   type: REMINDER_MSG,
   mode: EVA_MSG_MODE,
-  isShowName: true,
+  isShowName: 1,
   recipientId: -1,
   taskId: -1,
   msg: "",
