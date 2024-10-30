@@ -38,7 +38,7 @@
     @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="50" />
-      <el-table-column prop="name" label="菜单名称"></el-table-column>
+      <el-table-column prop="name" label="菜单名称" width="230"></el-table-column>
       <el-table-column label="图标" width="60">
         <template #default="scope">
           <i class="iconfont" v-html="scope.row.icon"></i>
