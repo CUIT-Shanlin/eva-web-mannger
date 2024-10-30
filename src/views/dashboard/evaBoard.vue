@@ -324,7 +324,7 @@ const initCharts = async()=>{
     bottom: '14.5px'
   },
   xAxis: {
-    data: barData.map(it => `${it.stratScore}-${it.endScore}`),
+    data: barData.sort((a, b) => a.endScore - b.endScore).map(it => `${it.startScore}-${it.endScore}`),
     axisLabel: {
       fontSize: 8
     }
