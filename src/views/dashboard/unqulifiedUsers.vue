@@ -229,6 +229,9 @@ const getMyPageData = async () => {
   isLoadingTable.value = true;
   const queryObj = pageReqData.value.queryObj;
   queryObj.keyword = removeSpace(queryObj.keyword);
+
+  pageReqData.value.size = pageData.value.size;
+  pageReqData.value.page = pageData.value.current;
   let res = await getUnqulifiedPageData( unqualifiedType.value, getQulifiedStandards[unqualifiedType.value], pageReqData.value);
   pageData.value = res;
   isLoadingTable.value = false;

@@ -19,7 +19,7 @@ export function setSemesterId(semId){
  * @returns 当前的学期id
  */
 export function getSemesterId(){
-    return sessionStorage.getItem(SEMESTER_KEY) | -1;
+    return sessionStorage.getItem(SEMESTER_KEY);
 }
 
 /**
