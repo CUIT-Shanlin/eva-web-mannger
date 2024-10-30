@@ -559,7 +559,7 @@ const checkUsername = async(username ='')=>{
  */
 const isThisExist = async(username)=>{
   // 检测用户名是否已经抢注
-  let { isExist } = await isExistUsername(username)
+  let isExist = await isExistUsername(username)
   updateOrAddProp.value.isUsername = !isExist// 用户名
 }
 
