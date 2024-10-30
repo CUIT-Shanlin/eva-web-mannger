@@ -1,7 +1,9 @@
-
 /**
  * 处理学期模块业务相关的工具js
  */
+import { isSpace } from "../stringUtil";
+
+
 
 const SEMESTER_KEY =  'eva_semester_id_key'
 
@@ -19,7 +21,8 @@ export function setSemesterId(semId){
  * @returns 当前的学期id
  */
 export function getSemesterId(){
-    return sessionStorage.getItem(SEMESTER_KEY);
+    const semId = sessionStorage.getItem(SEMESTER_KEY)
+    return isSpace(semId + '') ? -1 : semId;
 }
 
 /**
