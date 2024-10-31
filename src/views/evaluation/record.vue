@@ -202,7 +202,12 @@
           </template>
         </el-table-column>
         <el-table-column prop="teacherName" label="教学老师"/>
-        <el-table-column prop="averScore" label="综合评分"/>
+        <el-table-column label="综合评分">
+          <template #default="scope">
+            {{formatNumberToOneDecimalPlace(scope.row.averScore)}}
+          </template>
+
+        </el-table-column>
         <el-table-column label="操作">
           <template #default="scope">
             <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row)"
@@ -234,7 +239,7 @@
         <el-input type="textarea" :rows="5" :model-value="checkedRecord.textValue"></el-input>
         <div class="propOne">
           <span>综合评分</span>
-          <el-input :model-value="checkedRecord.averScore" class="myIpt"></el-input>
+          <el-input :model-value="formatNumberToOneDecimalPlace(checkedRecord.averScore)" class="myIpt"></el-input>
         </div>
     </el-dialog>
     
@@ -265,7 +270,10 @@ import { choreDateStr } from "@/utils/dateUtil";
 import { removeSpace, replaceStr } from "@/utils/stringUtil";
 import { isEmptyArr, isEmptyObj } from "@/utils/objUtil";
 import { useSimpleConfirm, useSuccessTip, useFailedTip } from "@/utils/msgTip";
-import { getShowNum } from '@/utils/numUtil';
+import {
+  getShowNum,
+  formatNumberToOneDecimalPlace
+} from '@/utils/numUtil';
 import { hasBtnPermission } from '@/utils/btnPermission';
 import { allCourseNature } from "@/utils/service/staticData";
 import { formatDate } from '@/utils/dateUtil';
