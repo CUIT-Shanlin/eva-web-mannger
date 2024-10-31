@@ -128,7 +128,8 @@ function changeMenusToRouters(routers = []){
             if(isSpace(route.component)){
                 route.component = ''
             }else{
-                route.component = loadModule(route.component.startsWith('/') ? route.component.slice(1) : route.component)
+                // route.component = loadModule(route.component.startsWith('/') ? route.component.slice(1) : route.component)
+                route.component = ()=>import(/* @vite-ignore */ `../views${route.component}.vue`)
                 // route.component = import('../views' + route.component + '.vue')
             }
         }
