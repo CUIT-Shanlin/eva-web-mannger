@@ -104,7 +104,7 @@ export function getSemesterisImported(type,imported={period:0,startYear:"",endYe
  * @returns 课程信息
  */
 
-export function changeClass(classdata={id:0,location:"",week:0,day:0,startTime:0,endTime:0}){
+export function changeClass(classdata = { id: 0, location: "", time: { week: 0, day: 0, startTime: 0, endTime: 0 } }){
     return request({
         url: `/course/one?semId=${getSemesterId()}`,
         method: 'PUT',
@@ -174,7 +174,7 @@ export function createClass(courseId,dateArr = []){
  * @returns 详细信息
  */
  
-export function createNewClass(techerId,courseInfo = {
+export function createNewClass(teacherId,courseInfo = {
     "subjectMsg": {
     "name": "",
     "nature": 1
@@ -182,7 +182,7 @@ export function createNewClass(techerId,courseInfo = {
 "templateId": null,
 "typeIdList": []}, dateArr=[]){
     return request({
-        url: `/course/batch/notExist?semId=${getSemesterId()}&techerId=${techerId}`,
+        url: `/course/batch/notExist?semId=${getSemesterId()}&teacherId=${teacherId}`,
         method: 'POST',
         data: {
             courseInfo: courseInfo,

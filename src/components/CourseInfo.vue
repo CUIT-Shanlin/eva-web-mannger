@@ -236,10 +236,12 @@ export default {
       editForm: {
         teacherName: '',
         location: '',
+        time:{
         week: 1,
         day: 1,
         startTime: 1,
         endTime: 1
+      }
       },
       showAssignDialog: false,
       showConfirmAssignDialog: false,
@@ -304,10 +306,12 @@ export default {
         await changeClass({
           id: this.selectedCourse.id,
           location: this.editForm.location,
+          time:{
           week: this.editForm.week,
           day: parseInt(this.editForm.day),
           startTime: this.editForm.startTime,
           endTime: this.editForm.endTime
+          }
         });
         this.showConfirmEditDialog = false;
         this.$emit('edit-course', {
