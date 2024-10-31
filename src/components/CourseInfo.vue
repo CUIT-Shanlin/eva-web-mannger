@@ -9,33 +9,35 @@
         <p><strong>已选中于{{ selectedDate }}的第{{selectedBox.num }}节课开始的课程</strong></p>
       </div>
     </div>
-    <div v-if="hasCourses">
-      <div v-for="(course, index) in selectedBox.courses" :key="index" class="course-module">
-        <div class="course-header">
-          <span class="teacher-name">{{ course.teacherName }}</span>
-          <el-dropdown trigger="click" @command="handleCommand">
-            <span class="el-dropdown-link">
-              点击操作...
-            </span>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item :command="{ action: 'edit', course }" :disabled="!checkPermission('course.tabulation.update')">编辑</el-dropdown-item>
-                <el-dropdown-item :command="{ action: 'delete', course }" :disabled="!checkPermission('course.table.delete')">删除</el-dropdown-item>
-                <el-dropdown-item :command="{ action: 'assigned', course }" :disabled="!checkPermission('course.table.assignEva')">分配听课</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-        <div class="course-details">
-          <p><strong>课程名称:</strong> {{ course.name }}</p>
-          <p><strong>课程时间:</strong> {{`第${course.time.startTime}-${course.time.endTime}节(${formatTime(course.time.startTime, course.time.endTime)})`}}</p>
-          <p><strong>课程教室:</strong> {{ course.location }}</p>
+    <el-scrollbar max-height="700px"> <!-- 使用 el-scrollbar 包裹课程数据部分 -->
+      <div v-if="hasCourses">
+        <div v-for="(course, index) in selectedBox.courses" :key="index" class="course-module">
+          <div class="course-header">
+            <span class="teacher-name">{{ course.teacherName }}</span>
+            <el-dropdown trigger="click" @command="handleCommand">
+              <span class="el-dropdown-link">
+                点击操作...
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item :command="{ action: 'edit', course }" :disabled="!checkPermission('course.tabulation.update')">编辑</el-dropdown-item>
+                  <el-dropdown-item :command="{ action: 'delete', course }" :disabled="!checkPermission('course.table.delete')">删除</el-dropdown-item>
+                  <el-dropdown-item :command="{ action: 'assigned', course }" :disabled="!checkPermission('course.table.assignEva')">分配听课</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+          <div class="course-details">
+            <p><strong>课程名称:</strong> {{ course.name }}</p>
+            <p><strong>课程时间:</strong> {{`第${course.time.startTime}-${course.time.endTime}节(${formatTime(course.time.startTime, course.time.endTime)})`}}</p>
+            <p><strong>课程教室:</strong> {{ course.location }}</p>
+          </div>
         </div>
       </div>
-    </div>
-    <div v-else class="no-course">
-      <p>暂无课程</p>
-    </div>
+      <div v-else class="no-course">
+        <p>暂无课程</p>
+      </div>
+    </el-scrollbar>
     <el-dialog
       title="删除课程"
       v-model="showDeleteDialog"
@@ -185,14 +187,16 @@
   </el-aside>
 </template>
 
-
 <script>
 import { getClassDay, delClassData, changeClass, assignedTeacher } from '../api/courseTable.js';
 import { getAllBaseUser } from '../api/user.js';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElScrollbar } from 'element-plus';
 import { hasBtnPermission  } from '@/utils/btnPermission';
 
 export default {
+  components: {
+    ElScrollbar
+  },
   props: {
     selectedBox: {
       type: Object,
@@ -441,6 +445,7 @@ export default {
 .el-side {
   background-color: #ffffff;
   border-radius: 15px;
+  overflow: hidden;
 }
 .course-module {
   border-bottom: 1px solid #ccc;

@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container class="big-box">
     <el-main>
       <div class="header-bar">
         <div class="left-section">
@@ -269,6 +269,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.big-box{
+  overflow: hidden;
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr); 
