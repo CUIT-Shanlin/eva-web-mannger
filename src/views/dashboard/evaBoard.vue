@@ -13,7 +13,7 @@
           <i :class="{iconfont: true, upIco: true, downIco: Number(it.morePercent) < 0}">&#xe639;</i>
         </div>
       </div>
-      <div :id="`line${i + 1}`" :ref="`line${i + 1}`" class="lineImg"></div>
+      <div :id="`line${2 - i}`" :ref="`line${2 - i}`" class="lineImg"></div>
     </div>
     
     <div class="commonBox flexUpDown">
@@ -211,10 +211,10 @@ function initDialog(){
  * 刷新未达标用户数据
  */
 function flashUnqualifiedUsers(){
-  // TODO 具体改变设置操作
+  // dkh: 具体改变设置操作
   setQulifiedStandards(qualifiedNums.value)
 
-  // TODO 改变设置之后刷新数据
+  // dkh: 改变设置之后刷新数据
   initMainLine()
   getMyUnqualifiedUsers().then(res => {
     useInfoTip('成功修改达标要求')
@@ -300,11 +300,11 @@ const initCharts = async()=>{
   }
   for(let i = 0;i < 2;i++){
     let res = await getDayMoreCount(i, 10)
-    moreCounts.value[i] = res
+    moreCounts.value[1 - i] = res
     const line = echarts.init(document.getElementById(`line${i + 1}`))
     line.setOption(getLineOption(res, i))
   }
-  // TODO 生成柱形图
+  // dkh: 生成柱形图
   const bar = echarts.init(document.getElementById('bar'))
   let barData = await getScoreCourseNum(5, 5)
   bar.setOption({
@@ -346,13 +346,13 @@ const initCharts = async()=>{
     },
   ]
 })
-  // TODO 生成主要线状图
+  // dkh: 生成主要线状图
   initMainLine()
 }
 
 const initMainLine = async()=>{
   const mainLine = echarts.init(document.getElementById('mainLine'))
-  // TODO 初始化数据
+  // dkh: 初始化数据
   let res = await getAllMyDetailEvaData(30, qualifiedNums.value[EVA_UNQUALIFIED_USER], qualifiedNums.value[UNQUALIFIED_USER])
   allMyDetailEvaData.value = res
   const fieldData = [
@@ -369,7 +369,7 @@ const initMainLine = async()=>{
       field: 'qualifiedInfo'
     }
   ]
-  // TODO 初始化info数据
+  // dkh: 初始化info数据
   for(let i = 0; i < fieldData.length;i++){
     const item = fieldData[i]
     const myInfo = res[item.field]
