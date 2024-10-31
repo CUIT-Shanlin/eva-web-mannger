@@ -294,8 +294,9 @@ function initDialog(menu = {}, fun = UPDATE_MODE) {
 function removeOneMenu(menu) {
   useSimpleConfirm(`你确定要删除菜单 “${menu.name}” 及其所有子菜单吗？`).then(
     async () => {
-      let res = await removeOne(menu);
+      await removeOne(menu.id);
       useSuccessTip(`成功删除菜单 “${menu.name}”`);
+      getMyTreeData()
     }
   );
 }
