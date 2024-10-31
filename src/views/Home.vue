@@ -27,7 +27,7 @@ import LeftMenu from '@/components/LeftMenu.vue';
     height: 100%;
     background: $page-back-color;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: auto;
     @include myScrollbar;
 }
 </style>
