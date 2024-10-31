@@ -93,9 +93,9 @@ const viteModules = import.meta.glob('../views/**/*.vue');
  */
 async function loadModule(modulePath){
     try{
-        // let url = 
-        const module = await import(/* @vite-ignore */ `../views/${modulePath}.vue`)
-        return module
+        // const module = await import(/* @vite-ignore */ `../views/${modulePath}.vue`)
+        // return module
+        return await import(/* @vite-ignore */ `../views/${modulePath}.vue`)
     } catch (error) {
         // 返回默认组件Empty
         console.error(error)
@@ -128,7 +128,7 @@ function changeMenusToRouters(routers = []){
             if(isSpace(route.component)){
                 route.component = ''
             }else{
-                route.component = loadModule(route.component.indexOf(0) === "/" ? route.component.substring(1) : route.component)
+                route.component = loadModule(route.component.startsWith('/') ? route.component.slice(1) : route.component)
                 // route.component = import('../views' + route.component + '.vue')
             }
         }
