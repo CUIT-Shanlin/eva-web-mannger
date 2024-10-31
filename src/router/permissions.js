@@ -56,7 +56,7 @@ router.beforeEach(async(to,from,next) => {
             // console.log(menus)
             // 保证添加路由的异步化操作完成后再转到目标路由
             // hack方法 确保addRoutes已完成
-            next({ ...to, replace: true })
+            next({...to})
             // next(to.fullPath);
         }else{
             next()
