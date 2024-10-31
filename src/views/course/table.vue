@@ -170,6 +170,7 @@ export default {
         currentWeek.value = newWeek;
         fetchWeekData(newWeek);
         updateUrlWithWeek(newWeek);
+        selectedBox.value = null;
       }
     };
 
@@ -180,6 +181,7 @@ export default {
         fetchWeekData(newWeek);
         updateUrlWithWeek(newWeek);
         selectedDate.value = null;
+        selectedBox.value = null;
       }
     };
 
