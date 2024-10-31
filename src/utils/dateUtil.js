@@ -1,6 +1,8 @@
 /**
  * 用于处理日期的工具js
  */
+import { isSpace } from "./stringUtil";
+
 
 /**
  * 处理日期字符串 将完整日期字符串转成MM.DD格式
@@ -20,7 +22,7 @@ export function choreDateStr(dateString){
  * @returns 格式之后的date字符串
  */
 export function formatDate(date) {
-    if(date === null || !date){
+    if(date === null || !date || isSpace(date + "")){
         return '';
     }
     if(!isDateStrict(date)){
