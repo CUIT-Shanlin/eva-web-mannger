@@ -41,7 +41,9 @@ export function useMySocket(handleMyMessage){
 
     function handleClose(e){
         console.log('webSocket 关闭', e)
-        useMySocket()
+        setTimeout(()=>{
+            useMySocket(handleMyMessage)
+        }, 3000)
     }
 
     function handleError(e){
