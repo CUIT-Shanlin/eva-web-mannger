@@ -7,9 +7,7 @@ import { getToken, removeToken } from "@/utils/auth";
 
 import Home from '@/views/Home.vue'
 import ParentView from "@/components/ParentView.vue";
-
-
-// const _import = require('./router/_import_'+process.env.NODE_ENV) // 获取组件的方法
+import Empty from "@/views/Empty.vue";
 
 /**
  * 处理路由守卫实现动态路由 + 获取权限
@@ -86,8 +84,12 @@ const userInit = async()=>{
 
 const modules = import.meta.glob('./../views/**/*.vue')
 
-
-export const loadView = (view) => {
+/**
+ * 将路径转成组件，路径不存在就是默认组件
+ * @param {string} view 传入组件路径
+ * @returns 
+ */
+const loadView = (view) => {
     let res = null;
     for (const path in modules) {
       const dir = path.split('views/')[1].split('.vue')[0];
@@ -96,23 +98,8 @@ export const loadView = (view) => {
       }
     }
     return res;
-  }
+}
 
-// /**
-//  * 将路径转成组件，路径不存在就是默认组件
-//  * @param {string} modulePath 传入路径
-//  * @returns 
-//  */
-// async function loadModule(modulePath){
-//     try{
-//         const module = await import(/* @vite-ignore */ `../views/${modulePath}.vue`)
-//         return module.default
-//     } catch (error) {
-//         // 返回默认组件Empty
-//         console.error(error)
-//         return await import('../views/Empty.vue');
-//     }
-// }
 
 /**
  * 将后端传过来的原始路由格式转成真正的路由数组
@@ -141,8 +128,9 @@ function changeMenusToRouters(routers = []){
             }else{
                 let componentStr = route.component.startsWith('/') ? route.component.slice(1) : route.component
                 route.component = loadView(componentStr)
-                // route.component = loadModule(route.component.startsWith('/') ? route.component.slice(1) : route.component)
-                // route.component = import('../views' + route.component + '.vue')
+                if(route.component === null || route.component === undefined){
+                    route.component = Empty
+                }
             }
         }
         // 有子路由就递归继续处理
