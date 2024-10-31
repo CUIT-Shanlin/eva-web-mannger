@@ -48,13 +48,16 @@ router.beforeEach(async(to,from,next) => {
             })
             let lastRou = {
                 path: '/:catchAll(.*)', // 使用参数匹配和正则表达式来捕获所有路径
+                
                 component: ()=>import('../views/404.vue')
             }
             router.addRoute(lastRou)
             useUserStore(pinia).menus = menus
             // console.log(menus)
             // 保证添加路由的异步化操作完成后再转到目标路由
-            next(to.fullPath);
+            // hack方法 确保addRoutes已完成
+            next({ ...to, replace: true })
+            // next(to.fullPath);
         }else{
             next()
         }
