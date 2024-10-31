@@ -241,7 +241,7 @@
               if(isEmptyArrOrNull(semesterOption.children)){
                 semesterOptions.value[i] = thisSemester
               }
-              if(!semesterOption.children.find(child=>{child.period === thisSemester.children[0].period})){
+              if(!semesterOption.children.find(child=> child.period === thisSemester.children[0].period)){
                 semesterOption.children.push(thisSemester.children[0])
               }
               break;
