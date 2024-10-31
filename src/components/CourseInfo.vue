@@ -28,7 +28,7 @@
         </div>
         <div class="course-details">
           <p><strong>课程名称:</strong> {{ course.name }}</p>
-          <p><strong>课程时间:</strong> {{ formatTime(course.time.startTime, course.time.endTime) }}</p>
+          <p><strong>课程时间:</strong> {{`第${course.time.startTime}-${course.time.endTime}节(${formatTime(course.time.startTime, course.time.endTime)})`}}</p>
           <p><strong>课程教室:</strong> {{ course.location }}</p>
         </div>
       </div>

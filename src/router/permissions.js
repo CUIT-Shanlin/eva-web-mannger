@@ -84,6 +84,7 @@ const userInit = async()=>{
     user.roles = data.roleList
 }
 
+const viteModules = import.meta.glob('../views/**/*.vue');
 
 /**
  * 将路径转成组件，路径不存在就是默认组件
@@ -92,13 +93,13 @@ const userInit = async()=>{
  */
 async function loadModule(modulePath){
     try{
-        let url = `./../views${modulePath}.vue`
-        const module = await import(new URL(`${url}`, import.meta.url).href)
-        return module;
+        // let url = 
+        const module = await import(/* @vite-ignore */ `../views/${modulePath}.vue`)
+        return module
     } catch (error) {
         // 返回默认组件Empty
         console.error(error)
-        return import('./../views/Empty.vue').then(m => m.default);
+        return await import('../views/Empty.vue');
     }
 }
 
@@ -127,7 +128,8 @@ function changeMenusToRouters(routers = []){
             if(isSpace(route.component)){
                 route.component = ''
             }else{
-                route.component = loadModule(route.component)
+                route.component = loadModule(route.component.indexOf(0) === "/" ? route.component.substring(1) : route.component)
+                // route.component = import('../views' + route.component + '.vue')
             }
         }
         // 有子路由就递归继续处理
