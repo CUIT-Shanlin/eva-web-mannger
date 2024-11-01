@@ -223,6 +223,7 @@ export default {
       // 处理创建成功后的逻辑
       console.log('创建课程成功');
       showCreateCourseDialog.value = false;
+      window.location.reload();
     };
     const checkPermission=(permission = '')=> {
       return hasBtnPermission(permission);

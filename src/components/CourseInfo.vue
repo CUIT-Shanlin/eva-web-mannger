@@ -333,6 +333,7 @@ export default {
           message: '修改成功',
           type: 'success',
         });
+        window.location.reload();
       } catch (error) {
         console.error('修改课程失败:', error);
         ElMessage.error('修改失败');
@@ -377,6 +378,7 @@ export default {
           message: '删除成功',
           type: 'success',
         });
+        window.location.reload();
       } catch (error) {
         console.error('删除课程失败:', error);
         ElMessage.error('删除失败');
