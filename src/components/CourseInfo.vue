@@ -367,7 +367,7 @@ export default {
         await delClassData(this.selectedCourse.id, {
           startWeek: this.deleteForm.startWeek,
           endWeek: this.deleteForm.endWeek,
-          day: this.selectedBox.day,
+          day: parseInt(this.selectedBox.day),
           startTime: this.selectedCourse.time.startTime,
           endTime: this.selectedCourse.time.endTime
         });
