@@ -42,7 +42,7 @@ export function useMySocket(handleMyMessage){
     function handleClose(e){
         console.log('webSocket 关闭', e)
         setTimeout(()=>{
-            useMySocket(handleMyMessage)
+            useMySocket()
         }, 3000)
     }
 
@@ -57,7 +57,7 @@ export function useMySocket(handleMyMessage){
             useFailedTip(`接收消息失败，${msgData.msg}`)
             return
         }
-        console.log('收到服务器内容：' + msgData.data);
+        // console.log(msgData.data);
         handleMyMessage(msgData.data)
     }
 
