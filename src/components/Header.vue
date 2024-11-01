@@ -20,29 +20,32 @@
               >
             </div>
             <div class="boxLine">&nbsp;</div>
-            <div class="msgOne" v-for="msgOne in allMyMsgs" :key="msgOne.id">
-              <div
-                class="msgTitle"
-                :style="{ color: msgOne.isRead === UNREAD_MSG ? '' : 'teal' }"
-              >
-                <el-badge
-                  is-dot
-                  :color="msgOne.isRead === UNREAD_MSG ? '' : 'transparent'"
+            <el-scrollbar max-height="420px">
+              <div class="msgOne" v-for="msgOne in allMyMsgs" :key="msgOne.id">
+                <div
+                  class="msgTitle"
+                  :style="{ color: msgOne.isRead === UNREAD_MSG ? '' : 'teal' }"
                 >
-                  <i class="iconfont ico">&#xe616;</i>
-                </el-badge>
-                <span class="titleTxt"
-                  >{{ msgOne.isRead === UNREAD_MSG ? "未" : "已" }}读消息</span
-                >
+                  <el-badge
+                    is-dot
+                    :color="msgOne.isRead === UNREAD_MSG ? '' : 'transparent'"
+                  >
+                    <i class="iconfont ico">&#xe616;</i>
+                  </el-badge>
+                  <span class="titleTxt"
+                    >{{ msgOne.isRead === UNREAD_MSG ? "未" : "已" }}读消息</span
+                  >
+                </div>
+                <div class="msg">
+                  {{ msgOne.msg }}
+                </div>
+                <div class="msgBottom">
+                  {{ msgOne.senderName }} .
+                  {{ dateToDistanceTime(msgOne.createTime) }}
+                </div>
               </div>
-              <div class="msg">
-                {{ msgOne.msg }}
-              </div>
-              <div class="msgBottom">
-                {{ msgOne.senderName }} .
-                {{ dateToDistanceTime(msgOne.createTime) }}
-              </div>
-            </div>
+            </el-scrollbar>
+
           </div>
         </template>
       </el-dropdown>
@@ -57,8 +60,6 @@
           :src="ERROR_AVATAR_URL"
         />
       </el-avatar>
-
-
       <span class="name">{{ userInfo.name }}</span>
       <el-dropdown placement="bottom" trigger="click"
       @visible-change="handleMyClose"
@@ -251,9 +252,9 @@ $box-padding-x: 12px;
 .msgBox {
   width: 400px;
   box-sizing: border-box;
-  overflow-x: hidden;
-  max-height: 420px;
-  @include myScrollbar;
+  overflow: hidden;
+  // max-height: 420px;
+  // @include myScrollbar;
   & > * {
     padding: $box-padding-y $box-padding-x;
   }
@@ -349,6 +350,12 @@ $box-padding-x: 12px;
     .openAct {
       transform: rotate(-90deg);
     }
+  }
+}
+
+:deep(){
+  .el-scrollbar{
+    padding: 0;
   }
 }
 </style>

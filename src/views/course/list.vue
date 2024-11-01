@@ -83,7 +83,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作">
+      <el-table-column label="操作" min-width="300">
         <template #default="scope">
           <el-link
             class="operation"
@@ -793,6 +793,7 @@ onMounted(() => {
     width: 100%;
     margin-top: 50px;
     margin-bottom: 35px;
+    overflow: auto;
   }
 }
 .chooseBox {

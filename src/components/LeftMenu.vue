@@ -41,6 +41,8 @@ function show(){
 @import url('../assets/font/iconfont.css');
 @import '../styles/globalPage.scss';
 @import '../styles/commonFlexStyles.scss';
+@import '../styles/common.scss';
+
 
 .leftAll{
     position: fixed;
@@ -53,6 +55,8 @@ function show(){
     border-radius: 2px;
     box-shadow: 0px 0px 3px #928c8c64;
     user-select: none;
+    overflow-y: auto;
+    @include myScrollbar;
     .topFill{
         height: 65px;
         border-bottom: 2px rgb(239,243,248) solid;

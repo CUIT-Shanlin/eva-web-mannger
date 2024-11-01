@@ -1,6 +1,8 @@
 /**
  * 用于处理日期的工具js
  */
+import { isSpace } from "./stringUtil";
+
 
 /**
  * 处理日期字符串 将完整日期字符串转成MM.DD格式
@@ -20,9 +22,12 @@ export function choreDateStr(dateString){
  * @returns 格式之后的date字符串
  */
 export function formatDate(date) {
-    if(date == null){
+    if(date === null || !date || isSpace(date + "")){
         return '';
     }
+    if(!isDateStrict(date)){
+		date = new Date(date)
+	}
     // 获取日期
     let year = date.getFullYear();
     let month = String(date.getMonth() + 1).padStart(2, '0');
@@ -36,6 +41,15 @@ export function formatDate(date) {
     // 拼接成 yyyy-MM-dd HH:mm:ss格式
     return `${year}-${month}-${day} ${hour}:${minute}:${secend}`;
 }
+
+/**
+ * 判断传入数据是不是日期对象
+ * @param {Object} date
+ */
+export function isDateStrict(date) {  
+    return Object.prototype.toString.call(date) === '[object Date]';
+}
+
 
 /**
  * 将 Date对象 转成yyyy-MM-dd格式 

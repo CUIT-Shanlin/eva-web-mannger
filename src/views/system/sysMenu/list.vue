@@ -46,14 +46,14 @@
       </el-table-column>
       <el-table-column prop="perms" label="权限标识"></el-table-column>
       <el-table-column prop="component" label="组件路径"></el-table-column>
-      <el-table-column label="状态" width="80">
+      <el-table-column label="状态" width="100">
         <template #default="scope">
           <div v-if="scope.row.status === NORMAL_STATE" class="rightStatus">正常</div>
           <div v-else class="wrongStatus">禁用</div>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" sortable=""></el-table-column>
-      <el-table-column label="操作" width="250">
+      <el-table-column prop="createTime" label="创建时间" sortable width="200"></el-table-column>
+      <el-table-column label="操作" min-width="150">
         <template #default="scope">
           <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, UPDATE_MODE)"
           :disabled="!hasBtnPermission('system.menu.update')"
@@ -294,8 +294,9 @@ function initDialog(menu = {}, fun = UPDATE_MODE) {
 function removeOneMenu(menu) {
   useSimpleConfirm(`你确定要删除菜单 “${menu.name}” 及其所有子菜单吗？`).then(
     async () => {
-      let res = await removeOne(menu);
+      await removeOne(menu.id);
       useSuccessTip(`成功删除菜单 “${menu.name}”`);
+      getMyTreeData()
     }
   );
 }
@@ -362,6 +363,7 @@ onMounted(() => {
     width: 100%;
     margin-top: 50px;
     margin-bottom: 35px;
+    overflow: auto;
   }
 }
 .myTreeSelect{
