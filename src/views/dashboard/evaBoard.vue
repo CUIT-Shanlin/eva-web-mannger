@@ -83,6 +83,9 @@
         </el-radio-group>
       </div>
       <div v-loading="isLoadingUsers">
+        <div v-if="isEmptyArrOrNull(unqualifiedUsersInfo.dataArr)">
+          <el-empty description="暂无未达标用户" />
+        </div>
         <div class="userOne" v-for="user in unqualifiedUsersInfo.dataArr" :key="user.id">
             <div class="userInfo">
               <el-avatar :src="user.avatarUrl" class="avatar" @error="() => true">
@@ -98,7 +101,7 @@
           <div class="numShow">{{user.num}}</div>
         </div>
       </div>
-      <div class="flexBetween bottomBox">
+      <div class="flexBetween bottomBox" v-if="!isEmptyArrOrNull(unqualifiedUsersInfo.dataArr)">
         <span class="totalFont">共{{unqualifiedUsersInfo.total}}人</span>
         <el-link class="moreShow banStyle" @click="$router.push('/dashboard/evaBoard/unqulifiedUsers')"
         :disabled="!hasBtnPermission('evaluate.board.query')">
@@ -171,6 +174,7 @@ import {
   hexToRgb,
   colorStrToArr,
 } from '@/utils/stringUtil';
+import { isEmptyArrOrNull } from "@/utils/objUtil";
 import { onMounted, ref } from 'vue'
 
 import * as echarts from "echarts";
