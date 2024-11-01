@@ -19,16 +19,35 @@
 }
 
 @mixin myScrollbar{
+    $track-color: #f1f1f1;
+    $thumb-color: #cac0c0;
+    // 适配FireFox
+    // scrollbar-width: thin;
+    // scrollbar-color: $thumb-color $track-color;
+
     &::-webkit-scrollbar {
-        width: 7px;
+        width: 5px;
     }
+
     &::-webkit-scrollbar-thumb {
-        background: #cdcaca;
+        background: $thumb-color;
         border-radius: 10px;
+        &:hover{
+            background: #bbafaf;
+        }
     }
     &::-webkit-scrollbar-track {
-        background: #f1f1f1; 
         border-radius: 10px;
+        background: $track-color; 
+        border-radius: 10px;
+    }
+
+    &:-webkit-scrollbar-button:horizontal {
+        display: none;
+    }
+
+    &::-webkit-scrollbar-button:vertical {
+        display: none;
     }
 }
 .noBtn{
