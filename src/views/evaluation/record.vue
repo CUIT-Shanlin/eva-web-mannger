@@ -792,6 +792,7 @@ $gap-size: 15px;
       width: 100%;
       margin-top: 50px;
       margin-bottom: 35px;
+      overflow: auto;
     }
     .myPage {
       @include flex-center-y;

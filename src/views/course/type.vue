@@ -69,7 +69,7 @@
         width="220"
         sortable
       />
-      <el-table-column label="操作">
+      <el-table-column label="操作" min-width="100">
         <template #default="scope">
           <el-link
             class="iconfont operation"
@@ -372,6 +372,7 @@ onMounted(() => {
     width: 100%;
     margin-top: 50px;
     margin-bottom: 35px;
+    overflow: auto;
   }
 }
 .myPage {

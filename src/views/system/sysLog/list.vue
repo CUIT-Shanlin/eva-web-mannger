@@ -39,14 +39,15 @@
         ref="logTable"
         :data="logs"
         v-loading="isLoadingTable"
+        class="tableBox"
       >
         <el-table-column label="信息" width="500">
           <template #default="scope">
             {{ scope.row.userName }} - {{ getTypeLabel(scope.row.type) }} - {{ scope.row.content }}
           </template>
         </el-table-column>
-        <el-table-column label="操作时间" prop="createTime" />
-        <el-table-column label="操作">
+        <el-table-column label="操作时间" prop="createTime" width="500"/>
+        <el-table-column label="操作" min-width="200">
           <template #default="scope">
             <el-button type="primary" @click="showDetail(scope.row)">查看详细</el-button>
           </template>
@@ -193,6 +194,10 @@ onMounted(() => {
   .pagination {
     margin-left: auto;
   }
+}
+.tableBox{
+  width: 100%;
+  overflow: auto;
 }
 .title {
   display: inline-flex;

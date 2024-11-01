@@ -53,7 +53,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" sortable=""></el-table-column>
-      <el-table-column label="操作" width="250">
+      <el-table-column label="操作" min-width="220">
         <template #default="scope">
           <el-link class="iconfont operation" type="primary" @click="initDialog(scope.row, UPDATE_MODE)"
           :disabled="!hasBtnPermission('system.menu.update')"
@@ -363,6 +363,7 @@ onMounted(() => {
     width: 100%;
     margin-top: 50px;
     margin-bottom: 35px;
+    overflow: auto;
   }
 }
 .myTreeSelect{

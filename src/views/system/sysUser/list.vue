@@ -66,7 +66,7 @@
     </div>
     <el-table
       :data="pageData.records"
-      style="width: 100%"
+      style="min-width: 100%;overflow-x: auto"
       v-loading="isLoadingTable"
     >
       <!-- <el-table-column type="selection" width="50" /> -->
@@ -133,7 +133,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" min-width="300">
         <template #default="scope">
           <div class="operationBox">
             <my-common-btn
