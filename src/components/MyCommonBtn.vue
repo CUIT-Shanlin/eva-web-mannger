@@ -98,6 +98,7 @@ $default-color: v-bind(defaultColor);
     color: #FFF;
     padding: 5px 15px;
     border-radius: 5px;
+    box-sizing: border-box;
     &:disabled{
         cursor: not-allowed;
     }
@@ -130,6 +131,7 @@ $default-color: v-bind(defaultColor);
     }
 }
 .largeBtn{
+    min-width: 100px;
     padding: 10px 35px;
     border-radius: 12px;
 }
