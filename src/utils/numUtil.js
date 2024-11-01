@@ -90,6 +90,9 @@ export function getShowNum(num, isShowSymbol = false, digit = 1){
  * @returns 格式化后的数字
  */
 export function formatNumberToOneDecimalPlace(num = 1, digit = 1) {
+    if((!num && num + '' !== '0') || num + '' == 'NaN'){
+        return '--'
+    }
     num = Number(num)
     // 检查num是否为整数  
     if (Number.isInteger(num)) {
