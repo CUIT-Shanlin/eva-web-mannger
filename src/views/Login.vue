@@ -107,7 +107,7 @@ function useLogin(){
 .loginAll {
   background-image: url("../assets/img/loginBack1.png");
   height: 100%;
-  width: 100%;
+  min-width: 100vw;
   display: flex;
   top: 0;
   left: 0;
@@ -118,11 +118,15 @@ function useLogin(){
     height: 100%;
     @include flex-center;
     .loginDialog {
-      // width: 59.64%;
-      // height: 55.6%;
-      height: 50%;
-      width: 47%;
-      padding: 7% 7%;
+      // height: 50%;
+      // width: 47%;
+      // padding: 7% 7%;
+
+      height: 450px;
+      width: 320px;
+      padding: 50px 50px;
+
+
       border-radius: 20px;
       background: #eff6ff;
       box-shadow: 0px 10px 30px #b7c1f1;
@@ -223,9 +227,8 @@ function useLogin(){
     }
   }
   .imgShow {
-    width: 58.4375%;
-    position: fixed;
-    right: 0;
+    // width: 58.4375%;
+    margin-left: auto;
   }
 }
 </style>
