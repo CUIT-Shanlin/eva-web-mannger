@@ -106,7 +106,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="所属角色">
+      <el-table-column label="所属角色" width="250">
         <template #default="scope">
           {{ getRolesNameStr(scope.row) }}
         </template>
@@ -133,7 +133,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" min-width="300">
+      <el-table-column label="操作" min-width="150">
         <template #default="scope">
           <div class="operationBox">
             <my-common-btn
