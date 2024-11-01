@@ -21,7 +21,7 @@
         </el-input>
         <el-select
           clearable
-          v-model="pageReqData.queryObj.departmentName"
+          v-model="pageReqData.queryObj.department"
           placeholder="请选择用户所在的专业名"
           @change="getMyPageData"
         >
@@ -188,7 +188,7 @@ const pageReqData = ref({
   page: 1,
   queryObj: {
     keyword: "",
-    departmentName: ''
+    department: ''
   },
 });
 // 存分页获取的数据
