@@ -144,6 +144,7 @@ function handleMyClose(){
 const batchMyUpdateIsRead = async () => {
   // 清零记录的未读数目
   unreadNum.value = 0;
+  ElNotification.closeAll()
   isLoadingMsgs.value = true;
   await batchUpdateIsRead();
   await dealAllMyMsg();
@@ -158,6 +159,7 @@ const dealAllMyMsg = async () => {
   // 重置记录的未读数目，防止重复计算
   unreadNum.value = 0;
   // 拿到所有普通消息
+  // ElNotification.closeAll()
   let data = await getAllMyMsg(-1, COMMON_MSG_MODE);
   // TODO 将消息进行排序，总体上是按照createTime进行排序，然后未读消息要排在最前面
   data.sort((msg1, msg2) => {
@@ -172,6 +174,7 @@ const dealAllMyMsg = async () => {
   let notDisplayedMsgs = data.filter(
     (item) => item.isDisplayed === NOT_DISPLAYED_MSG
   );
+  // 先将页面正在显示的消息框删除再进行队列播放
   receiveMsgArr(notDisplayedMsgs, 0);
   allMyMsgs.value = data;
   // TODO 记录未读的数目
@@ -199,6 +202,7 @@ function receiveMsgArr(msgDatas = [], i = 0) {
     message: `${msgOne.msg}<br/><div style="color: teal">${msgOne.createTime}</div>`,
     type: "info",
     dangerouslyUseHTMLString: true,
+    position: 'bottom-right',
     onClose: () => {
       updateIsDisplayed(msgOne.id);
       receiveMsgArr(msgDatas, ++i);
@@ -235,6 +239,7 @@ onMounted(() => {
   initInfo();
   // 初始化消息 + 实时接收消息
   mySocket.value = useMySocket((data) => {
+    ElNotification.closeAll()
     dealAllMyMsg();
   });
   dealAllMyMsg();
