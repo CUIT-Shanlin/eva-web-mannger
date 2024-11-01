@@ -10,10 +10,11 @@
             :data="menuTreeList"
             node-key="id"
             show-checkbox
-            default-expand-all
             :props="myProps"
+            default-expand-all
             @check-change="getChooseMenusIdlist"
-            :default-checked-keys="oldMenuIdList"
+            :default-checked-keys="chooseIdList"
+            :check-strictly="isChecked"
             />
         </div>
     </div>
@@ -31,11 +32,13 @@ import { hasBtnPermission } from '@/utils/btnPermission';
 // 确定按钮是否是loading状态
 const isLoadingBtn = ref(false)
 
+
+const isChecked = ref(true)
+
 // 保存并退出
 const save = async()=>{
     isLoadingBtn.value = true
-    console.log(chooseIdList.value)
-    let res = await doAssignForRole({roleId: role.value.id,menuIdList: chooseIdList.value});
+    await doAssignForRole({roleId: role.value.id,menuIdList: chooseIdList.value});
     useSuccessTip(`你成功对角色 “${role.value.roleName}” 进行了权限修改`)
     isLoadingBtn.value = false
 }
@@ -52,6 +55,7 @@ let chooseIdList = ref([])
 let myProps = ref({label: 'name'})
 // 通过监听选中与否来不断获取选中了的菜单
 function getChooseMenusIdlist(data, checked, indeterminate) {
+    isChecked.value = false
     const index = chooseIdList.value.indexOf(data.id);
     if (checked || indeterminate) {
         // 如果节点被选中且此前还没有添加，就添加到chooseIdList
@@ -66,15 +70,12 @@ function getChooseMenusIdlist(data, checked, indeterminate) {
     }
 }
 
-// 存原来的菜单id列表
-let oldMenuIdList = ref([])
-
 // 拿到原本就有的菜单id列表(无子节点)
 
 const getMyMenuIds = async()=>{
     let res = await getMenuIdListByRoleId(role.value.id)
     // 将旧数据拿到默认选中里面
-    oldMenuIdList.value = res
+    chooseIdList.value = res
 }
 
 // 获取到所有的树型菜单列表
