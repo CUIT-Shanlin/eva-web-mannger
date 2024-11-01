@@ -91,6 +91,9 @@ export function dateToDistanceTime(date){
     const nowTime = new Date().getTime()
     const passMinute = Number.parseInt((nowTime - pastTime) / (1000.0 * 60.0))
     // 不足一小时，直接返回是多少分钟前
+    if(passMinute === 0){
+        return "刚刚"
+    }
     if(passMinute < 60){
         return `${passMinute}分钟前`
     }
