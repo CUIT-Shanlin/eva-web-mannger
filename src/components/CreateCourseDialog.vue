@@ -154,7 +154,7 @@
               <el-option
                 v-for="course in existingCourses"
                 :key="course.id"
-                :label="`${course.name} -- ${course.teacherName}`"
+                :label="`${course.name} -- ${course.teacherName} -- ${courseNatures.find(natureObj => natureObj.value === course.nature).name}`"
                 :value="course.id"
               />
             </el-select>
