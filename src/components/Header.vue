@@ -148,6 +148,7 @@ const batchMyUpdateIsRead = async () => {
   isLoadingMsgs.value = true;
   await batchUpdateIsRead();
   await dealAllMyMsg();
+  ElNotification.closeAll()
   useSuccessTip("消息已全部已读");
   isLoadingMsgs.value = false;
 };

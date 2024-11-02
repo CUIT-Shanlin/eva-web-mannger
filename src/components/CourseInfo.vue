@@ -345,7 +345,7 @@ export default {
     formatTime(startTime, endTime) {
       const startTimes = ["8:20", "9:15", "10:20", "11:15", "14:00", "14:55", "16:00", "16:55", "19:30", "20:25", "21:20"];
       const endTimes = ["9:05", "10:00", "11:05", "12:00", "14:45", "15:40", "16:45", "17:40", "20:15", "21:10", "22:05"];
-      return `${startTimes[startTime - 1 < 0 ? 0 : startTime]} - ${endTimes[endTime - 1 > endTimes.length - 1 ? endTimes.length - 1 : endTime - 1]}`;
+      return `${startTimes[startTime - 1 < 0 ? 0 : startTime - 1]} - ${endTimes[endTime - 1 > endTimes.length - 1 ? endTimes.length - 1 : endTime - 1]}`;
     },
     getLessonNumber(time) {
       return time;
