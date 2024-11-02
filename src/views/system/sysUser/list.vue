@@ -454,12 +454,19 @@ function syncMyLdap(){
  * @param info 用户信息
  */
 const updateThisUserStatus = async(info)=>{
-  let res = await updateUserStatus(info.id, info.status)
-  if(info.status === NORMAL_STATE){
-    useSuccessTip(`成功启用用户 “${info.name}”`)
-  }else{
-    useInfoTip(`成功禁用用户 “${info.name}”`)
-  }
+  // await updateUserStatus(info.id, info.status)
+  const oldStatus = info.status
+  console.log('oldStatus=',oldStatus)
+  updateUserStatus(info.id, info.status).then(()=>{
+    if(info.status === NORMAL_STATE){
+      useSuccessTip(`成功启用用户 “${info.name}”`)
+    }else{
+      useInfoTip(`成功禁用用户 “${info.name}”`)
+    }
+  }).catch(()=>{
+    info.status = oldStatus
+    console.log(info.status)
+  })
 }
 
 /**
@@ -617,7 +624,7 @@ function doMyAssign(){
     userId: checkedUser.value.info.id,
     roleIdList: userRoleIds.value,
   };
-  console.log(assighVo)
+  // console.log(assighVo)
   doAssign(assighVo).then(()=>{
     assignDialogOpen.value = false;
     useSuccessTip("分配角色成功");
