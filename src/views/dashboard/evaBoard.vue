@@ -390,7 +390,7 @@ const initMainLine = async()=>{
         top: '8px',
         bottom: '5px',
         right: '0',
-        left: '19px'
+        left: '30px'
       },
       tooltip: {
         trigger: 'axis',
