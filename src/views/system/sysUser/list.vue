@@ -97,7 +97,7 @@
         <template #default="scope">
           <el-switch
             class="banStyle"
-            :disabled="!hasBtnPermission('system.user.update')"
+            :disabled="!hasBtnPermission('system.user.update') || scope.row.info.username === 'admin'"
             v-model="scope.row.info.status"
             :active-value="NORMAL_STATE"
             :inactive-value="DISABLED_STATE"
