@@ -65,7 +65,7 @@ export function doAssign(assignVo = {}){
  */
 export function getScoreMsg(userId = -1){
     return request({
-        url: `/user/score/${userId}`
+        url: `/user/score/${userId}?semId=${getSemesterId()}`
     })
 }
 
