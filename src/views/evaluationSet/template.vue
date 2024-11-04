@@ -278,10 +278,11 @@ const updateOrAddRole = async () => {
   // 去除空白指标
   checkedTemplate.value.props = JSON.stringify(removeSpaceStrToArr(myProps.value))
   if (funMode.value === UPDATE_MODE) {
+    delete template.isDefault
     await updateTemplate(template);
     msg = `成功修改模板 “${template.name}”`;
   } else {
-    console.log(template)
+    delete template.isDefault
     await addTemplate(template);
     msg = "成功新建模板";
   }
