@@ -386,6 +386,7 @@ function createOptions(level = 1, maxLevel = 4, dataArr = [], parentValue = 0){
  * @param {Array} data 
  */
 function deelChooseCourseTimes(data = []){
+  pageReqData.value.queryObj.courseTimes = []
   data.forEach(timeArr => {
     const courseTime = {
       week: timeArr[0],
