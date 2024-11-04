@@ -45,7 +45,7 @@
           </div>
         </el-popover>
         <my-common-btn
-          class="addIco banStyle"
+          class="addIco"
           :disabled="!hasBtnPermission('system.user.add')"
           txt="新建用户"
           :is-large="true"
@@ -137,7 +137,6 @@
         <template #default="scope">
           <div class="operationBox">
             <my-common-btn
-              class="banStyle"
               :disabled="!hasBtnPermission('system.user.query')"
               txt="查看"
               :default-color="getRandColor()"
@@ -145,7 +144,6 @@
               @click="showFunDialog(scope.row, CHECK_MODE)"
             />
             <my-common-btn
-              class="banStyle"
               :disabled="!hasBtnPermission('system.user.update')"
               txt="修改"
               :default-color="getRandColor()"
