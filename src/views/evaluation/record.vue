@@ -519,7 +519,7 @@ function initCharts() {
     circle1.setOption(getCircleOption("评教任务完成情况", [
       {
         name: '待完成任务',
-        value: evaTaskCompleteMsg.value.totalNum - evaTaskCompleteMsg.value.evaNum
+        value: evaTaskCompleteMsg.value.totalNum
       },
       {
         name: '已完成任务',
