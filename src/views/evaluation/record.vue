@@ -558,10 +558,12 @@ function getLineOption(myData = [
   // 找到data中的最值
   let min = myData[0].value
   let max = myData[0].value
+  myData.sort((item1, item2) => new Date(item1.date).getTime() - new Date(item2.date).getTime()),
   myData.map(item => item.value).forEach(it => {
     max = it > max ? it : max
     min = it < min ? it : min
   })
+
 
   return {
       xAxis: {
