@@ -676,7 +676,7 @@ function goToMyRecord(course = {}) {
   router.push({
     path: "/evaluation/record",
     query: {
-      courseId: course.id,
+      courseId: course.subjectId,
       teacherId: course.teacherMsg.id,
       department: course.teacherMsg.department,
     },

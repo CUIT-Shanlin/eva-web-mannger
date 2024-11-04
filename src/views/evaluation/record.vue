@@ -664,6 +664,16 @@ function getCircleOption( title = '统计情况',
 }
 
 onMounted(() => {
+// 初始化参数
+  const query = route.query
+  if(!isEmptyObj(query)){
+    const queryObj = pageReqData.value.queryObj
+    queryObj.courseIds.push(Number(query.subjectId))
+    queryObj.teacherIds.push(Number(query.teacherId))
+    queryObj.departmentName = query.department
+  }
+
+
   getAllBaseUser().then((res) => {
     allUserMsg.value = res;
   });
@@ -676,14 +686,6 @@ onMounted(() => {
   initCharts();
   getMyPageData();
   createOptions(1, 4,options.value)
-  // 初始化参数
-  const query = route.query
-  if(!isEmptyObj(query)){
-    const queryObj = pageReqData.value.queryObj
-    queryObj.courseIds.push(Number(query.courseId))
-    queryObj.teacherIds.push(Number(query.teacherId))
-    queryObj.departmentName = query.department
-  }
 });
 </script>
 
