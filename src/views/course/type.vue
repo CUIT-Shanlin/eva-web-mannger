@@ -233,10 +233,12 @@ const updateOrAddType = async () => {
   const type = checkedType.value;
   let msg = "";
   if (funMode.value === UPDATE_MODE) {
-    let res = await updateType(type);
+    delete type.isDefault
+    await updateType(type);
     msg = `成功修改课程类型 “${type.name}”`;
   } else {
-    let res = await addType(type);
+    delete type.isDefault
+    await addType(type);
     msg = "成功新建课程类型";
   }
   getMyPageData(); // 刷新页面
