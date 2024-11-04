@@ -7,6 +7,8 @@ import {
   useWarningConfirm,
   useFailedTip
 } from './msgTip';
+import { setSemesterId } from './service/semesterUtil';
+import { getNowSemester } from '@/api/semester';
 
 /**
  * 封装axios
@@ -50,17 +52,24 @@ request.interceptors.request.use(
 request.interceptors.response.use(
     response=>{
         let {data} = response
-        if(data.code + '' === '200'){
+        const codeStr = data.code + ''
+        if(codeStr === '200'){
             // useSuccessTip(data.msg)
+            return Promise.resolve(data.data)
+        }else if(codeStr === '202'){
+            // 学期数据异常，更新本地缓存
+			getNowSemester().then(semester=>{
+				setSemesterId(semester.id)
+			})
             return Promise.resolve(data.data)
         }else{
             // useSuccessTip(data.msg)
-            if(data.code + '' === '401'){ // authorized，token过期或token异常等的返回码
+            if(codeStr === '401'){ // authorized，token过期或token异常等的返回码
                 useWarningConfirm('登录过期或异常，即将跳转登录页，重新登录').then(()=>{
                     removeToken()
                     window.location.reload()
                 })
-            }else if(data.code + '' === '403'){ // 没有权限的情况
+            }else if(codeStr === '403'){ // 没有权限的情况
                 useFailedTip("您没有权限进行该操作！")
             }else{
                 useFailedTip(data.msg)
