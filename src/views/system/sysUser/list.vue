@@ -25,11 +25,7 @@
               <i
                 class="clear iconfont"
                 v-if="iptDate[0] != null && iptDate[1] != null"
-                @click="
-                  iptDate[0] = null;
-                  iptDate[0] = null;
-                  isChooseDate = !isChooseDate;
-                "
+                @click="clearDate()"
               >
                 &#xe68b;
               </i>
@@ -435,6 +431,19 @@ const pageReqData = ref({
     endCreateTime: null,
   },
 });
+
+
+/**
+ * 清空日期选择之后的操作
+ */
+function clearDate(){
+  iptDate.value[0] = null;
+  iptDate.value[1] = null;
+  pageReqData.value.queryObj.startCreateTime = null;
+  pageReqData.value.queryObj.endCreateTime = null;
+  isChooseDate.value = !isChooseDate.value;
+  getMyPageData()
+}
 
 /**
  * 同步ldap用户
