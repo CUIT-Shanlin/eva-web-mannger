@@ -322,8 +322,9 @@ function removeOneTemplate(template) {
   }
   useSimpleConfirm(`你确定要删除评教模板 “${template.name}” 吗？`).then(
     async () => {
-      let res = await removeOne(template);
+      await removeOne(template.id);
       useSuccessTip(`成功删除评教模板 “${template.name}”`);
+      getMyPageData()
     }
   );
 }
