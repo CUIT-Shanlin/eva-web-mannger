@@ -155,7 +155,7 @@
             clearable
             v-model="updatedCourse.templateId"
             placeholder="请选择课程模板"
-            :disabled="isLockTemplate(updateCourse.templateId)"
+            :disabled="isLockTemplate(updatedCourse.templateId)"
           >
             <el-option
               v-for="template in allTemplates"
@@ -477,7 +477,7 @@ const createTimeArr = ref([]);
  * 判断是不是锁定的模板
  * @param {*} templateId 
  */
-function isLockTemplate(templateId = -1){
+function isLockTemplate(templateId){
   return templateId < 0 || templateId === null || templateId === undefined || templateId + '' === 'NaN'
 }
 
