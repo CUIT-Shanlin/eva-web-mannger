@@ -388,6 +388,7 @@ import { getTime } from "@/utils/dateUtil";
 import { hasBtnPermission } from '@/utils/btnPermission';
 import { formatDate } from '@/utils/dateUtil';
 import { useRouter } from "vue-router";
+import { CHANGE_EVENT } from "element-plus";
 
 const router = useRouter();
 
@@ -710,7 +711,9 @@ const getThisEvaData = async (course) => {
  */
 const initDialog = async (courseId = -1) => {
   let res = await getOneCourseDetail(courseId);
+  funMode.value = CHECK_MODE
   checkedCourse.value = res;
+  updateCourse.value = {}
   tempCourse.value = deepCopy(res);
   checkOrUpdateDialogVisible.value = true;
 };
