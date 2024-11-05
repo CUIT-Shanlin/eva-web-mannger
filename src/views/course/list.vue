@@ -155,6 +155,7 @@
             clearable
             v-model="updatedCourse.templateId"
             placeholder="请选择课程模板"
+            :disabled="isLockTemplate(updateCourse.templateId)"
           >
             <el-option
               v-for="template in allTemplates"
@@ -387,6 +388,7 @@ import { getTime } from "@/utils/dateUtil";
 import { hasBtnPermission } from '@/utils/btnPermission';
 import { formatDate } from '@/utils/dateUtil';
 import { useRouter } from "vue-router";
+import { CHANGE_EVENT } from "element-plus";
 
 const router = useRouter();
 
@@ -470,6 +472,15 @@ const pageData = ref({
 const updateTimeArr = ref([]);
 // 存创建日期对应数组
 const createTimeArr = ref([]);
+
+/**
+ * 判断是不是锁定的模板
+ * @param {*} templateId 
+ */
+function isLockTemplate(templateId = -1){
+  return templateId < 0 || templateId === null || templateId === undefined || templateId + '' === 'NaN'
+}
+
 
 /**
  * 删除一门课程及其下面的每节课
@@ -700,7 +711,9 @@ const getThisEvaData = async (course) => {
  */
 const initDialog = async (courseId = -1) => {
   let res = await getOneCourseDetail(courseId);
+  funMode.value = CHECK_MODE
   checkedCourse.value = res;
+  updateCourse.value = {}
   tempCourse.value = deepCopy(res);
   checkOrUpdateDialogVisible.value = true;
 };

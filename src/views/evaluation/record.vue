@@ -668,7 +668,7 @@ onMounted(() => {
   const query = route.query
   if(!isEmptyObj(query)){
     const queryObj = pageReqData.value.queryObj
-    queryObj.courseIds.push(Number(query.subjectId))
+    queryObj.courseIds.push(Number(query.courseId))
     queryObj.teacherIds.push(Number(query.teacherId))
     queryObj.departmentName = query.department
   }

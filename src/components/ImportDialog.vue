@@ -63,7 +63,7 @@
       </p>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="executeOverwrite" :disabled="!checkPermission('course.table.import')">确认</el-button>
+          <el-button type="primary" @click="executeOverwrite" :disabled="!checkPermission('course.table.import')" :loading="isLoadingBtn">确认</el-button>
           <el-button @click="showConfirmOverwriteDialog = false">取消</el-button>
         </span>
       </template>
@@ -305,6 +305,7 @@
         }
       };
       const executeOverwrite = async () => {
+        isLoadingBtn.value = true
         const id = importForm.value.id;
         const period = importForm.value.period;
         const startYear = importForm.value.startYear;
@@ -326,6 +327,7 @@
             startDate: formattedDate
           };
         try {
+          delete semesterData.id
           await importFile(courseNature, semesterData, file);
           emit('import-success');
           ElMessage({
@@ -338,6 +340,7 @@
           ElMessage.error('覆盖失败');
         } finally {
           showConfirmOverwriteDialog.value = false;
+          isLoadingBtn.value = false
         }
       };
   
@@ -364,6 +367,7 @@
             startDate: formattedDate
           };
         try {
+          delete semesterData.id
           await importFile(courseNature, semesterData, file);
           emit('import-success');
           ElMessage({

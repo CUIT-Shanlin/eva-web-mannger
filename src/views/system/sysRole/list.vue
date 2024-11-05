@@ -289,7 +289,8 @@ function initDialog(role = {}, fun = UPDATE_MODE) {
 function removeOneRole(role) {
   useSimpleConfirm(`你确定要删除角色 “${role.roleName}” 吗？`).then(
     async () => {
-      let res = await removeOne(role);
+      await removeOne(role.id);
+      getMyPageData();
       useSuccessTip(`成功删除角色 “${role.roleName}”`);
     }
   );
@@ -306,7 +307,7 @@ function batchRemoveMyRoles() {
   useSimpleConfirm("你确定要删除选中角色吗？").then(async () => {
     const idList = handleRoles.value.map((role) => role.id);
     console.log(idList);
-    let res = await batchRemove(idList);
+    await batchRemove(idList);
     useSuccessTip("成功删除选中角色");
     getMyPageData();
   });
