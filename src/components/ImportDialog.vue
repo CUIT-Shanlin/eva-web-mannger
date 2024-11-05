@@ -326,6 +326,7 @@
             startDate: formattedDate
           };
         try {
+          delete semesterData.id
           await importFile(courseNature, semesterData, file);
           emit('import-success');
           ElMessage({
@@ -364,6 +365,7 @@
             startDate: formattedDate
           };
         try {
+          delete semesterData.id
           await importFile(courseNature, semesterData, file);
           emit('import-success');
           ElMessage({
