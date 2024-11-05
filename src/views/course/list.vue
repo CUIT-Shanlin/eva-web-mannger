@@ -155,6 +155,7 @@
             clearable
             v-model="updatedCourse.templateId"
             placeholder="请选择课程模板"
+            :disabled="isLockTemplate(updateCourse.templateId)"
           >
             <el-option
               v-for="template in allTemplates"
@@ -470,6 +471,15 @@ const pageData = ref({
 const updateTimeArr = ref([]);
 // 存创建日期对应数组
 const createTimeArr = ref([]);
+
+/**
+ * 判断是不是锁定的模板
+ * @param {*} templateId 
+ */
+function isLockTemplate(templateId = -1){
+  return templateId < 0 || templateId === null || templateId === undefined || templateId + '' === 'NaN'
+}
+
 
 /**
  * 删除一门课程及其下面的每节课
