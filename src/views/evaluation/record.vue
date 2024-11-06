@@ -75,13 +75,13 @@
               <div>
                 <div class="topText">待评教(个)</div>
                 <div style="font-size: 20px">
-                  {{getShowNum(evaTaskCompleteMsg.totalNum - evaTaskCompleteMsg.evaNum)}}
+                  {{getShowNum(evaTaskCompleteMsg.totalNum)}}
                 </div>
               </div>
               <div class="bottomText">
                 今日 {{getShowNum(evaTaskCompleteMsg.moreEvaNum,true)}}
                 <i :class="{iconfont: true, ico: true,
-                downIco: (evaTaskCompleteMsg.totalNum - evaTaskCompleteMsg.evaNum) < 0}">&#xe6e9;</i>
+                downIco: (evaTaskCompleteMsg.moreEvaNum) < 0}">&#xe6e9;</i>
               </div>
             </div>
             <div class="imgShow">
