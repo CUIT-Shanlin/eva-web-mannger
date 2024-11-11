@@ -281,7 +281,11 @@ import {
   batchRemove,
   exportRecordFile
 } from '@/api/evaluation';
-import { choreDateStr } from "@/utils/dateUtil";
+import { getOneSemster } from '@/api/semester';
+import {
+  choreDateStr,
+  formatDateNotTime
+} from "@/utils/dateUtil";
 import { removeSpace, replaceStr } from "@/utils/stringUtil";
 import { isEmptyArr, isEmptyObj } from "@/utils/objUtil";
 import { useSimpleConfirm, useSuccessTip, useFailedTip } from "@/utils/msgTip";
@@ -370,7 +374,9 @@ const exportMyRecordFile = async()=>{
     // 创建一个链接元素来下载文件
     const link = document.createElement("a");
     link.href = window.URL.createObjectURL(myBlob); // 创建一个表示这个文件的URL
-    link.download = 'filename.xlsx'; // 设置下载文件的名称，你可以根据需要自定义文件名
+    let semester = await getOneSemster()
+    // dkh: 设置下载文件的名称
+    link.download = `${semester.startYear}-${semester.endYear}-${semester.period + 1}学期评教记录（${formatDateNotTime(new Date())}）.xlsx`;
 
     // 触发下载操作
     document.body.appendChild(link);

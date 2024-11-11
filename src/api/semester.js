@@ -1,4 +1,5 @@
 import request from '@/utils/request.js'
+import { getSemesterId } from '@/utils/service/semesterUtil'
 
 const SEMESTER_URL = '/semester/'
 
@@ -21,5 +22,15 @@ export function getNowSemester(){
     return request({
         url: SEMESTER_URL + 'now',
         method: 'GET'
+    })
+}
+
+/**
+ * 获取一个学期的信息
+ * @param {string | number} [id=getSemesterId()] 学期id
+ */
+export function getOneSemster(id = getSemesterId()){
+    return request({
+        url: `${SEMESTER_URL}${id}`
     })
 }
