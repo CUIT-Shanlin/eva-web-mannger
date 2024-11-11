@@ -128,10 +128,10 @@
           <el-input-number v-model="configData.minEvaNum" :min="0"/>
         </el-form-item>
         <el-form-item label="最小被评次数">
-          <el-input-number v-model="configData.minMyEvaNum" :min="0"/>
+          <el-input-number v-model="configData.minBeEvaNum" :min="0"/>
         </el-form-item>
         <el-form-item label="最大被评次数">
-          <el-input-number v-model="configData.maxMyEvaNum" :min="configData.minMyEvaNum"/>
+          <el-input-number v-model="configData.maxBeEvaNum" :min="configData.minBeEvaNum"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -357,7 +357,7 @@ const initCharts = async()=>{
 const initMainLine = async()=>{
   const mainLine = echarts.init(document.getElementById('mainLine'))
   // dkh: 初始化数据
-  let res = await getAllMyDetailEvaData(30, configData.value.minEvaNum, configData.value.minMyEvaNum)
+  let res = await getAllMyDetailEvaData(30)
   allMyDetailEvaData.value = res
   const fieldData = [
     {

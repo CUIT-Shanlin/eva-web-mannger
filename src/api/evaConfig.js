@@ -15,13 +15,13 @@ export function getEvaConfig(){
 
 /**
  * 修改评教配置文件信息
- * @param {{ minEvaNum: number; minMyEvaNum: number; maxMyEvaNum: number; }} [config] 新配置信息
+ * @param {{ minEvaNum: number; minBeEvaNum: number; maxBeEvaNum: number; }} [config] 新配置信息
  * @returns 
  */
 export function updateEvaConfig(config = {
     minEvaNum: 2,
-    minMyEvaNum: 2,
-    maxMyEvaNum: 8
+    minBeEvaNum: 2,
+    maxBeEvaNum: 8
   }){
     return request({
         url: '/evaluate/config',

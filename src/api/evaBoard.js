@@ -41,12 +41,10 @@ export function getMonthEvaNum(){
 /**
  * 获取指定过去一段时间内的详细评教统计数据
  * @param {Number|string} num 获取从今天开始往过去看 num 天（含今天）中，每天的新增评教数目
- * @param {Number|string} target 被评教的目标次数，大于等于该数目则达标，小于则未达标
- * @param {Number|string} evaTarget 评教的目标次数，大于等于该数目则达标，小于则未达标
  * @returns 
  */
-export function getAllMyDetailEvaData(num = 30, target = 2, evaTarget = 2){
+export function getAllMyDetailEvaData(num = 30){
     return request({
-        url: `/evaluate/moreCounts/${num}/${target}/${evaTarget}`
+        url: `/evaluate/moreCounts/${num}`
     })
 }

@@ -206,7 +206,7 @@ const pageData = ref({
  * 获取评教/被评的最小次数
  */
 function getMinNum(){
-  return unqualifiedType.value === EVA_UNQUALIFIED_USER ? configData.value.minEvaNum : configData.value.minMyEvaNum
+  return unqualifiedType.value === EVA_UNQUALIFIED_USER ? configData.value.minEvaNum : configData.value.minBeEvaNum
 }
 
 /**
