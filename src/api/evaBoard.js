@@ -4,18 +4,17 @@
 import request from '@/utils/request.js'
 import { getSemesterId } from '@/utils/service/semesterUtil';
 
-
 /**
- * 获取指定某一天的详细评教统计数据
- * @param {Number|string} day 指定的这一天和今天相差多少天，eg：0 =》 今天，1 =》 昨天
- * @param {Number|string} num 要将这一天的24小时分num段时间进行数据的统计
+ * 获取指定某一周的详细评教统计数据
+ * @param {Number|String} week 距离本周差多少周，eg: 0: 本周；1：上周
  * @returns 
  */
-export function getDayMoreCount(day = 0, num = 12){
+export function getWeekMoreCount(week = 0){
     return request({
-        url: `/evaluate/moreCount/${day}/${num}`
+        url: `/evaluate/moreCount?semId=${getSemesterId()}&week=${week}`
     })
 }
+
 
 /**
  * 获取各个分数段中课程的数目情况

@@ -5,7 +5,7 @@
     <div class="commonBox commonLineBox" v-for="(it,i) in moreCounts" :key="i">
       <div class="txtBox flexUpDown">
         <div class="caption">
-          <strong>{{i === 0 ? '昨' : '今'}}日评教增长</strong>
+          <strong>{{i === 0 ? '上' : '本'}}周评教增长</strong>
         </div>
         <div class="largeTitle">{{getShowNum(it.moreNum)}}</div>
         <div class="tipFont">
@@ -144,7 +144,7 @@
 import PageTitle from "@/components/PageTitle.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
 import { 
-  getDayMoreCount,
+  getWeekMoreCount,
   getScoreCourseNum,
   getMonthEvaNum,
   getAllMyDetailEvaData,
@@ -156,6 +156,7 @@ import {
 import { 
   getShowNum,
   formatNumberToOneDecimalPlace,
+  getWeekByNum
 } from '@/utils/numUtil';
 import{
   EVA_UNQUALIFIED_USER,
@@ -242,16 +243,13 @@ const getMyUnqualifiedUsers = async()=>{
 }
 
 const initCharts = async()=>{
-  // dkh 生成两个一般大小的线型图
+  // dkh 生成两个一样大小的线型图
   const getLineOption = (res = {},mode = 0) => {
     let lineColors = mode === 0 ? ['rgb(54,154,254)','rgb(224,239,255)'] : ['rgb(255,200,0)','rgb(255,243,199)']
     let xDataArr = []
     for(let i = 0;i < res.evaNumArr.length;i++){
-      let prefix = ''
-      if(i > 0){
-        prefix = `${res.evaNumArr[i-1].time}到`
-      }
-      xDataArr.push(`${prefix}${res.evaNumArr[i].time}期间的次数`)
+      let prefix = mode === 0 ? '本周' : '上周'
+      xDataArr.push(`${prefix}星期${getWeekByNum(i + 1)}单日内的评教次数`)
     }
     return {
       grid: {
@@ -278,7 +276,7 @@ const initCharts = async()=>{
       },
       series: [
         {
-          data: res.evaNumArr.map(item => item.moreEvaNum),
+          data: res.evaNumArr,
           type: 'line',
           // 隐藏坐标点
           symbol: 'none',
@@ -303,7 +301,7 @@ const initCharts = async()=>{
     }
   }
   for(let i = 0;i < 2;i++){
-    let res = await getDayMoreCount(i, 10)
+    let res = await getWeekMoreCount(i)
     moreCounts.value[1 - i] = res
     const line = echarts.init(document.getElementById(`line${i + 1}`))
     line.setOption(getLineOption(res, i))
