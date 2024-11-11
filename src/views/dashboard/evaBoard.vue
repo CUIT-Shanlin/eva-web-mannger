@@ -118,17 +118,20 @@
     <!-- 设置达标要求的弹窗 -->
     <el-dialog
       v-model="settingDialogVisible"
-      title="设置达标要求"
+      title="配置评教/被评次数限制"
       append-to-body
       draggable
       width="325"
     >
-      <el-form label-width="80px">
-        <el-form-item label="评教">
-          <el-input-number v-model="qualifiedNums[0]" :min="0"/>
+      <el-form label-width="100px">
+        <el-form-item label="最小评教次数">
+          <el-input-number v-model="configData.minEvaNum" :min="0"/>
         </el-form-item>
-        <el-form-item label="被评">
-          <el-input-number v-model="qualifiedNums[1]" :min="0"/>
+        <el-form-item label="最小被评次数">
+          <el-input-number v-model="configData.minMyEvaNum" :min="0"/>
+        </el-form-item>
+        <el-form-item label="最大被评次数">
+          <el-input-number v-model="configData.maxMyEvaNum" :min="configData.minMyEvaNum"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -153,6 +156,10 @@ import {
   getUnqualifiedUsers,
   getUserAvatar
 } from '@/api/user';
+import {
+  getEvaConfig,
+  updateEvaConfig
+} from '@/api/evaConfig';
 import { 
   getShowNum,
   formatNumberToOneDecimalPlace,
@@ -163,10 +170,6 @@ import{
   UNQUALIFIED_USER,
   ERROR_AVATAR_URL
 }from '@/utils/service/staticData';
-import {
-  setQulifiedStandards,
-  getQulifiedStandards,
-} from '@/utils/service/userUtil'
 import { hasBtnPermission } from '@/utils/btnPermission';
 import {
   useInfoTip,
@@ -179,6 +182,9 @@ import { isEmptyArrOrNull } from "@/utils/objUtil";
 import { onMounted, ref } from 'vue'
 
 import * as echarts from "echarts";
+
+// 存评教相关配置信息
+const configData = ref({})
 
 // 实现未达标用户切换时的加载显示
 const isLoadingUsers = ref(false)
@@ -193,8 +199,6 @@ const myNumData = ref([])
 
 // 判断设置弹窗的开关
 const settingDialogVisible = ref(false);
-// 存设置了的达标要求
-const qualifiedNums = ref(getQulifiedStandards())
 
 // 用于确定当前选择的未达标类型
 const unqualifiedType = ref(EVA_UNQUALIFIED_USER)
@@ -209,7 +213,6 @@ const monthEvaNums = ref([])
 
 function initDialog(){
   settingDialogVisible.value = true
-  qualifiedNums.value = getQulifiedStandards()
 }
 
 /**
@@ -217,12 +220,11 @@ function initDialog(){
  */
 function flashUnqualifiedUsers(){
   // dkh: 具体改变设置操作
-  setQulifiedStandards(qualifiedNums.value)
-
+  updateEvaConfig(configData.value)
   // dkh: 改变设置之后刷新数据
   initMainLine()
   getMyUnqualifiedUsers().then(res => {
-    useInfoTip('成功修改达标要求')
+    useInfoTip('成功修改评教配置')
   })
 }
 
@@ -231,7 +233,7 @@ function flashUnqualifiedUsers(){
  */
 const getMyUnqualifiedUsers = async()=>{
   isLoadingUsers.value = true
-  let res = await getUnqualifiedUsers(unqualifiedType.value, 5, getQulifiedStandards()[unqualifiedType.value])
+  let res = await getUnqualifiedUsers(unqualifiedType.value, 5)
   unqualifiedUsersInfo.value = res
   // 加载头像信息
   unqualifiedUsersInfo.value.dataArr.forEach((user) => {
@@ -355,7 +357,7 @@ const initCharts = async()=>{
 const initMainLine = async()=>{
   const mainLine = echarts.init(document.getElementById('mainLine'))
   // dkh: 初始化数据
-  let res = await getAllMyDetailEvaData(30, qualifiedNums.value[EVA_UNQUALIFIED_USER], qualifiedNums.value[UNQUALIFIED_USER])
+  let res = await getAllMyDetailEvaData(30, configData.value.minEvaNum, configData.value.minMyEvaNum)
   allMyDetailEvaData.value = res
   const fieldData = [
     {
@@ -443,7 +445,10 @@ function getLighterColor(baseColor){
 }
 
 onMounted(()=>{
-  initCharts()
+  getEvaConfig().then(res=>{
+    configData.value = res
+    initCharts()
+  })
   getMonthEvaNum().then(res => {
     monthEvaNums.value = res
   })

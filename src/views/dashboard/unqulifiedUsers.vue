@@ -54,7 +54,7 @@
         min-width="120"
       >
         <template #default="scope">
-          {{getMyStandard(unqualifiedType) - scope.row.num}}
+          {{getMinNum() - scope.row.num}}
         </template>
       </el-table-column>
 
@@ -142,6 +142,7 @@ import { ref, onMounted } from "vue";
 import { getUnqulifiedPageData } from '@/api/user';
 import { getAllDepartments } from "@/api/other";
 import { sendMsg } from "@/api/msg";
+import { getEvaConfig } from '@/api/evaConfig';
 import{
   EVA_UNQUALIFIED_USER,
   UNQUALIFIED_USER,
@@ -149,14 +150,14 @@ import{
   REMINDER_MSG,
   allMsgTypes,
 }from '@/utils/service/staticData';
-import { 
-  getQulifiedStandards,
-  getMyStandard,
-} from '@/utils/service/userUtil';
 import { removeSpace } from "@/utils/stringUtil";
 import { useSuccessTip } from "@/utils/msgTip";
 import { useUserStore } from '@/stores/userStore';
 import pinia from '@/utils/pinia';
+
+
+// 评教配置信息
+const configData = ref({})
 
 // 消息
 const myMsg = ref({
@@ -202,6 +203,13 @@ const pageData = ref({
 });
 
 /**
+ * 获取评教/被评的最小次数
+ */
+function getMinNum(){
+  return unqualifiedType.value === EVA_UNQUALIFIED_USER ? configData.value.minEvaNum : configData.value.minMyEvaNum
+}
+
+/**
  * 发送消息的具体操作
  */
 const sendMyMsg = async()=>{
@@ -217,10 +225,9 @@ const sendMyMsg = async()=>{
  */
 function initDialog(user = {}) {
   checkedUser.value = user;
-  // TODO 初始化消息数据
-  myMsg.value.msg = `您本学期的${unqualifiedType.value === UNQUALIFIED_USER ? '被' : ''}评教次数不足，\n还差${getMyStandard(unqualifiedType.value) - user.num}次，请尽快完成~`
+  // dkh: 初始化消息数据
+  myMsg.value.msg = `您本学期的${unqualifiedType.value === UNQUALIFIED_USER ? '被' : ''}评教次数不足，\n还差${getMinNum() - user.num}次，请尽快完成~`
   myMsg.value.recipientId = user.id
-
   tipDialogVisible.value = true;
 }
 
@@ -234,12 +241,16 @@ const getMyPageData = async () => {
 
   pageReqData.value.size = pageData.value.size;
   pageReqData.value.page = pageData.value.current;
-  let res = await getUnqulifiedPageData( unqualifiedType.value, getQulifiedStandards()[unqualifiedType.value], pageReqData.value);
+  // let res = await getUnqulifiedPageData( unqualifiedType.value, getQulifiedStandards()[unqualifiedType.value], pageReqData.value);
+  let res = await getUnqulifiedPageData(unqualifiedType.value, pageReqData.value);
   pageData.value = res;
   isLoadingTable.value = false;
 };
 
 onMounted(() => {
+  getEvaConfig().then((res)=>{
+    configData.value = res
+  })
   getMyPageData();
   getAllDepartments().then((res) => {
     allDepartments.value = res;
