@@ -152,38 +152,46 @@
 
     <div class="dataShow">
       <div class="funBar">
-        <el-input
-        v-model="pageReqData.queryObj.keyword"
-        style="width: 260px;height: 30px;"
-        placeholder="请输入评教内容进行查询"
-        clearable
-        @change="getMyPageData"
+        <el-button
+          :disabled="!hasBtnPermission('evaluate.record.export')"
+          type="primary"
+          @click="exportMyRecordFile()"
+          >导出记录</el-button
         >
-          <template #append>
-            <el-button :icon="Search" @click="getMyPageData()"/>
-          </template>
-        </el-input>
-        <el-date-picker
-        v-model="evaTimeArr"
-        type="daterange"
-        range-separator="—"
-        start-placeholder="开始评教时间"
-        end-placeholder="结束评教时间"
-        :shortcuts="shortcuts"
-        @change="getMyPageData()"
-        style="width: 240px;"
-        />
-        <el-cascader
-          :options="options"
-          :props="props"
-          collapse-tags
-          collapse-tags-tooltip
-          :max-collapse-tags="1"
-          placeholder="请选择上课时间段"
+        <div class="iptFuns">
+          <el-input
+          v-model="pageReqData.queryObj.keyword"
+          style="width: 260px;height: 30px;"
+          placeholder="请输入评教内容进行查询"
           clearable
-          @change="deelChooseCourseTimes"
-          style="width: 300px;"
-        />
+          @change="getMyPageData"
+          >
+            <template #append>
+              <el-button :icon="Search" @click="getMyPageData()"/>
+            </template>
+          </el-input>
+          <el-date-picker
+          v-model="evaTimeArr"
+          type="daterange"
+          range-separator="—"
+          start-placeholder="开始评教时间"
+          end-placeholder="结束评教时间"
+          :shortcuts="shortcuts"
+          @change="getMyPageData()"
+          style="width: 240px;"
+          />
+          <el-cascader
+            :options="options"
+            :props="props"
+            collapse-tags
+            collapse-tags-tooltip
+            :max-collapse-tags="1"
+            placeholder="请选择上课时间段"
+            clearable
+            @change="deelChooseCourseTimes"
+            style="width: 300px;"
+          />
+        </div>
       </div>
       <el-table
       :data="pageData.records"
@@ -265,7 +273,14 @@ import PageTitle from "@/components/PageTitle.vue";
 import { getAllBaseUser } from "@/api/user";
 import { getAllBaseSubject } from "@/api/courseList";
 import { getAllDepartments } from "@/api/other";
-import { getEvaSituation, getEvaScoreSituation, getPageData, removeOne, batchRemove } from '@/api/evaluation';
+import {
+  getEvaSituation,
+  getEvaScoreSituation,
+  getPageData,
+  removeOne,
+  batchRemove,
+  exportRecordFile
+} from '@/api/evaluation';
 import { choreDateStr } from "@/utils/dateUtil";
 import { removeSpace, replaceStr } from "@/utils/stringUtil";
 import { isEmptyArr, isEmptyObj } from "@/utils/objUtil";
@@ -344,6 +359,29 @@ const weeks = ['一','二','三','四','五','六','日']
 
 const lenArr = [20,7,11,11]
 const strArr = ['第|周','星期|','第|节课开始','第|节课结束']
+
+
+
+/**
+ * 导出并下载评教记录文件
+ */
+const exportMyRecordFile = async()=>{
+    let myBlob = await exportRecordFile()
+    // 创建一个链接元素来下载文件
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(myBlob); // 创建一个表示这个文件的URL
+    link.download = 'filename.xlsx'; // 设置下载文件的名称，你可以根据需要自定义文件名
+
+    // 触发下载操作
+    document.body.appendChild(link);
+    link.click();
+
+    // 清理操作，移除创建的链接元素并释放URL对象
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(link.href);
+}
+
+
 
 function getMyCourseLabel(course = {}){
   return `${course.name} - ${allCourseNature.find(natureObj => natureObj.value === course.nature).name}`
@@ -788,10 +826,13 @@ $gap-size: 15px;
     display: flex;
     flex-wrap: wrap;
     .funBar{
-      margin-left: auto;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr) 1.25fr;
-      gap: 30px;
+      width: 100%;
+      @include flex-between;
+      .iptFuns{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr) 1.25fr;
+        gap: 30px;
+      }
     }
     .tableBox{
       width: 100%;

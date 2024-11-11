@@ -1,6 +1,8 @@
 import request from '@/utils/request.js'
+import axios from 'axios'
 import { getSemesterId } from '@/utils/service/semesterUtil';
-
+import { getToken } from '@/utils/auth';
+import { useFailedTip } from '@/utils/msgTip';
 
 /**
  * 获取评教任务完成情况
@@ -60,5 +62,30 @@ export function batchRemove(idList){
         url: '/evaluate/records',
         method: 'DELETE',
         data: idList
+    })
+}
+
+/**
+ * 导出某学期的评教记录文件
+ * @returns 
+ */
+export function exportRecordFile(){
+    return new Promise((resolve, reject)=>{
+        axios({
+            url: `/evaluate/export?semId=${getSemesterId()}`,
+            method: 'GET',
+            responseType: 'blob',
+            headers:{
+                Authorization: getToken()
+            }
+        }).then(response => {
+            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            resolve(blob)
+            
+        }).catch(error => {
+            console.log(error)
+            useFailedTip(error.message)
+            reject(error);
+        })
     })
 }
