@@ -156,6 +156,7 @@
           :disabled="!hasBtnPermission('evaluate.record.export')"
           type="primary"
           @click="exportMyRecordFile()"
+          :loading="isLoadingExportBtn"
           >导出记录</el-button
         >
         <div class="iptFuns">
@@ -301,6 +302,9 @@ import { useRoute } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
 import * as echarts from "echarts";
 
+// 用于确定导出按钮是否是loading状态
+const isLoadingExportBtn = ref(false)
+
 const route = useRoute()
 // 存所有老师的基础信息
 const allUserMsg = ref([]);
@@ -370,21 +374,23 @@ const strArr = ['第|周','星期|','第|节课开始','第|节课结束']
  * 导出并下载评教记录文件
  */
 const exportMyRecordFile = async()=>{
-    let myBlob = await exportRecordFile()
-    // 创建一个链接元素来下载文件
-    const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(myBlob); // 创建一个表示这个文件的URL
-    let semester = await getOneSemster()
-    // dkh: 设置下载文件的名称
-    link.download = `${semester.startYear}-${semester.endYear}-${semester.period + 1}学期评教记录（${formatDateNotTime(new Date())}）.xlsx`;
+  isLoadingExportBtn.value = true;
+  let myBlob = await exportRecordFile()
+  // 创建一个链接元素来下载文件
+  const link = document.createElement("a");
+  link.href = window.URL.createObjectURL(myBlob); // 创建一个表示这个文件的URL
+  let semester = await getOneSemster()
+  // dkh: 设置下载文件的名称
+  link.download = `${semester.startYear}-${semester.endYear}-${semester.period + 1}学期评教记录（${formatDateNotTime(new Date())}）.xlsx`;
 
-    // 触发下载操作
-    document.body.appendChild(link);
-    link.click();
+  // 触发下载操作
+  document.body.appendChild(link);
+  link.click();
 
-    // 清理操作，移除创建的链接元素并释放URL对象
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(link.href);
+  // 清理操作，移除创建的链接元素并释放URL对象
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(link.href);
+  isLoadingExportBtn.value = false;
 }
 
 
