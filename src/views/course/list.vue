@@ -75,8 +75,14 @@
       <el-table-column type="selection" width="50" />
       <el-table-column prop="name" label="课程名称" width="200" />
       <el-table-column prop="teacherMsg.name" label="教学老师" width="120" />
-      <el-table-column prop="templateMsg.name" label="评教模板" width="200" />
-      <el-table-column prop="teacherMsg.department" label="专业" width="250" />
+      <!-- allCourseNature -->
+      <el-table-column label="课程性质">
+        <template #default="scope">
+          {{ allCourseNature.find(natureObj => natureObj.value === scope.row.nature).name }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="templateMsg.name" label="评教模板" width="150" />
+      <el-table-column prop="teacherMsg.department" label="专业" width="220" />
       <el-table-column label="创建日期" width="180" sortable>
         <template #default="scope">
           {{ getTime(scope.row.createTime) }}
