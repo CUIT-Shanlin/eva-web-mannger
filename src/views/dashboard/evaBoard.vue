@@ -225,9 +225,9 @@ function initDialog(){
 /**
  * 刷新未达标用户数据
  */
-function flashUnqualifiedUsers(){
+const flashUnqualifiedUsers = async()=>{
   // dkh: 具体改变设置操作
-  updateEvaConfig(configData.value)
+  await updateEvaConfig(configData.value)
   // dkh: 改变设置之后刷新数据
   initMainLine()
   getMyUnqualifiedUsers().then(res => {
