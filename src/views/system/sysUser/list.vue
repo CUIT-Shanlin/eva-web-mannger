@@ -508,7 +508,7 @@ function totalCheck(){
   const fun = prop.fun
   checkUsername(info.username)
   return ( (checkNewPwd(info.password) && checkAgainPwd(prop.againPwd)) || (!prop.isUpdatePwd && fun === 0))
-  && prop.isUsername && isPhone(info.phone) && isEmail(info.email)
+  && prop.isUsername && (info.username === 'admin' || isPhone(info.phone) && isEmail(info.email))
 }
 
 /**
