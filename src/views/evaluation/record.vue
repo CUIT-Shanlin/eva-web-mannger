@@ -618,7 +618,7 @@ function getLineOption(myData = [
 
   return {
       xAxis: {
-        data: myData.map(item => `截止${choreDateStr(item.date)}日${suffix}`),
+        data: myData.map(item => `${choreDateStr(item.date)}日${suffix}`),
         type: "category",
         splitLine: { show: false },
         axisLabel: { show: false },
