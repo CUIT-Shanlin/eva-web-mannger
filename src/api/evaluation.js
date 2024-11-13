@@ -72,7 +72,7 @@ export function batchRemove(idList){
 export function exportRecordFile(){
     return new Promise((resolve, reject)=>{
         axios({
-            url: `/evaluate/export?semId=${getSemesterId()}`,
+            url: `/api/evaluate/export?semId=${getSemesterId()}`,
             method: 'GET',
             responseType: 'blob',
             headers:{
