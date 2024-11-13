@@ -178,6 +178,7 @@ import {
   hexToRgb,
   colorStrToArr,
 } from '@/utils/stringUtil';
+import { formatDateNotTime } from '@/utils/dateUtil';
 import { isEmptyArrOrNull } from "@/utils/objUtil";
 import { onMounted, ref } from 'vue'
 
@@ -256,8 +257,20 @@ const initCharts = async()=>{
   const getLineOption = (res = {},mode = 0) => {
     let lineColors = mode === 0 ? ['rgb(54,154,254)','rgb(224,239,255)'] : ['rgb(255,200,0)','rgb(255,243,199)']
     let xDataArr = []
+    let prefix = mode === 0 ? '本周' : '上周'
+    if(isEmptyArrOrNull(res.evaNumArr)){
+      res.evaNumArr = []
+      if(mode !== 0){
+        for(let i = 0;i < 7;i++){
+          res.evaNumArr.push(0)
+        }
+      }else{
+        for(let i = 0;i < new Date().getDay() + 1;i++){
+          res.evaNumArr.push(0)
+        }
+      }
+    }
     for(let i = 0;i < res.evaNumArr.length;i++){
-      let prefix = mode === 0 ? '本周' : '上周'
       xDataArr.push(`${prefix}星期${getWeekByNum(i + 1)}单日内的评教次数`)
     }
     return {
@@ -364,7 +377,8 @@ const initCharts = async()=>{
 const initMainLine = async()=>{
   const mainLine = echarts.init(document.getElementById('mainLine'))
   // dkh: 初始化数据
-  let res = await getAllMyDetailEvaData(30)
+  const DATA_DAYS = 30
+  let res = await getAllMyDetailEvaData(DATA_DAYS)
   allMyDetailEvaData.value = res
   const fieldData = [
     {
@@ -383,13 +397,24 @@ const initMainLine = async()=>{
   // dkh: 初始化info数据
   for(let i = 0; i < fieldData.length;i++){
     const item = fieldData[i]
-    const myInfo = res[item.field]
+    const myInfo = res[item.field] | {}
     const data = {
       title: item.title,
       num: myInfo.num,
       percent: myInfo.morePercent
     }
     myNumData.value[i] = data
+  }
+
+  if(isEmptyArrOrNull(res.dataArr)){
+    res.dataArr = []
+    const nowTime = new Date().getTime()
+    for(let i = DATA_DAYS;i >= 0;i--){
+      res.dataArr.push({
+        date: formatDateNotTime(new Date(nowTime - (i * 24 * 3600 * 1000))),
+        moreEvaNum: 0
+      })
+    }
   }
 
   let option = {
