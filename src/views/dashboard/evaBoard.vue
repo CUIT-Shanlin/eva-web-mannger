@@ -128,7 +128,7 @@
           <el-input-number v-model="configData.minEvaNum" :min="0"/>
         </el-form-item>
         <el-form-item label="最小被评次数">
-          <el-input-number v-model="configData.minBeEvaNum" :min="0"/>
+          <el-input-number v-model="configData.minBeEvaNum" :min="0" @change="checkMaxBeEvaNum()"/>
         </el-form-item>
         <el-form-item label="最大被评次数">
           <el-input-number v-model="configData.maxBeEvaNum" :min="configData.minBeEvaNum"/>
@@ -209,6 +209,13 @@ const unqualifiedUsersInfo = ref({dataArr: []})
 const moreCounts = ref([{},{}])
 // 存上个月和这个月的评教数目
 const monthEvaNums = ref([])
+
+
+function checkMaxBeEvaNum(){
+  const maxNum = configData.value.maxBeEvaNum
+  const minNum = configData.value.minBeEvaNum
+  configData.value.maxBeEvaNum = minNum > maxNum ? minNum : maxNum;
+}
 
 
 function initDialog(){
