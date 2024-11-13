@@ -45,6 +45,7 @@
 <script setup>
 import { getAllSemester,getNowSemester } from '@/api/semester'
 import { getDistinctSemsters,getSemesterId,isCommonYear,setSemesterId } from '@/utils/service/semesterUtil.js'
+import { isEmptyOrNullOrUndefined } from '@/utils/objUtil';
 import { onMounted, ref } from 'vue'
 
 // 存当前显示的学期信息
@@ -56,7 +57,7 @@ const semesters = ref([])
 
 
 function hasPeriod(period = 0){
-    return semesters.value.find(semester => semester.period === period)
+    return semesters.value.find(semester => semester.period === period && isCommonYear(checkedSemester.value, semester))
 }
 
 
@@ -90,6 +91,13 @@ function changeSemYear(newSem){
     checkedSemester.value = semesters.value.find(sem => {
         return isCommonYear(sem,newSem) && sem.period === checkedSemester.value.period
     })
+
+    // 解决新学期组无对应period的情况
+    if(isEmptyOrNullOrUndefined(checkedSemester.value)){
+        checkedSemester.value = semesters.value.find(sem => {
+            return isCommonYear(sem,newSem)
+        })
+    }
     setSemesterId(checkedSemester.value.id)
     // 刷新整个窗口页面
     window.location.reload()
