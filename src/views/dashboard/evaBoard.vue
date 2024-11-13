@@ -252,7 +252,13 @@ const getMyUnqualifiedUsers = async()=>{
   isLoadingUsers.value = false
 }
 
+/**
+ * 初始化图表数据
+ */
 const initCharts = async()=>{
+  // dkh: 生成主要线状图
+  initMainLine()
+
   // dkh 生成两个一样大小的线型图
   const getLineOption = (res = {},mode = 0) => {
     let lineColors = mode === 0 ? ['rgb(54,154,254)','rgb(224,239,255)'] : ['rgb(255,200,0)','rgb(255,243,199)']
@@ -323,55 +329,56 @@ const initCharts = async()=>{
     }
   }
   for(let i = 0;i < 2;i++){
-    let res = await getWeekMoreCount(i)
-    moreCounts.value[1 - i] = res
-    const line = echarts.init(document.getElementById(`line${i + 1}`))
-    line.setOption(getLineOption(res, i))
+    getWeekMoreCount(i).then(res=>{
+      moreCounts.value[1 - i] = res
+      const line = echarts.init(document.getElementById(`line${i + 1}`))
+      line.setOption(getLineOption(res, i))
+    })
   }
+
   // dkh: 生成柱形图
-  const bar = echarts.init(document.getElementById('bar'))
-  let barData = await getScoreCourseNum(5, 5)
-  bar.setOption({
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'shadow'
-    },
-    formatter: function(params) {
-      return `${params[0].name}分<br/>${params[0].value}门课程`
-    }
-  },
-  grid: {
-    top: '0',
-    left: '0',
-    right: '0',
-    bottom: '14.5px'
-  },
-  xAxis: {
-    data: barData.sort((a, b) => a.endScore - b.endScore).map(it => `${it.startScore}-${it.endScore}`),
-    axisLabel: {
-      fontSize: 8
-    }
-  },
-  yAxis: {
-    type: 'value',
-    splitLine: { show: false },
-    axisLabel: { show: false },
-  },
-  series: [
-    {
-      type: 'bar',
-      barWidth: '40%',
-      data: barData.map(it => it.count),
-      itemStyle:{
-        borderRadius: [7, 7, 0, 0],
-        color: 'rgb(86,170,255)'
-      }
-    },
-  ]
-})
-  // dkh: 生成主要线状图
-  initMainLine()
+  getScoreCourseNum(5, 5).then(barData=>{
+    const bar = echarts.init(document.getElementById('bar'))
+    bar.setOption({
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        },
+        formatter: function(params) {
+          return `${params[0].name}分<br/>${params[0].value}门课程`
+        }
+      },
+      grid: {
+        top: '0',
+        left: '0',
+        right: '0',
+        bottom: '14.5px'
+      },
+      xAxis: {
+        data: barData.sort((a, b) => a.endScore - b.endScore).map(it => `${it.startScore}-${it.endScore}`),
+        axisLabel: {
+          fontSize: 8
+        }
+      },
+      yAxis: {
+        type: 'value',
+        splitLine: { show: false },
+        axisLabel: { show: false },
+      },
+      series: [
+        {
+          type: 'bar',
+          barWidth: '40%',
+          data: barData.map(it => it.count),
+          itemStyle:{
+            borderRadius: [7, 7, 0, 0],
+            color: 'rgb(86,170,255)'
+          }
+        },
+      ]
+    })
+  })
 }
 
 const initMainLine = async()=>{
