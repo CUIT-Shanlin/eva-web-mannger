@@ -44,6 +44,7 @@
                   {{ dateToDistanceTime(msgOne.createTime) }}
                 </div>
               </div>
+              <el-empty v-if="isEmptyArrOrNull(allMyMsgs)" description="暂无消息" />
             </el-scrollbar>
 
           </div>
@@ -97,6 +98,7 @@ import {
   UNREAD_MSG,
   ERROR_AVATAR_URL
 } from "@/utils/service/staticData";
+import { isEmptyArrOrNull } from "@/utils/objUtil";
 import { dateToDistanceTime } from "@/utils/dateUtil";
 import { removeToken } from '@/utils/auth'
 import { 
