@@ -69,7 +69,6 @@ function show(){
         font-size: 16.42px;
         padding: 15px 0;
         padding-left: 24px;
-        font-weight: 550;
         .box{
             @include flex-center-y;
             .ico{
@@ -91,6 +90,7 @@ function show(){
         background: $main-back-color;
     }
     .actLib{
+        // font-weight: 550;
         background: $main-back-color;
         color: rgb(60,118,244);
     }

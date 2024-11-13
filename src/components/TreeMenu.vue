@@ -72,7 +72,6 @@ const chooseIndex = ref(-1)
     padding-left: 40px;
     padding-left: v-bind(paddingLeft);
     font-size: 16.42px;
-    font-weight: 550;
     color: rgb(136,136,136);
     .box{
         @include flex-center-y;
@@ -92,6 +91,7 @@ const chooseIndex = ref(-1)
     }
 }
 .actMenu{
+    font-weight: 550;
     color: rgb(60,118,244);
 }
 </style>
