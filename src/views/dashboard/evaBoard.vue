@@ -111,7 +111,7 @@
       </div>
       <div class="boxLine">&nbsp;</div>
       <div class="caption mySet" @click="initDialog()">
-        <strong>设置达标要求</strong>
+        <strong>设置评教/被评限制</strong>
       </div>
     </div>
 
