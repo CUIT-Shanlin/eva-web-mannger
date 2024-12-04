@@ -56,10 +56,10 @@ publish:      # This job runs in the deploy stage.
   script:
     - docker login -u $HARBOR_USER -p $HARBOR_PASSWORD $HARBOR_URL
     - docker build -t eva-management-frontend-match:$EVA_VERSION .
-    - docker tag eva-management-frontend-match:$EVA_VERSION $HARBOR_URL/eva-system/eva-management-frontend-match:$EVA_VERSION
-    - docker push $HARBOR_URL/eva-system/eva-management-frontend-match:$EVA_VERSION
-    - docker tag eva-management-frontend-match:$EVA_VERSION $HARBOR_URL/eva-system/eva-management-frontend-match
-    - docker push $HARBOR_URL/eva-system/eva-management-frontend-match
+    - docker tag eva-management-frontend-match:$EVA_VERSION $HARBOR_URL/eva-match/eva-management-frontend-match:$EVA_VERSION
+    - docker push $HARBOR_URL/eva-match/eva-management-frontend-match:$EVA_VERSION
+    - docker tag eva-management-frontend-match:$EVA_VERSION $HARBOR_URL/eva-match/eva-management-frontend-match
+    - docker push $HARBOR_URL/eva-match/eva-management-frontend-match
   rules:
     - if: $CI_COMMIT_BRANCH == 'master-match'
 
