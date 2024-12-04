@@ -18,7 +18,7 @@
 
 variables:
   DOCKER_TLS_CERTDIR: ""
-  EVA_VERSION: 1.69-SNAPSHOT
+  EVA_VERSION: 1.70-SNAPSHOT
 
 stages:          # List of stages for jobs, and their order of execution
   - build
@@ -67,6 +67,6 @@ recreate:
   image: $HARBOR_URL/library/curl:8.9.1
   stage: recreate
   script:
-    - curl -X POST $PORTAINER_UPDATE_URL
+    - curl -X POST $PORTAINER_UPDATE_MATCH_URL
   rules:
     - if: $CI_COMMIT_BRANCH == 'master-match'
