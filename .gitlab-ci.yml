@@ -41,7 +41,7 @@ build:       # This job runs in the build stage, which runs first.
       - dist
     expire_in: 1 days
   rules:
-    - if: $CI_COMMIT_BRANCH == 'master'
+    - if: $CI_COMMIT_BRANCH == 'master-match'
 
 
 publish:      # This job runs in the deploy stage.
@@ -56,12 +56,12 @@ publish:      # This job runs in the deploy stage.
   script:
     - docker login -u $HARBOR_USER -p $HARBOR_PASSWORD $HARBOR_URL
     - docker build -t eva-management-frontend:$EVA_VERSION .
-    - docker tag eva-management-frontend:$EVA_VERSION $HARBOR_URL/eva-system/eva-management-frontend:$EVA_VERSION
-    - docker push $HARBOR_URL/eva-system/eva-management-frontend:$EVA_VERSION
-    - docker tag eva-management-frontend:$EVA_VERSION $HARBOR_URL/eva-system/eva-management-frontend
-    - docker push $HARBOR_URL/eva-system/eva-management-frontend
+    - docker tag eva-management-frontend:$EVA_VERSION $HARBOR_URL/eva-system/eva-management-frontend-match:$EVA_VERSION
+    - docker push $HARBOR_URL/eva-system/eva-management-frontend-match:$EVA_VERSION
+    - docker tag eva-management-frontend:$EVA_VERSION $HARBOR_URL/eva-system/eva-management-frontend-match
+    - docker push $HARBOR_URL/eva-system/eva-management-frontend-match
   rules:
-    - if: $CI_COMMIT_BRANCH == 'master'
+    - if: $CI_COMMIT_BRANCH == 'master-match'
 
 recreate:
   image: $HARBOR_URL/library/curl:8.9.1
@@ -69,4 +69,4 @@ recreate:
   script:
     - curl -X POST $PORTAINER_UPDATE_URL
   rules:
-    - if: $CI_COMMIT_BRANCH == 'master'
+    - if: $CI_COMMIT_BRANCH == 'master-match'
