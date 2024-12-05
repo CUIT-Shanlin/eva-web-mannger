@@ -2,7 +2,7 @@
   <div class="loginAll">
     <div class="dialogBox">
       <div class="loginDialog">
-        <h1 class="title">欢迎使用智慧评教后台</h1>
+        <h1 class="title">欢迎使用AI 赋能教评领航者后台</h1>
         <div class="iptBar">
           <div class="iconfont ico">&#xe65e;</div>
           <div class="iptBox">
@@ -131,6 +131,7 @@ function useLogin(){
       background: #eff6ff;
       box-shadow: 0px 10px 30px #b7c1f1;
       .title {
+        font-size: 25px;
         text-align: center;
         margin-bottom: 40px;
       }
