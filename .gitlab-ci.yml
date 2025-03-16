@@ -54,7 +54,7 @@ publish:      # This job runs in the deploy stage.
   before_script:
     - until docker info; do sleep 5s; done
   script:
-    - docker login -u $HARBOR_USER -p $HARBOR_PASSWORD $HARBOR_HOST
+    - docker login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD $HARBOR_URL
     - docker build -t eva-management-frontend:$EVA_VERSION .
     - docker tag eva-management-frontend:$EVA_VERSION $HARBOR_HOST/eva-system/eva-management-frontend:$EVA_VERSION
     - docker push $HARBOR_HOST/eva-system/eva-management-frontend:$EVA_VERSION
