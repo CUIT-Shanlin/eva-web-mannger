@@ -49,7 +49,7 @@ publish:      # This job runs in the deploy stage.
   image: $HARBOR_HOST/library/docker:23.0.2-alpine3.17
   services:
     - name: $HARBOR_HOST/library/docker:23.0.2-dind-alpine3.17
-      command: [ "--insecure-registry=$HARBOR_URL" ]
+      command: [ "--insecure-registry","$HARBOR_URL" ]
       alias: docker
   before_script:
     - until docker info; do sleep 5s; done
