@@ -6,7 +6,7 @@ import { getToken } from "@/utils/auth";
 
 
 // 后端socket的地址
-const HOST = import.meta.env.VITE_APP_MODE === 'development' ? 'apifoxmock.com/m1/4684209-4335706-default:8080' : '192.168.1.144:8080'
+const HOST = import.meta.env.VITE_APP_MODE === 'development' ? 'apifoxmock.com/m1/4684209-4335706-default:8080' : 'eva-test.project.littlestrange.site/api'
 const WSS_ADDRESS = `ws://${HOST}/send/msg`
 
 /**
