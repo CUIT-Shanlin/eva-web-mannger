@@ -18,7 +18,7 @@
 
 variables:
   DOCKER_TLS_CERTDIR: ""
-  EVA_VERSION: 1.68-SNAPSHOT
+  EVA_VERSION: 1.69-SNAPSHOT
 
 stages:          # List of stages for jobs, and their order of execution
   - build
@@ -27,7 +27,7 @@ stages:          # List of stages for jobs, and their order of execution
 
 build:       # This job runs in the build stage, which runs first.
   stage: build
-  image: $HARBOR_URL/library/node:18.20-alpine
+  image: $HARBOR_HOST/library/node:18.20-alpine
   script:
     - npm config set registry https://registry.npmmirror.com
     - npm install --force
@@ -47,9 +47,9 @@ build:       # This job runs in the build stage, which runs first.
 
 publish:      # This job runs in the deploy stage.
   stage: publish  # It only runs when *both* jobs in the test stage complete successfully.
-  image: $HARBOR_URL/library/docker:23.0.2-alpine3.17
+  image: $HARBOR_HOST/library/docker:23.0.2-alpine3.17
   services:
-    - name: $HARBOR_URL/library/docker:23.0.2-dind-alpine3.17
+    - name: $HARBOR_HOST/library/docker:23.0.2-dind-alpine3.17
       command: [ "--tls=false" ]
       alias: docker
   before_script:
@@ -57,18 +57,18 @@ publish:      # This job runs in the deploy stage.
   script:
     - docker login -u $HARBOR_USER -p $HARBOR_PASSWORD $HARBOR_URL
     - docker build -t eva-management-frontend:$EVA_VERSION .
-    - docker tag eva-management-frontend:$EVA_VERSION $HARBOR_URL/eva-system/eva-management-frontend:$EVA_VERSION
-    - docker push $HARBOR_URL/eva-system/eva-management-frontend:$EVA_VERSION
-    - docker tag eva-management-frontend:$EVA_VERSION $HARBOR_URL/eva-system/eva-management-frontend
-    - docker push $HARBOR_URL/eva-system/eva-management-frontend
+    - docker tag eva-management-frontend:$EVA_VERSION $HARBOR_HOST/eva-system/eva-management-frontend:$EVA_VERSION
+    - docker push $HARBOR_HOST/eva-system/eva-management-frontend:$EVA_VERSION
+    - docker tag eva-management-frontend:$EVA_VERSION $HARBOR_HOST/eva-system/eva-management-frontend
+    - docker push $HARBOR_HOST/eva-system/eva-management-frontend
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
 
 publish-test:      # This job runs in the deploy stage.
   stage: publish  # It only runs when *both* jobs in the test stage complete successfully.
-  image: $HARBOR_URL/library/docker:23.0.2-alpine3.17
+  image: $HARBOR_HOST/library/docker:23.0.2-alpine3.17
   services:
-    - name: $HARBOR_URL/library/docker:23.0.2-dind-alpine3.17
+    - name: $HARBOR_HOST/library/docker:23.0.2-dind-alpine3.17
       command: [ "--tls=false" ]
       alias: docker
   before_script:
@@ -76,10 +76,10 @@ publish-test:      # This job runs in the deploy stage.
   script:
     - docker login -u $HARBOR_USER -p $HARBOR_PASSWORD $HARBOR_URL
     - docker build -t eva-management-frontend-test:$EVA_VERSION .
-    - docker tag eva-management-frontend-test:$EVA_VERSION $HARBOR_URL/eva-system/eva-management-frontend-test:$EVA_VERSION
-    - docker push $HARBOR_URL/eva-system/eva-management-frontend-test:$EVA_VERSION
-    - docker tag eva-management-frontend-test:$EVA_VERSION $HARBOR_URL/eva-system/eva-management-frontend-test
-    - docker push $HARBOR_URL/eva-system/eva-management-frontend-test
+    - docker tag eva-management-frontend-test:$EVA_VERSION $HARBOR_HOST/eva-system/eva-management-frontend-test:$EVA_VERSION
+    - docker push $HARBOR_HOST/eva-system/eva-management-frontend-test:$EVA_VERSION
+    - docker tag eva-management-frontend-test:$EVA_VERSION $HARBOR_HOST/eva-system/eva-management-frontend-test
+    - docker push $HARBOR_HOST/eva-system/eva-management-frontend-test
   rules:
     - if: $CI_COMMIT_BRANCH == 'master-test'
 
