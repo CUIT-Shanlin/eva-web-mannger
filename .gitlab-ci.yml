@@ -84,7 +84,7 @@ publish-test:      # This job runs in the deploy stage.
     - if: $CI_COMMIT_BRANCH == 'master-test'
 
 recreate:
-  image: $HARBOR_URL/library/curl:8.9.1
+  image: $HARBOR_HOST/library/curl:8.9.1
   stage: recreate
   script:
     - curl -X POST $PORTAINER_UPDATE_URL
@@ -92,7 +92,7 @@ recreate:
     - if: $CI_COMMIT_BRANCH == 'master'
 
 recreate-test:
-  image: $HARBOR_URL/library/curl:8.9.1
+  image: $HARBOR_HOST/library/curl:8.9.1
   stage: recreate
   script:
     - curl -X POST $PORTAINER_UPDATE_TEST_URL
