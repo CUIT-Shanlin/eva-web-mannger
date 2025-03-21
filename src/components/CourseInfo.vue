@@ -2,7 +2,13 @@
   <el-aside width="300px" v-if="selectedBox" class="el-side">
     <h3 class="title">课程信息</h3>
     <div v-if="selectedBox" class="selected-date">
-      <div v-if="selectedBox.num<=9">
+      <div v-if="selectedBox.num<=6">
+        <p><strong>已选中于{{ selectedDate }}的第{{selectedBox.num }},{{String(Number(selectedBox.num)+1)}}节课开始的课程</strong></p>
+      </div>
+      <div v-else-if="selectedBox.num>=7&&selectedBox.num<=9">
+        <p><strong>已选中于{{ selectedDate }}的第{{selectedBox.num }},{{String(Number(selectedBox.num)+1)}},{{String(Number(selectedBox.num)+2)}}节课开始的课程</strong></p>
+      </div>
+      <div v-else-if="selectedBox.num>=10&&selectedBox.num<=11">
         <p><strong>已选中于{{ selectedDate }}的第{{selectedBox.num }},{{String(Number(selectedBox.num)+1)}}节课开始的课程</strong></p>
       </div>
       <div v-else>
@@ -344,8 +350,8 @@ export default {
       this.$emit('delete-course', course);
     },
     formatTime(startTime, endTime) {
-      const startTimes = ["8:20", "9:15", "10:20", "11:15", "14:00", "14:55", "16:00", "16:55", "19:30", "20:25", "21:20"];
-      const endTimes = ["9:05", "10:00", "11:05", "12:00", "14:45", "15:40", "16:45", "17:40", "20:15", "21:10", "22:05"];
+      const startTimes = ["8:20", "9:15", "10:20", "11:15", "14:00", "14:55", "15:50", "16:45","17:40", "19:30", "20:25", "21:20"];
+      const endTimes = ["9:05", "10:00", "11:05", "12:00", "14:45", "15:40", "16:35", "17:30","18:25", "20:15", "21:10", "22:05"];
       return `${startTimes[startTime - 1 < 0 ? 0 : startTime - 1]} - ${endTimes[endTime - 1 > endTimes.length - 1 ? endTimes.length - 1 : endTime - 1]}`;
     },
     getLessonNumber(time) {

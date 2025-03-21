@@ -365,7 +365,7 @@ const props = { multiple: true }
 // 数字与周的映射（num-1）
 const weeks = ['一','二','三','四','五','六','日']
 
-const lenArr = [20,7,11,11]
+const lenArr = [20,7,12,12]
 const strArr = ['第|周','星期|','第|节课开始','第|节课结束']
 
 

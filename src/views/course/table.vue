@@ -73,8 +73,8 @@ import { ArrowLeftBold, ArrowRightBold } from '@element-plus/icons-vue';
 import { getWeekData, getClassTable, getClassDay } from '../../api/courseTable.js';
 import { hasBtnPermission } from '@/utils/btnPermission';
 
-const startTimes = ["8:20", "9:15", "10:20", "11:15", "14:00", "14:55", "16:00", "16:55", "19:30", "20:25", "21:20"];
-const endTimes = ["9:05", "10:00", "11:05", "12:00", "14:45", "15:40", "16:45", "17:40", "20:15", "21:10", "22:05"];
+const startTimes = ["8:20", "9:15", "10:20", "11:15", "14:00", "14:55", "15:50", "16:45","17:40", "19:30", "20:25", "21:20"];
+const endTimes = ["9:05", "10:00", "11:05", "12:00", "14:45", "15:40", "16:35", "17:30","18:25", "20:15", "21:10", "22:05"];
 
 const getCourseTime = (courseParam) => {
   const index = courseParam - 1;
@@ -98,7 +98,7 @@ export default {
   },
   setup() {
     const days = ["1", "2", "3", "4", "5", "6", "7"];
-    const nums = ["1", "3", "5", "7", "9", "11"];
+    const nums = ["1", "3", "5", "7", "10", "12"];
 
     const tableData = ref([]);
     const selectedBox = ref(null);
