@@ -49,7 +49,7 @@ publish:      # This job runs in the deploy stage.
   stage: publish  # It only runs when *both* jobs in the test stage complete successfully.
   image: $HARBOR_HOST/library/docker:23.0.2-alpine3.17
   services:
-    - name: $HARBOR_URL/library/docker:23.0.2-dind-alpine3.17
+    - name: $HARBOR_HOST/library/docker:23.0.2-dind-alpine3.17
       command: [ "--tls=false" ]
       alias: docker
   before_script:
