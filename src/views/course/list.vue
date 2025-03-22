@@ -78,7 +78,11 @@
       <!-- allCourseNature -->
       <el-table-column label="课程性质">
         <template #default="scope">
-          {{ allCourseNature.find(natureObj => natureObj.value === scope.row.nature).name }}
+          {{
+            allCourseNature.find(
+              (natureObj) => natureObj.value === scope.row.nature
+            ).name
+          }}
         </template>
       </el-table-column>
       <el-table-column prop="templateMsg.name" label="评教模板" width="150" />
@@ -125,8 +129,16 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-button @click="initBatchDialog(0)" :disabled="!hasBtnPermission('course.template.update')">批量修改课程模板</el-button>
-    <el-button @click="initBatchDialog(1)" :disabled="!hasBtnPermission('course.tabulation.update')">批量修改课程类型</el-button>
+    <el-button
+      @click="initBatchDialog(0)"
+      :disabled="!hasBtnPermission('course.template.update')"
+      >批量修改课程模板</el-button
+    >
+    <el-button
+      @click="initBatchDialog(1)"
+      :disabled="!hasBtnPermission('course.tabulation.update')"
+      >批量修改课程类型</el-button
+    >
     <!-- 课程详情查看及修改弹窗 -->
     <el-dialog width="500" v-model="checkOrUpdateDialogVisible" append-to-body>
       <template #header="{ titleId, titleClass }">
@@ -269,10 +281,26 @@
       :title="evaDataTitle"
     >
       <el-table :data="evaDataList">
-        <el-table-column prop="prop" label="指标名称" width="565" />
-        <el-table-column prop="averScore" label="平均分" width="200" />
-        <el-table-column prop="minScore" label="最低分" width="200" />
-        <el-table-column prop="maxScore" label="最高分" width="200" />
+        <el-table-column prop="prop" label="指标名称" width="565">
+          <template #default="scope">
+            {{ getShowProp(scope.row.prop) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="averScore" label="平均分" width="200">
+          <template #default="scope">
+            {{ formatScore(scope.row.averScore) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="minScore" label="最低分" width="200">
+          <template #default="scope">
+            {{ formatScore(scope.row.minScore) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="maxScore" label="最高分" width="200">
+          <template #default="scope">
+            {{ formatScore(scope.row.maxScore) }}
+          </template>
+        </el-table-column>
       </el-table>
       <template #footer>
         <el-button @click="evaDataDialogVisible = false">关闭</el-button>
@@ -309,7 +337,7 @@
           class="myChoose"
           v-else
         >
-        <el-option
+          <el-option
             v-for="type in allTypes"
             :value="type.id"
             :label="type.name"
@@ -332,7 +360,14 @@
         style="display: flex; justify-content: center; align-items: center"
       >
         <template #default="{ option }">
-          <span>{{ option.name }} - {{ option.teacherName }} | {{allCourseNature.find(natureObj => natureObj.value === option.nature).name}}</span>
+          <span
+            >{{ option.name }} - {{ option.teacherName }} |
+            {{
+              allCourseNature.find(
+                (natureObj) => natureObj.value === option.nature
+              ).name
+            }}</span
+          >
         </template>
       </el-transfer>
 
@@ -340,7 +375,12 @@
         <el-button
           type="primary"
           @click="batchUpdate()"
-          :disabled="(batchFunMode === 0 && changeTemplateId == null) || (batchFunMode === 1 && (!changeTypes || !changeTypes.length)) || !handleCourseIds || handleCourseIds.length === 0"
+          :disabled="
+            (batchFunMode === 0 && changeTemplateId == null) ||
+            (batchFunMode === 1 && (!changeTypes || !changeTypes.length)) ||
+            !handleCourseIds ||
+            handleCourseIds.length === 0
+          "
           >保存</el-button
         >
         <el-button @click="batchUpdateVisible = false">取消</el-button>
@@ -381,7 +421,7 @@ import {
   getAllBaseCourse,
   updateCourse,
   batchUpdateType,
-  removeOne
+  removeOne,
 } from "@/api/courseList";
 import { getAllType } from "@/api/courseType";
 import { getAllDepartments } from "@/api/other";
@@ -391,19 +431,21 @@ import { deepCopy } from "@/utils/objUtil";
 import { getChineseNum, getWeekByNum } from "@/utils/numUtil";
 import { removeSpace } from "@/utils/stringUtil";
 import { getTime } from "@/utils/dateUtil";
-import { hasBtnPermission } from '@/utils/btnPermission';
-import { formatDate } from '@/utils/dateUtil';
+import { hasBtnPermission } from "@/utils/btnPermission";
+import { formatDate } from "@/utils/dateUtil";
 import { useRouter } from "vue-router";
 import { CHANGE_EVENT } from "element-plus";
 
 const router = useRouter();
 
+const DELIMITER = "|";
+
 // 判断修改表单的按钮是否是loading状态
-const isLoadingBtn = ref(false)
+const isLoadingBtn = ref(false);
 
-const changeTypes = ref([])
+const changeTypes = ref([]);
 
-const batchFunMode = ref(0) // 确定批量修改的弹窗的类型是批量修改模板(0)还是类型(1)
+const batchFunMode = ref(0); // 确定批量修改的弹窗的类型是批量修改模板(0)还是类型(1)
 
 // 用于确定当前弹窗的模式，修改还是查看
 const funMode = ref(CHECK_MODE);
@@ -480,47 +522,65 @@ const updateTimeArr = ref([]);
 const createTimeArr = ref([]);
 
 /**
- * 判断是不是锁定的模板
- * @param {*} templateId 
+ * 格式化显示分数
+ * @param {*} score
  */
-function isLockTemplate(templateId){
-  return templateId < 0 || templateId === null || templateId === undefined || templateId + '' === 'NaN'
+function formatScore(score) {
+  return (!score && score !== 0) || score === -1 ? "-" : score;
 }
 
+function getShowProp(propStr) {
+  const strArr = propStr.split(DELIMITER);
+  const grade = Number(strArr.shift());
+  const name = strArr.join(DELIMITER);
+  return `${name}（${grade}）`;
+}
+/**
+ * 判断是不是锁定的模板
+ * @param {*} templateId
+ */
+function isLockTemplate(templateId) {
+  return (
+    templateId < 0 ||
+    templateId === null ||
+    templateId === undefined ||
+    templateId + "" === "NaN"
+  );
+}
 
 /**
  * 删除一门课程及其下面的每节课
  * @param {Object} course 待删除的课程的信息
  */
-function removeMyCourse(course = {}){
-  useSimpleConfirm(`你确定要删除课程："${course.name}"及其下面的每节课吗？`).then(async()=>{
-    await removeOne(course.id)
-    getMyPageData()
-    useSuccessTip('成功删除课程')
-  })
+function removeMyCourse(course = {}) {
+  useSimpleConfirm(
+    `你确定要删除课程："${course.name}"及其下面的每节课吗？`
+  ).then(async () => {
+    await removeOne(course.id);
+    getMyPageData();
+    useSuccessTip("成功删除课程");
+  });
 }
-
 
 /**
  * 初始化批量修改的弹窗
- * @param {Number} batchMode 批量修改的模式 
+ * @param {Number} batchMode 批量修改的模式
  */
-function initBatchDialog(batchMode = 0){
+function initBatchDialog(batchMode = 0) {
   batchFunMode.value = batchMode;
-  batchUpdateVisible.value = true
+  batchUpdateVisible.value = true;
 }
-
 
 /**
  * 进行修改课程信息
  */
 const updateMyCourse = async () => {
-  isLoadingBtn.value = true
+  isLoadingBtn.value = true;
   await updateCourse(updatedCourse.value);
   useSuccessTip("成功修改课程信息");
   checkOrUpdateDialogVisible.value = false;
-  getMyPageData()
-  isLoadingBtn.value = false
+  getMyPageData();
+  isLoadingBtn.value = false;
 };
 
 /**
@@ -578,15 +638,14 @@ function handleSelectionChange(courses = []) {
   handleCourseIds.value = courses.map((course) => course.id);
 }
 
-
 /**
  * 批量修改操作的总操作
  */
-function batchUpdate(){
-  if(batchFunMode.value === 0){
-    batchUpdateMyTemplate()
-  }else{
-    batchUpdateMyType()
+function batchUpdate() {
+  if (batchFunMode.value === 0) {
+    batchUpdateMyTemplate();
+  } else {
+    batchUpdateMyType();
   }
 }
 
@@ -594,17 +653,14 @@ function batchUpdate(){
  * 批量修改课程的类型
  */
 function batchUpdateMyType() {
-  useSimpleConfirm("你确定要修改所有待修改课程的类型吗？").then(
-    async () => {
-      const idList = handleCourseIds.value;
-      await batchUpdateType(idList, changeTypes.value);
-      batchUpdateVisible.value = false;
-      useSuccessTip("成功修改所有待修改课程的课程类型");
-      getMyPageData();
-    }
-  );
+  useSimpleConfirm("你确定要修改所有待修改课程的类型吗？").then(async () => {
+    const idList = handleCourseIds.value;
+    await batchUpdateType(idList, changeTypes.value);
+    batchUpdateVisible.value = false;
+    useSuccessTip("成功修改所有待修改课程的课程类型");
+    getMyPageData();
+  });
 }
-
 
 /**
  * 批量修改课程的评教模板
@@ -717,9 +773,9 @@ const getThisEvaData = async (course) => {
  */
 const initDialog = async (courseId = -1) => {
   let res = await getOneCourseDetail(courseId);
-  funMode.value = CHECK_MODE
+  funMode.value = CHECK_MODE;
   checkedCourse.value = res;
-  updateCourse.value = {}
+  updateCourse.value = {};
   tempCourse.value = deepCopy(res);
   checkOrUpdateDialogVisible.value = true;
 };
@@ -762,7 +818,6 @@ const getMyPageData = async () => {
   queryObj.endCreateTime = formatDate(createTimeArr.value[1]);
   queryObj.startUpdateTime = formatDate(updateTimeArr.value[0]);
   queryObj.endUpdateTime = formatDate(updateTimeArr.value[1]);
-
 
   pageReqData.value.size = pageData.value.size;
   pageReqData.value.page = pageData.value.current;

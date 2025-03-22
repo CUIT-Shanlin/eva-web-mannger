@@ -3,7 +3,12 @@
   <PageTitle content="评教模板列表" />
   <div class="templateAllSty">
     <div class="funBar">
-      <el-button type="primary" @click="initDialog({}, ADD_MODE)" :disabled="!hasBtnPermission('evaluate.template.add')">新建</el-button>
+      <el-button
+        type="primary"
+        @click="initDialog({}, ADD_MODE)"
+        :disabled="!hasBtnPermission('evaluate.template.add')"
+        >新建</el-button
+      >
       <span class="iptFuns">
         <el-input
           v-model="pageReqData.queryObj.keyword"
@@ -46,12 +51,16 @@
       class="tableBox"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="50" :selectable="isNotDefaultTemplate"/>
+      <el-table-column
+        type="selection"
+        width="50"
+        :selectable="isNotDefaultTemplate"
+      />
       <el-table-column prop="name" label="模板名称" width="200" />
       <el-table-column prop="description" label="描述" width="400" />
       <el-table-column label="是否为默认模板" width="170">
         <template #default="scope">
-          <span>{{getIsDefaultText(scope.row.isDefault)}}模板</span>
+          <span>{{ getIsDefaultText(scope.row.isDefault) }}模板</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -87,7 +96,11 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-button @click="batchRemoveMyTemplates()" :disabled="!hasBtnPermission('evaluate.template.delete')">批量删除</el-button>
+    <el-button
+      @click="batchRemoveMyTemplates()"
+      :disabled="!hasBtnPermission('evaluate.template.delete')"
+      >批量删除</el-button
+    >
 
     <!-- 新建/修改弹窗 -->
     <el-dialog
@@ -111,23 +124,52 @@
         </el-form-item>
         <div class="myProp">
           <div class="propHeader">
-            <span>指标名称</span>
+            <span style="width: 380px">指标名称</span>
+            <span>对应分数</span>
             <span>操作</span>
           </div>
           <div class="propAll">
-            <div class="propOne" v-for="(prop,index) in myProps" :key="index"
-            :style="{marginBottom: index < myProps.length - 1 ? '30px' :''}">
-                <el-input v-model="myProps[index]" size="large" style="width: 450px;"
-                placeholder="请输入指标名称" @change="deelDuplicateName()"></el-input>
-                <el-link disabledclass="operation" type="primary" @click="removeRow(prop)">删除</el-link>
+            <div
+              class="propOne"
+              v-for="(prop, index) in myProps"
+              :key="index"
+              :style="{
+                marginBottom: index < myProps.length - 1 ? '30px' : '',
+              }"
+            >
+              <el-input
+                v-model="prop.name"
+                size="large"
+                style="width: 380px"
+                placeholder="请输入指标名称"
+              ></el-input>
+              <!-- @change="deelDuplicateName()" -->
+
+              <el-input-number
+                v-model="prop.grade"
+                :min="0"
+                :max="100"
+                controls-position="right"
+              />
+              <el-link
+                disabledclass="operation"
+                type="primary"
+                @click="removeRow(prop)"
+                >删除</el-link
+              >
             </div>
           </div>
-
         </div>
         <button class="addBtn" type="button" @click="addNewRow()">＋</button>
       </el-form>
       <template #footer>
-        <el-button type="primary" @click="updateOrAddRole()" :loading="isLoadingBtn" :disabled="!isChecked()">保存</el-button>
+        <el-button
+          type="primary"
+          @click="updateOrAddTemplate()"
+          :loading="isLoadingBtn"
+          :disabled="!isChecked()"
+          >保存</el-button
+        >
         <el-button @click="updateOrAddDialogVisible = false">取消</el-button>
       </template>
     </el-dialog>
@@ -151,7 +193,13 @@
 import PageTitle from "@/components/PageTitle.vue";
 import { Search } from "@element-plus/icons-vue";
 import { ref, onMounted, computed } from "vue";
-import { getPageData, removeOne, batchRemove, updateTemplate, addTemplate } from "@/api/template";
+import {
+  getPageData,
+  removeOne,
+  batchRemove,
+  updateTemplate,
+  addTemplate,
+} from "@/api/template";
 import {
   useSimpleConfirm,
   useWarningConfirm,
@@ -162,17 +210,23 @@ import {
   UPDATE_MODE,
   ADD_MODE,
   NOT_DEFAULT,
-  allDefaultData
+  allDefaultData,
 } from "@/utils/service/staticData";
-import { isEmptyArr, deepCopy, addSuffixToDuplicates, removeSpaceStrToArr, isEmptyArrOrNull } from "@/utils/objUtil";
+import {
+  isEmptyArr,
+  deepCopy,
+  addSuffixToDuplicates,
+  removeSpaceStrToArr,
+  isEmptyArrOrNull,
+} from "@/utils/objUtil";
 import { isSpace, removeSpace } from "@/utils/stringUtil";
-import { formatDate } from '@/utils/dateUtil';
-import { hasBtnPermission } from '@/utils/btnPermission';
+import { formatDate } from "@/utils/dateUtil";
+import { hasBtnPermission } from "@/utils/btnPermission";
 
-
-const isLoadingBtn = ref(false)
+const DELIMITER = "|";
+const isLoadingBtn = ref(false);
 // 当前正在操作的评教模板
-const checkedTemplate = ref({props: JSON.stringify([]), name: ''});
+const checkedTemplate = ref({ props: JSON.stringify([]), name: "" });
 // 控制弹窗功能 0: 修改，1：新建
 const funMode = ref(UPDATE_MODE);
 // 控制弹窗的开启
@@ -205,104 +259,157 @@ const updateTimeArr = ref([]);
 // 存创建日期对应数组
 const createTimeArr = ref([]);
 
-
 // 当前正在操作的指标
-const myProps = ref([])
+const myProps = ref([]);
 
 /**
  * 确认当前是否可以提交新建表单
  * @returns false: 不能提交; true: 可以提交
  */
-function isChecked(){
-  if(funMode.value === UPDATE_MODE){
-    return true
+function isChecked() {
+  if (funMode.value === UPDATE_MODE) {
+    return true;
   }
   try {
-    const thisProps = myProps.value
-    return !(isSpace(checkedTemplate.value.name) || isEmptyArr(thisProps) || isSpace(thisProps[0]))
+    const thisProps = myProps.value;
+    return !(
+      isSpace(checkedTemplate.value.name) ||
+      isEmptyArr(thisProps) ||
+      isSpace(thisProps[0])
+    );
   } catch (error) {
-    return false
+    return false;
   }
 }
-
 
 /**
  * 确认是否不是默认模板
  * @param {Obeject} data 传入的模板对象
  */
-function isNotDefaultTemplate (data){
-  return data.isDefault + '' === NOT_DEFAULT + ''
+function isNotDefaultTemplate(data) {
+  return data.isDefault + "" === NOT_DEFAULT + "";
 }
 
 /**
  * 获取是否是默认模板的文本
- * @param {Number|String} isDefault 
+ * @param {Number|String} isDefault
  */
-function getIsDefaultText(isDefault = -1){
-  return allDefaultData.find(data => data.value + '' === isDefault + '').label
+function getIsDefaultText(isDefault = -1) {
+  return allDefaultData.find((data) => data.value + "" === isDefault + "")
+    .label;
 }
 
 /**
  * 移除一个指标（仅作用于页面数据）
  * @param {string} str 指标名称
  */
-function removeRow(str){
-  myProps.value = myProps.value.filter(item => item !== str)
+function removeRow(str) {
+  myProps.value = myProps.value.filter((item) => item !== str);
 }
 
 /**
  * 新建一个新的空指标
  */
-function addNewRow(){
-  if(isEmptyArrOrNull(myProps.value)){
-    myProps.value = []
+function addNewRow() {
+  if (isEmptyArrOrNull(myProps.value)) {
+    myProps.value = [];
   }
-    myProps.value.push('')
-    deelDuplicateName()
+  myProps.value.push({ name: "", grade: 0 });
+  // deelDuplicateName();
 }
 
 /**
  * 处理重名的情况
  */
-function deelDuplicateName(){
-    myProps.value = addSuffixToDuplicates(myProps.value)
+function deelDuplicateName() {
+  // myProps.value = addSuffixToDuplicates(myProps.value);
 }
 
 /**
  * 修改和新建的总方法
  */
-const updateOrAddRole = async () => {
-  isLoadingBtn.value = true
+const updateOrAddTemplate = async () => {
+  isLoadingBtn.value = true;
   const template = checkedTemplate.value;
   let msg = "";
-  // 去除空白指标
-  checkedTemplate.value.props = JSON.stringify(removeSpaceStrToArr(myProps.value))
+  // 去除空白指标 + 对象转字符串
+  checkedTemplate.value.props = JSON.stringify(
+    // removeSpaceStrToArr(myProps.value)
+    myProps.value
+      .filter((prop) => !isSpace(prop.name) && prop.grade >= 0)
+      .map((prop) => {
+        const { name, grade } = prop;
+        return `${grade}${DELIMITER}${removeSpace(name)}`;
+      })
+  );
+  // 看有没有重复的指标
+  if (isReapted(myProps.value)) {
+    useFailedTip("指标不能重复");
+    isLoadingBtn.value = false;
+    return;
+  }
+  // 看分数总值有没有100
+  const sum = myProps.value.reduce((sum, prop) => sum + prop.grade, 0);
+  if (sum < 100) {
+    useFailedTip("总分值低于100！");
+    isLoadingBtn.value = false;
+    return;
+  } else if (sum > 100) {
+    useFailedTip("总分值高于100！");
+    isLoadingBtn.value = false;
+    return;
+  }
   if (funMode.value === UPDATE_MODE) {
-    delete template.isDefault
+    delete template.isDefault;
     await updateTemplate(template);
     msg = `成功修改模板 “${template.name}”`;
   } else {
-    delete template.isDefault
+    delete template.isDefault;
     await addTemplate(template);
     msg = "成功新建模板";
   }
   getMyPageData(); // 刷新页面
   updateOrAddDialogVisible.value = false;
   useSuccessTip(msg);
-  isLoadingBtn.value = false
+  isLoadingBtn.value = false;
 };
+
+function isReapted() {
+  const set = new Set();
+  for (const prop of myProps.value) {
+    const { name } = prop;
+    if (set.has(name)) {
+      return true;
+    } else {
+      set.add(name);
+    }
+  }
+  return false;
+}
 
 /**
  * 初始化弹窗
  * @param {Object} template 操作的评教模板
  * @param {Number} fun 弹窗功能 0：修改，1：新建
  */
-function initDialog(template = {props: JSON.stringify([]), name: ''}, fun = UPDATE_MODE) {
+function initDialog(
+  template = { props: JSON.stringify([]), name: "" },
+  fun = UPDATE_MODE
+) {
   funMode.value = fun;
-  try{
-    myProps.value = JSON.parse(template.props)
-  }catch{
-    myProps.value = ['']
+  try {
+    // TODO 把字符串数组通过分割符转成对象数组
+    // myProps.value = JSON.parse(template.props);
+    let data = JSON.parse(template.props) || [];
+    myProps.value = data.map((item) => {
+      const strArr = item.split(DELIMITER);
+      return {
+        grade: Number(strArr.shift()),
+        name: strArr.join(DELIMITER),
+      };
+    });
+  } catch {
+    myProps.value = [{}];
   }
   checkedTemplate.value = deepCopy(template);
   updateOrAddDialogVisible.value = true;
@@ -315,16 +422,14 @@ function initDialog(template = {props: JSON.stringify([]), name: ''}, fun = UPDA
 function removeOneTemplate(template) {
   // TODO 确定该模板是否允许被删除
   if (!isNotDefaultTemplate(template)) {
-    useWarningConfirm(
-      "默认模板不允许被删除！"
-    );
+    useWarningConfirm("默认模板不允许被删除！");
     return;
   }
   useSimpleConfirm(`你确定要删除评教模板 “${template.name}” 吗？`).then(
     async () => {
       await removeOne(template.id);
       useSuccessTip(`成功删除评教模板 “${template.name}”`);
-      getMyPageData()
+      getMyPageData();
     }
   );
 }
@@ -428,39 +533,40 @@ onMounted(() => {
   }
 }
 $table-th-color: rgb(250, 250, 250);
-.myProp{
-    .propHeader, .propOne{
-        @include flex-center-y;
-        justify-content: space-between;
-    }
-    .propHeader{
-        padding: 20px 15px;
-        margin-bottom: 15px;
-    }
-    .propAll{
-        max-height: 300px;
-        overflow: auto;
-        @include myScrollbar;
-    }
-    .propOne{
-        padding-right: 15px;
-    }
+.myProp {
+  .propHeader,
+  .propOne {
+    @include flex-center-y;
+    justify-content: space-between;
+  }
+  .propHeader {
+    padding: 20px 15px;
+    margin-bottom: 15px;
+  }
+  .propAll {
+    max-height: 300px;
+    overflow: auto;
+    @include myScrollbar;
+  }
+  .propOne {
+    padding-right: 15px;
+  }
 }
 /**.addBtn */
 
-.addBtn{
-    margin-top: 15px;
-    border: 0;
-    font-size: 25px;
-    background-color: $table-th-color;
-    box-shadow: $small-box-shadow;
-    cursor: pointer;
-    &:hover{
-        background: rgb(245, 242, 242);
-    }
-    &:active{
-        background: rgb(238, 223, 223);
-    }
+.addBtn {
+  margin-top: 15px;
+  border: 0;
+  font-size: 25px;
+  background-color: $table-th-color;
+  box-shadow: $small-box-shadow;
+  cursor: pointer;
+  &:hover {
+    background: rgb(245, 242, 242);
+  }
+  &:active {
+    background: rgb(238, 223, 223);
+  }
 }
 /**.addBtn */
 
@@ -468,7 +574,8 @@ $table-th-color: rgb(250, 250, 250);
   float: right;
 }
 :deep() {
-  th.el-table__cell, .propHeader {
+  th.el-table__cell,
+  .propHeader {
     font-size: 15px;
     font-weight: 500;
     color: black;
