@@ -18,14 +18,14 @@
 
 variables:
   DOCKER_TLS_CERTDIR: ""
-  EVA_VERSION: 1.76-SNAPSHOT
+  EVA_VERSION: 1.78-SNAPSHOT
 
-stages:          # List of stages for jobs, and their order of execution
+stages: # List of stages for jobs, and their order of execution
   - build
   - publish
   - recreate
 
-build:       # This job runs in the build stage, which runs first.
+build: # This job runs in the build stage, which runs first.
   stage: build
   image: $HARBOR_HOST/library/node:18.20-alpine
   script:
@@ -43,14 +43,14 @@ build:       # This job runs in the build stage, which runs first.
   only:
     refs:
       - master
-      - master-test 
+      - master-test
 
-publish:      # This job runs in the deploy stage.
-  stage: publish  # It only runs when *both* jobs in the test stage complete successfully.
+publish: # This job runs in the deploy stage.
+  stage: publish # It only runs when *both* jobs in the test stage complete successfully.
   image: $HARBOR_HOST/library/docker:23.0.2-alpine3.17
   services:
     - name: $HARBOR_HOST/library/docker:23.0.2-dind-alpine3.17
-      command: [ "--tls=false" ]
+      command: ["--tls=false"]
       alias: docker
   before_script:
     - until docker info; do sleep 5s; done
@@ -64,12 +64,12 @@ publish:      # This job runs in the deploy stage.
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
 
-publish-test:      # This job runs in the deploy stage.
-  stage: publish  # It only runs when *both* jobs in the test stage complete successfully.
+publish-test: # This job runs in the deploy stage.
+  stage: publish # It only runs when *both* jobs in the test stage complete successfully.
   image: $HARBOR_HOST/library/docker:23.0.2-alpine3.17
   services:
     - name: $HARBOR_HOST/library/docker:23.0.2-dind-alpine3.17
-      command: [ "--tls=false" ]
+      command: ["--tls=false"]
       alias: docker
   before_script:
     - until docker info; do sleep 5s; done
