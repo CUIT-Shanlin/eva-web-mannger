@@ -46,7 +46,7 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="visible = false">取消</el-button>
+          <el-button @click="cancelDialog">取消</el-button>
           <el-button type="primary" @click="importFiles" :disabled="!checkPermission('course.table.import') || !isChecked()">导入</el-button>
         </span>
       </template>
@@ -145,6 +145,13 @@
   
       const isLoadingBtn = ref(false)
 
+      /**
+       * 关闭弹窗
+       */
+      function cancelDialog(){
+        visible.value = false;
+        emit('update:modelValue', false);
+      }
 
       /**
        * 用于确认是否可以提交表单
@@ -422,7 +429,8 @@
         executeOverwrite,
         executeImport,
         checkPermission,
-        isChecked
+        isChecked,
+        cancelDialog
       };
     }
   };
