@@ -217,7 +217,7 @@
             const newPeriod = lastPeriod === '下学期' ? '上学期' : '下学期';
   
             // 检查最后一个学年是否已经包含两个学期
-            if (lastSemester.children.length < 2) {
+            if (lastSemester.children.length < 2 && lastPeriod[0] !== "下") {
               lastSemester.children.push({
                 id: `${newStartYear}-${newEndYear}`,
                 label: '下学期',
