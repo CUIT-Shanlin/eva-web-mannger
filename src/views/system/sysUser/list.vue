@@ -246,8 +246,8 @@
           <el-form-item label="用户名">
             <el-input v-model="checkedUser.info.username" placeholder="请输入用户名"
             @change="checkUsername(checkedUser.info.username)"
-            :disabled="updateOrAddProp.fun === CHECK_MODE"></el-input>
-            <div class="tipMsg">{{updateOrAddProp.usernameMsg}}</div>
+            :disabled="updateOrAddProp.fun !==  ADD_MODE"></el-input>
+            <div class="tipMsg" v-if="updateOrAddProp.fun === ADD_MODE">{{updateOrAddProp.usernameMsg}}</div>
           </el-form-item>
           <el-form-item label="密码" v-if="!updateOrAddProp.isUpdatePwd && updateOrAddProp.fun === UPDATE_MODE">
             <el-link type="primary"

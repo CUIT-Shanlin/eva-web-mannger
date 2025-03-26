@@ -18,7 +18,8 @@
 
 variables:
   DOCKER_TLS_CERTDIR: ""
-  EVA_VERSION: 1.78-SNAPSHOT
+  EVA_VERSION: 1.79-SNAPSHOT
+  EVA_TEST_VERSION: 1.77
 
 stages: # List of stages for jobs, and their order of execution
   - build
@@ -52,11 +53,13 @@ publish: # This job runs in the deploy stage.
     - name: $HARBOR_HOST/library/docker:23.0.2-dind-alpine3.17
       command: ["--tls=false"]
       alias: docker
+  variables:
+    GIT_STRATEGY: none
   before_script:
     - until docker info; do sleep 5s; done
   script:
     - docker login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD $HARBOR_URL
-    - docker build -t eva-management-frontend:$EVA_VERSION .
+    - docker build --cache-from $HARBOR_HOST/eva-system/eva-management-frontend:latest -t eva-management-frontend:$EVA_VERSION .
     - docker tag eva-management-frontend:$EVA_VERSION $HARBOR_HOST/eva-system/eva-management-frontend:$EVA_VERSION
     - docker push $HARBOR_HOST/eva-system/eva-management-frontend:$EVA_VERSION
     - docker tag eva-management-frontend:$EVA_VERSION $HARBOR_HOST/eva-system/eva-management-frontend
@@ -71,14 +74,16 @@ publish-test: # This job runs in the deploy stage.
     - name: $HARBOR_HOST/library/docker:23.0.2-dind-alpine3.17
       command: ["--tls=false"]
       alias: docker
+  variables:
+    GIT_STRATEGY: none
   before_script:
     - until docker info; do sleep 5s; done
   script:
     - docker login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD $HARBOR_URL
-    - docker build -t eva-management-frontend-test:$EVA_VERSION .
-    - docker tag eva-management-frontend-test:$EVA_VERSION $HARBOR_HOST/eva-system/eva-management-frontend-test:$EVA_VERSION
-    - docker push $HARBOR_HOST/eva-system/eva-management-frontend-test:$EVA_VERSION
-    - docker tag eva-management-frontend-test:$EVA_VERSION $HARBOR_HOST/eva-system/eva-management-frontend-test
+    - docker build --cache-from $HARBOR_HOST/eva-system/eva-management-frontend-test:latest -t eva-management-frontend-test:$EVA_TEST_VERSION .
+    - docker tag eva-management-frontend-test:$EVA_TEST_VERSION $HARBOR_HOST/eva-system/eva-management-frontend-test:$EVA_TEST_VERSION
+    - docker push $HARBOR_HOST/eva-system/eva-management-frontend-test:$EVA_TEST_VERSION
+    - docker tag eva-management-frontend-test:$EVA_TEST_VERSION $HARBOR_HOST/eva-system/eva-management-frontend-test
     - docker push $HARBOR_HOST/eva-system/eva-management-frontend-test
   rules:
     - if: $CI_COMMIT_BRANCH == 'master-test'
@@ -86,6 +91,11 @@ publish-test: # This job runs in the deploy stage.
 recreate:
   image: $HARBOR_HOST/library/curl:8.9.1
   stage: recreate
+  variables:
+    GIT_STRATEGY: none
+  needs:
+    - job: build
+      artifacts: false
   script:
     - curl -X POST $PORTAINER_UPDATE_URL
   rules:
@@ -94,6 +104,11 @@ recreate:
 recreate-test:
   image: $HARBOR_HOST/library/curl:8.9.1
   stage: recreate
+  variables:
+    GIT_STRATEGY: none
+  needs:
+    - job: build
+      artifacts: false
   script:
     - curl -X POST $PORTAINER_UPDATE_TEST_URL
   rules:
