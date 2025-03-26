@@ -620,7 +620,7 @@ function getLineOption(myData = [
     date: '2005-08-17',
     value: 100
   }
-], suffix = '完成的评教数目'){
+], suffix = '新增的任务数'){
   // 找到data中的最值
   let min = myData[0].value
   let max = myData[0].value
