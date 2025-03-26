@@ -241,7 +241,7 @@
         title="评教表单"
       >
         <div class="propOne" v-for="(prop, i) in JSON.parse(checkedRecord.formPropsValues)" :key="i">
-          <span>{{prop.prop}}</span>
+          <span>{{ formatProp(prop.prop) }}</span>
           <el-input :model-value="prop.score" class="myIpt"></el-input>
         </div>
         <p>评价：</p>
@@ -368,7 +368,22 @@ const weeks = ['一','二','三','四','五','六','日']
 const lenArr = [20,7,12,12]
 const strArr = ['第|周','星期|','第|节课开始','第|节课结束']
 
+const DELIMITER = "|";
 
+
+/**
+ * 格式化指标
+ * @param {*} prop 
+ */
+function formatProp(prop = ""){
+  const strArr = prop.split(DELIMITER);
+  if(strArr.length === 1){
+    return prop
+  }
+  const grade = Number(strArr.shift()),
+        name = strArr.join(DELIMITER);
+  return `${name}（${grade}）`
+}
 
 /**
  * 导出并下载评教记录文件
