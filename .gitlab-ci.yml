@@ -49,12 +49,11 @@ build: # This job runs in the build stage, which runs first.
 publish: # This job runs in the deploy stage.
   stage: publish # It only runs when *both* jobs in the test stage complete successfully.
   image: $HARBOR_HOST/library/docker:23.0.2-alpine3.17
+  retry: 2
   services:
     - name: $HARBOR_HOST/library/docker:23.0.2-dind-alpine3.17
       command: ["--tls=false"]
       alias: docker
-  variables:
-    GIT_STRATEGY: none
   before_script:
     - until docker info; do sleep 5s; done
   script:
@@ -70,12 +69,11 @@ publish: # This job runs in the deploy stage.
 publish-test: # This job runs in the deploy stage.
   stage: publish # It only runs when *both* jobs in the test stage complete successfully.
   image: $HARBOR_HOST/library/docker:23.0.2-alpine3.17
+  retry: 2
   services:
     - name: $HARBOR_HOST/library/docker:23.0.2-dind-alpine3.17
       command: ["--tls=false"]
       alias: docker
-  variables:
-    GIT_STRATEGY: none
   before_script:
     - until docker info; do sleep 5s; done
   script:
@@ -91,6 +89,7 @@ publish-test: # This job runs in the deploy stage.
 recreate:
   image: $HARBOR_HOST/library/curl:8.9.1
   stage: recreate
+  retry: 2
   variables:
     GIT_STRATEGY: none
   needs:
@@ -104,6 +103,7 @@ recreate:
 recreate-test:
   image: $HARBOR_HOST/library/curl:8.9.1
   stage: recreate
+  retry: 2
   variables:
     GIT_STRATEGY: none
   needs:
