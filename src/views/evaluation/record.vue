@@ -236,7 +236,7 @@
       <!-- 评教表单详情弹窗 -->
       <el-dialog
         v-model="dialogVisible"
-        width="400"
+        style="min-width: 400px;"
         append-to-body
         title="评教表单"
       >
