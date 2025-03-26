@@ -116,7 +116,7 @@
                   <el-option
                     v-for="(time, idx) in times"
                     :key="idx + 1"
-                    :label="time.startTime"
+                    :label="`第${idx + 1}节(${time.startTime})`"
                     :value="idx + 1"
                   />
                 </el-select>
@@ -124,7 +124,7 @@
                   <el-option
                     v-for="(time, idx) in times"
                     :key="idx + 1"
-                    :label="time.endTime"
+                    :label="`第${idx + 1}节(${time.endTime})`"
                     :value="idx + 1"
                   />
                 </el-select>
@@ -190,7 +190,7 @@
                   <el-option
                     v-for="(time, idx) in times"
                     :key="idx + 1"
-                    :label="time.startTime"
+                    :label="`第${idx + 1}节(${time.startTime})`"
                     :value="idx + 1"
                   />
                 </el-select>
@@ -198,7 +198,7 @@
                   <el-option
                     v-for="(time, idx) in times"
                     :key="idx + 1"
-                    :label="time.endTime"
+                    :label="`第${idx + 1}节(${time.endTime})`"
                     :value="idx + 1"
                   />
                 </el-select>
@@ -299,8 +299,9 @@
         { startTime: "11:15", endTime: "12:00" },
         { startTime: "14:00", endTime: "14:45" },
         { startTime: "14:55", endTime: "15:40" },
-        { startTime: "16:00", endTime: "16:45" },
-        { startTime: "16:55", endTime: "17:40" },
+        { startTime: "15:50", endTime: "16:35" },
+        { startTime: "16:45", endTime: "17:30" },
+        { startTime: "17:40", endTime: "18:25" },
         { startTime: "19:30", endTime: "20:15" },
         { startTime: "20:25", endTime: "21:10" },
         { startTime: "21:20", endTime: "22:05" }
