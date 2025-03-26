@@ -18,8 +18,8 @@
 
 variables:
   DOCKER_TLS_CERTDIR: ""
-  EVA_VERSION: 1.83-SNAPSHOT
-  EVA_TEST_VERSION: 1.82
+  EVA_VERSION: 1.84-SNAPSHOT
+  EVA_TEST_VERSION: 1.83
 
 stages: # List of stages for jobs, and their order of execution
   - build
