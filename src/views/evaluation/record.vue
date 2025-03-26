@@ -94,7 +94,7 @@
               <div>
                 <div class="topText">今日新增评教任务(个)</div>
                 <div style="font-size: 20px">
-                  {{getShowNum(evaTaskCompleteMsg.moreEvaNum)}}
+                  {{getShowNum(evaTaskCompleteMsg.evaNumArr[evaTaskCompleteMsg.evaNumArr.length - 1].value)}}
                 </div>
               </div>
               <div class="bottomText">
@@ -316,7 +316,7 @@ const allCourseMsg = ref([]);
 const allDepartments = ref([]);
 
 // 存评教任务完成情况信息
-const evaTaskCompleteMsg = ref({})
+const evaTaskCompleteMsg = ref({evaNumArr: [{}]})
 
 // 存评教分数统计基础信息
 const evaScoreMsg = ref({})
@@ -624,7 +624,7 @@ function getLineOption(myData = [
   // 找到data中的最值
   let min = myData[0].value
   let max = myData[0].value
-  myData.sort((item1, item2) => new Date(item1.date).getTime() - new Date(item2.date).getTime()),
+  myData.sort((item1, item2) => new Date(item1.date).getTime() - new Date(item2.date).getTime())
   myData.map(item => item.value).forEach(it => {
     max = it > max ? it : max
     min = it < min ? it : min
