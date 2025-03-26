@@ -92,7 +92,7 @@
           <div class="lineBox">
             <div class="textMsg">
               <div>
-                <div class="topText">新增评教任务(个)</div>
+                <div class="topText">今日新增评教任务(个)</div>
                 <div style="font-size: 20px">
                   {{getShowNum(evaTaskCompleteMsg.moreEvaNum)}}
                 </div>
