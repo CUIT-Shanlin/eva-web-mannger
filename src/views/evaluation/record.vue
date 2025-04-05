@@ -244,12 +244,33 @@
           <span>{{ formatProp(prop.prop) }}</span>
           <el-input :model-value="prop.score" class="myIpt"></el-input>
         </div>
-        <p>评价：</p>
-        <el-input type="textarea" :rows="5" :model-value="checkedRecord.textValue"></el-input>
         <div class="propOne">
           <span>综合评分</span>
           <el-input :model-value="formatNumberToOneDecimalPlace(checkedRecord.averScore)" class="myIpt"></el-input>
         </div>
+        <div class="propOne">
+          <span>听课主题</span>
+          <span class="topic">{{checkedRecord.topic}}</span>
+        </div>
+        <p>上课照片：</p>
+        <div class="img-container" v-load="isLoadRecordImages">
+          <el-empty class="empty" description="未上传上课照片" v-if="!checkedRecord.images || checkedRecord.images.length === 0"></el-empty>
+          <el-image
+            v-for="(imgSrc, index) in checkedRecord.images"
+            class="img"
+            :key="imgSrc"
+            :src="imgSrc"
+            :zoom-rate="1.2"
+            :max-scale="7"
+            :min-scale="0.2"
+            :preview-src-list="checkedRecord.images"
+            show-progress
+            :initial-index="index"
+            fit="cover"
+          />
+        </div>
+        <p>评价：</p>
+        <el-input type="textarea" :rows="5" :model-value="checkedRecord.textValue"></el-input>
     </el-dialog>
     
       <el-button @click="batchRemoveMyRecords()">批量删除</el-button>
@@ -280,7 +301,8 @@ import {
   getPageData,
   removeOne,
   batchRemove,
-  exportRecordFile
+  exportRecordFile,
+  getRecordImages
 } from '@/api/evaluation';
 import { getOneSemster } from '@/api/semester';
 import {
@@ -301,6 +323,10 @@ import { onMounted, ref } from "vue";
 import { useRoute } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
 import * as echarts from "echarts";
+
+
+
+const isLoadRecordImages = ref(false)
 
 // 用于确定导出按钮是否是loading状态
 const isLoadingExportBtn = ref(false)
@@ -506,6 +532,12 @@ function removeOneRecord(record = {}){
  */
 function initDialog(record = {}){
   checkedRecord.value = record
+  isLoadRecordImages.value = true
+  // 拿上课照片
+  getRecordImages(record.id).then(res=>{
+    checkedRecord.value.images = res.data ?? []
+    isLoadRecordImages.value = false
+  })
   dialogVisible.value = true
 }
 
@@ -880,6 +912,10 @@ $gap-size: 15px;
     width: 60px;
     margin-left: auto;
   }
+  .topic{
+    margin-left: auto;
+    font-weight: 550;
+  }
 }
 :deep() {
   th.el-table__cell {
@@ -901,6 +937,28 @@ $gap-size: 15px;
   // color: rgb(64,158,255);
   .ico{
     font-size: 18px;
+  }
+}
+
+$img-size: 150px;
+.img-container{
+  border: #CCC solid 1px;
+  height: $img-size;
+  padding: 10px 15px;
+  @include flex-center-y;
+  .img{
+    width: $img-size;
+    height: $img-size;
+    margin: 0 8px;
+  }
+  :deep() {
+    .el-empty__image{
+      height: calc($img-size - 20px);
+    }
+    .el-empty{
+      width: 100%;
+      padding: 0;
+    }
   }
 }
 </style>

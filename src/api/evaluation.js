@@ -89,3 +89,14 @@ export function exportRecordFile(){
         })
     })
 }
+
+/**
+ * 获取某条评教数据的照片
+ * @param {Number} recordId 评教记录id
+ * @returns 
+ */
+export function getRecordImages(recordId = -1){
+  return request({
+    url: `/evaluate/records/images?id=${recordId}`
+  })
+}
