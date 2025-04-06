@@ -241,11 +241,11 @@
         title="评教表单"
       >
         <div class="propOne" v-for="(prop, i) in JSON.parse(checkedRecord.formPropsValues)" :key="i">
-          <span>{{ formatProp(prop.prop) }}</span>
+          <span class="label">{{ formatProp(prop.prop) }}</span>
           <el-input :model-value="prop.score" class="myIpt"></el-input>
         </div>
         <div class="propOne">
-          <span>综合评分</span>
+          <span class="label">综合评分</span>
           <el-input :model-value="formatNumberToOneDecimalPlace(checkedRecord.averScore)" class="myIpt"></el-input>
         </div>
         <div class="propOne">
@@ -253,7 +253,7 @@
           <span class="topic">{{checkedRecord.topic}}</span>
         </div>
         <p>上课照片：</p>
-        <div class="img-container" v-load="isLoadRecordImages">
+        <div class="img-container" v-loading="isLoadRecordImages">
           <el-empty class="empty" description="未上传上课照片" v-if="!checkedRecord.images || checkedRecord.images.length === 0"></el-empty>
           <el-image
             v-for="(imgSrc, index) in checkedRecord.images"
@@ -535,7 +535,7 @@ function initDialog(record = {}){
   isLoadRecordImages.value = true
   // 拿上课照片
   getRecordImages(record.id).then(res=>{
-    checkedRecord.value.images = res.data ?? []
+    checkedRecord.value.images = res ?? []
     isLoadRecordImages.value = false
   })
   dialogVisible.value = true
@@ -908,11 +908,15 @@ $gap-size: 15px;
 .propOne{
   @include flex-center-y;
   margin: 10px 0;
+  .label{
+    max-width: 80%;
+  }
   .myIpt{
     width: 60px;
     margin-left: auto;
   }
   .topic{
+    text-align: center;
     margin-left: auto;
     font-weight: 550;
   }
