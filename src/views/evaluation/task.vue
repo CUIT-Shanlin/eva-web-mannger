@@ -42,9 +42,9 @@
       v-loading="isLoadingTable"
       class="tableBox"
     >
-      <el-table-column prop="evaTeacherName" label="评教老师" width="200" />
+      <el-table-column prop="evaTeacherName" label="评教老师" width="135" />
       <el-table-column prop="courseName" label="评教课程" width="300" />
-      <el-table-column prop="teacherName" label="教学老师" width="200" />
+      <el-table-column prop="teacherName" label="教学老师" width="135" />
 
       <el-table-column label="任务状态" width="150">
         <template #default="scope">
@@ -64,6 +64,13 @@
       <el-table-column
         prop="createTime"
         label="创建日期"
+        width="220"
+        sortable
+      />
+
+      <el-table-column
+        prop="updateTime"
+        label="修改日期"
         width="220"
         sortable
       />
