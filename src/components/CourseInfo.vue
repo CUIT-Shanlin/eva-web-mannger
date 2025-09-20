@@ -97,13 +97,39 @@
       v-model="showEditDialog"
       append-to-body
       width="30%"
-      :before-close="handleClose"
+      :before-close="() => {
+        handleClose(() => {
+          this.weekList = []
+          this.isBatchUpdate = false
+          this.showEditDialog = false
+        })
+      }"
     >
       <el-form :model="editForm">
+        <el-form-item label="是否批量修改">
+          <el-switch 
+            :active-value="true"
+            :inactive-value="false"
+            v-model="isBatchUpdate"
+          />
+        </el-form-item>
         <el-form-item label="教室">
           <el-input v-model="editForm.location" />
         </el-form-item>
-        <el-form-item label="周数">
+        <el-form-item label="需要修改的周" v-if="isBatchUpdate">
+          <el-select
+            v-model="weekList"
+            multiple
+          >
+            <el-option
+              v-for="val in allWeeks"
+              :key="val"
+              :label="`第${val}周`"
+              :value="val"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="周数" v-else>
           <el-input-number v-model="editForm.week" :min="1" :max="20"/>
         </el-form-item>
         <el-form-item label="星期">
@@ -138,12 +164,17 @@
       width="30%"
       :before-close="handleClose"
     >
-      <p>
-        是否将<strong>{{ selectedCourse.teacherName }}</strong>位于{{ selectedCourse.location}}教室第<strong>{{ currentWeek }}</strong>周星期<strong>{{ selectedBox.day }}</strong>从第<strong>{{ getLessonNumber(selectedCourse.time.startTime) }}</strong>节到第<strong>{{ getLessonNumber(selectedCourse.time.endTime) }}</strong>节的课程
-      </p>
-      <p>
-        修改为位于{{editForm.location}}教室第<strong>{{ editForm.week }}</strong>周星期<strong>{{ editForm.day }}</strong>从第<strong>{{ editForm.startTime }}</strong>节到第<strong>{{ editForm.endTime }}</strong>节？
-      </p>
+      <div v-if="isBatchUpdate">
+        <p>是否确认批量修改这些周的课程？</p>
+      </div>
+      <div v-else>
+        <p>
+          是否将<strong>{{ selectedCourse.teacherName }}</strong>位于{{ selectedCourse.location}}教室第<strong>{{ currentWeek }}</strong>周星期<strong>{{ selectedBox.day }}</strong>从第<strong>{{ getLessonNumber(selectedCourse.time.startTime) }}</strong>节到第<strong>{{ getLessonNumber(selectedCourse.time.endTime) }}</strong>节的课程
+        </p>
+        <p>
+          修改为位于{{editForm.location}}教室第<strong>{{ editForm.week }}</strong>周星期<strong>{{ editForm.day }}</strong>从第<strong>{{ editForm.startTime }}</strong>节到第<strong>{{ editForm.endTime }}</strong>节？
+        </p>
+      </div>
       <template #footer>
         <span class="dialog-footer">
           <el-button type="primary" :loading="isLoadingUpdateBtn" @click="executeEdit" :disabled="!checkPermission('course.tabulation.update')">确认</el-button>
@@ -219,6 +250,9 @@ export default {
   },
   data() {
     return {
+      allWeeks: Array.from({ length: 20 }, (_, i) => i + 1),
+      weekList: [],
+      isBatchUpdate: false,
       isLoadingUpdateBtn: false, // 修改课程的弹窗按钮的loading状态确认
       isLoadingAssignBtn: false, // 分配教师的弹窗按钮的loading状态确认
       showAddCourseDialog: false,
@@ -299,8 +333,8 @@ export default {
       this.editForm = {
         teacherName: course.teacherName,
         location: course.location,
-        week: course.week,
-        day: course.day,
+        week: course?.time?.week,
+        day: course?.time?.day,
         startTime: course.time.startTime,
         endTime: course.time.endTime
       };
@@ -313,16 +347,20 @@ export default {
     async executeEdit() {
       this.isLoadingUpdateBtn = true
       try {
-        await changeClass({
-          id: this.selectedCourse.id,
-          location: this.editForm.location,
-          time:{
-          week: this.editForm.week,
-          day: parseInt(this.editForm.day),
-          startTime: this.editForm.startTime,
-          endTime: this.editForm.endTime
-          }
-        });
+        await changeClass(
+          {
+            id: this.selectedCourse.id,
+            location: this.editForm.location,
+            time:{
+              week: this.editForm.week,
+              day: parseInt(this.editForm.day),
+              startTime: this.editForm.startTime,
+              endTime: this.editForm.endTime
+            },
+          },
+          this.weekList,
+          this.isBatchUpdate,
+        );
         this.showConfirmEditDialog = false;
         this.$emit('edit-course', {
           ...this.selectedCourse,
@@ -333,7 +371,9 @@ export default {
           time: {
             startTime: this.editForm.startTime,
             endTime: this.editForm.endTime
-          }
+          },
+          weekList: this.weekList,
+          isBatchUpdate: this.isBatchUpdate,
         });
         ElMessage({
           message: '修改成功',

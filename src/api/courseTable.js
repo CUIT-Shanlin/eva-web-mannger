@@ -1,17 +1,17 @@
-import CourseInfo from '@/components/CourseInfo.vue';
-import request from '@/utils/request.js'
-import { getSemesterId } from '@/utils/service/semesterUtil';
+import CourseInfo from "@/components/CourseInfo.vue";
+import request from "@/utils/request.js";
+import { getSemesterId } from "@/utils/service/semesterUtil";
 /**
  * 获取周课表的课程信息
  * @param {Number} week 周数
  * @returns 课程节数
  */
 
-export function getWeekData(week){
-    return request({
-        url: `/courses/table?semId=${getSemesterId()}&week=${week}`,
-        method: 'GET'
-    })
+export function getWeekData(week) {
+  return request({
+    url: `/courses/table?semId=${getSemesterId()}&week=${week}`,
+    method: "GET",
+  });
 }
 
 /**
@@ -22,12 +22,12 @@ export function getWeekData(week){
  * @returns 课程信息
  */
 
-export function getClassTable(classdata={week:0,day:0,num:0}){
-    return request({
-        url: `/course/table?semId=${getSemesterId()}`,
-        method: 'POST',
-        data:classdata
-    })
+export function getClassTable(classdata = { week: 0, day: 0, num: 0 }) {
+  return request({
+    url: `/course/table?semId=${getSemesterId()}`,
+    method: "POST",
+    data: classdata,
+  });
 }
 
 /**
@@ -36,11 +36,11 @@ export function getClassTable(classdata={week:0,day:0,num:0}){
  * @returns 详细信息
  */
 
-export function getClassData(id){
-    return request({
-        url: `/course/table/one?id=${id}&semId=${getSemesterId()}`,
-        method: 'GET'
-    })
+export function getClassData(id) {
+  return request({
+    url: `/course/table/one?id=${id}&semId=${getSemesterId()}`,
+    method: "GET",
+  });
 }
 
 /**
@@ -50,11 +50,11 @@ export function getClassData(id){
  * @returns 具体日期
  */
 
-export function getClassDay(week,day){
-    return request({
-        url: `/course/date?semId=${getSemesterId()}&week=${week}&day=${day}`,
-        method: 'GET'
-    })
+export function getClassDay(week, day) {
+  return request({
+    url: `/course/date?semId=${getSemesterId()}&week=${week}&day=${day}`,
+    method: "GET",
+  });
 }
 
 /**
@@ -69,12 +69,22 @@ export function getClassDay(week,day){
  * @returns 课程信息
  */
 
-export function getTimeClass(classquery={departmentName:"",keyword:"",sort:0,startDay:"",endDay:"",teacherId:0,typeId:0}){
-    return request({
-        url: `/courses/query?semId=${getSemesterId()}`,
-        method: 'POST',
-        data:classquery
-    })
+export function getTimeClass(
+  classquery = {
+    departmentName: "",
+    keyword: "",
+    sort: 0,
+    startDay: "",
+    endDay: "",
+    teacherId: 0,
+    typeId: 0,
+  }
+) {
+  return request({
+    url: `/courses/query?semId=${getSemesterId()}`,
+    method: "POST",
+    data: classquery,
+  });
 }
 
 /**
@@ -86,12 +96,15 @@ export function getTimeClass(classquery={departmentName:"",keyword:"",sort:0,sta
  * @returns 课程信息
  */
 
-export function getSemesterisImported(type,imported={period:0,startYear:"",endYear:""}){
-    return request({
-        url: `/course/table/isImported/${type}`,
-        method: 'POST',
-        data:imported
-    }) 
+export function getSemesterisImported(
+  type,
+  imported = { period: 0, startYear: "", endYear: "" }
+) {
+  return request({
+    url: `/course/table/isImported/${type}`,
+    method: "POST",
+    data: imported,
+  });
 }
 /**
  * 修改一节课
@@ -104,12 +117,20 @@ export function getSemesterisImported(type,imported={period:0,startYear:"",endYe
  * @returns 课程信息
  */
 
-export function changeClass(classdata = { id: 0, location: "", time: { week: 0, day: 0, startTime: 0, endTime: 0 } }){
-    return request({
-        url: `/course/one?semId=${getSemesterId()}`,
-        method: 'PUT',
-        data:classdata
-    }) 
+export function changeClass(
+  classdata = {
+    id: 0,
+    location: "",
+    time: { week: 0, day: 0, startTime: 0, endTime: 0 },
+  },
+  weekList = [],
+  isBatchUpdate = false
+) {
+  return request({
+    url: `/course/one?semId=${getSemesterId()}&weekList=${weekList}&isBatchUpdate=${isBatchUpdate}`,
+    method: "PUT",
+    data: classdata,
+  });
 }
 
 /**
@@ -123,12 +144,15 @@ export function changeClass(classdata = { id: 0, location: "", time: { week: 0, 
  * @returns 详细信息
  */
 
-export function delClassData(id,classdata={startWeek:0,endWeek:0,day:0,startTime:0,endTime:0}){
-    return request({
-        url: `/course/table?id=${id}&semId=${getSemesterId()}`,
-        method: 'DELETE',
-        data:classdata
-    })
+export function delClassData(
+  id,
+  classdata = { startWeek: 0, endWeek: 0, day: 0, startTime: 0, endTime: 0 }
+) {
+  return request({
+    url: `/course/table?id=${id}&semId=${getSemesterId()}`,
+    method: "DELETE",
+    data: classdata,
+  });
 }
 
 /**
@@ -142,18 +166,22 @@ export function delClassData(id,classdata={startWeek:0,endWeek:0,day:0,startTime
  * @returns 详细信息
  */
 
-export function importFile(type, semester = { id: 0, period: 0, startYear: "", endYear: "", startDate: "" }, file = {}) {
-    let formData = new FormData()
-    formData.append('file', file)
-    formData.append('semester', JSON.stringify(semester))
-    return request({
-        headers: {
-            'Content-Type': 'multipart/form-data;'
-         },
-        url: `/course/import/${type}`,
-        method: 'PUT',
-        data:formData
-    })
+export function importFile(
+  type,
+  semester = { id: 0, period: 0, startYear: "", endYear: "", startDate: "" },
+  file = {}
+) {
+  let formData = new FormData();
+  formData.append("file", file);
+  formData.append("semester", JSON.stringify(semester));
+  return request({
+    headers: {
+      "Content-Type": "multipart/form-data;",
+    },
+    url: `/course/import/${type}`,
+    method: "PUT",
+    data: formData,
+  });
 }
 
 /**
@@ -161,34 +189,39 @@ export function importFile(type, semester = { id: 0, period: 0, startYear: "", e
  * @returns 详细信息
  */
 
-export function createClass(courseId,dateArr = []){
-    return request({
-        url: `/course/batch/exist/${courseId}`,
-        method: 'POST',
-        data: dateArr
-    })
+export function createClass(courseId, dateArr = []) {
+  return request({
+    url: `/course/batch/exist/${courseId}`,
+    method: "POST",
+    data: dateArr,
+  });
 }
 
 /**
  * 批量新建多节课(新课程)
  * @returns 详细信息
  */
- 
-export function createNewClass(teacherId,courseInfo = {
-    "subjectMsg": {
-    "name": "",
-    "nature": 1
-},
-"templateId": null,
-"typeIdList": []}, dateArr=[]){
-    return request({
-        url: `/course/batch/notExist?semId=${getSemesterId()}&teacherId=${teacherId}`,
-        method: 'POST',
-        data: {
-            courseInfo: courseInfo,
-            dateArr: dateArr,
-        }
-    })
+
+export function createNewClass(
+  teacherId,
+  courseInfo = {
+    subjectMsg: {
+      name: "",
+      nature: 1,
+    },
+    templateId: null,
+    typeIdList: [],
+  },
+  dateArr = []
+) {
+  return request({
+    url: `/course/batch/notExist?semId=${getSemesterId()}&teacherId=${teacherId}`,
+    method: "POST",
+    data: {
+      courseInfo: courseInfo,
+      dateArr: dateArr,
+    },
+  });
 }
 
 /**
@@ -198,10 +231,10 @@ export function createNewClass(teacherId,courseInfo = {
  * @returns 详细信息
  */
 
-export function assignedTeacher(teacher={id:1,evaTeacherIdList:[]}){
-    return request({
-        url: `/course/table/one/eva?semId=${getSemesterId()}`,
-        method: 'PUT',
-        data:teacher
-    })
+export function assignedTeacher(teacher = { id: 1, evaTeacherIdList: [] }) {
+  return request({
+    url: `/course/table/one/eva?semId=${getSemesterId()}`,
+    method: "PUT",
+    data: teacher,
+  });
 }
