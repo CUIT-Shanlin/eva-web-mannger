@@ -126,8 +126,9 @@ export function changeClass(
   weekList = [],
   isBatchUpdate = false
 ) {
+  const listStr = weekList.reduce((str, week) => `${str}&weekList=${week}`, "");
   return request({
-    url: `/course/one?semId=${getSemesterId()}&weekList=${weekList}&isBatchUpdate=${isBatchUpdate}`,
+    url: `/course/one?semId=${getSemesterId()}${listStr}&isBatchUpdate=${isBatchUpdate}`,
     method: "PUT",
     data: classdata,
   });
