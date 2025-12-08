@@ -13,12 +13,9 @@ env:
   NODE_VERSION: "18.20"
   NPM_REGISTRY: https://registry.npmmirror.com
   DIST_ARTIFACT_NAME: frontend-dist
-  HARBOR_HOST: ${{ secrets.HARBOR_HOST }}
-  HARBOR_USERNAME: ${{ secrets.HARBOR_USERNAME }}
-  HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
   PORTAINER_UPDATE_TEST_URL: ${{ secrets.PORTAINER_UPDATE_TEST_URL }}
-  PROD_IMAGE: ${{ format('{0}/eva-system/eva-management-frontend', secrets.HARBOR_HOST) }}
-  TEST_IMAGE: ${{ format('{0}/eva-system/eva-management-frontend-test', secrets.HARBOR_HOST) }}
+  PROD_IMAGE: ${{ format('ghcr.io/{0}/eva-management-frontend', github.repository_owner) }}
+  TEST_IMAGE: ${{ format('ghcr.io/{0}/eva-management-frontend-test', github.repository_owner) }}
 
 jobs:
   build:
@@ -73,9 +70,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Harbor
-        run: |
-          docker login ${HARBOR_HOST} -u ${HARBOR_USERNAME} -p ${HARBOR_PASSWORD}
+      - name: Login to Registry
+        uses: docker/login-action@v3
+        with:
+          registry: 'ghcr.io'
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push production image
         uses: docker/build-push-action@v6
@@ -108,12 +108,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Harbor
+      - name: Log into registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.HARBOR_HOST }}
-          username: ${{ env.HARBOR_USERNAME }}
-          password: ${{ env.HARBOR_PASSWORD }}
+          registry: 'ghcr.io'
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push test image
         uses: docker/build-push-action@v6
