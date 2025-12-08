@@ -13,6 +13,9 @@ env:
   NODE_VERSION: "18.20"
   NPM_REGISTRY: https://registry.npmmirror.com
   DIST_ARTIFACT_NAME: frontend-dist
+  HARBOR_HOST: ${{ secrets.HARBOR_HOST }}
+  HARBOR_USERNAME: ${{ secrets.HARBOR_USERNAME }}
+  HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
   PORTAINER_UPDATE_TEST_URL: ${{ secrets.PORTAINER_UPDATE_TEST_URL }}
   PROD_IMAGE: ${{ format('{0}/eva-system/eva-management-frontend', secrets.HARBOR_HOST) }}
   TEST_IMAGE: ${{ format('{0}/eva-system/eva-management-frontend-test', secrets.HARBOR_HOST) }}
@@ -73,9 +76,9 @@ jobs:
       - name: Log in to Harbor
         uses: docker/login-action@v3
         with:
-          registry: ${{ secrets.HARBOR_HOST }}
-          username: ${{ secrets.HARBOR_USERNAME }}
-          password: ${{ secrets.HARBOR_PASSWORD }}
+          registry: ${{ env.HARBOR_HOST }}
+          username: ${{ env.HARBOR_USERNAME }}
+          password: ${{ env.HARBOR_PASSWORD }}
 
       - name: Build and push production image
         uses: docker/build-push-action@v6
@@ -111,9 +114,9 @@ jobs:
       - name: Log in to Harbor
         uses: docker/login-action@v3
         with:
-          registry: ${{ secrets.HARBOR_HOST }}
-          username: ${{ secrets.HARBOR_USERNAME }}
-          password: ${{ secrets.HARBOR_PASSWORD }}
+          registry: ${{ env.HARBOR_HOST }}
+          username: ${{ env.HARBOR_USERNAME }}
+          password: ${{ env.HARBOR_PASSWORD }}
 
       - name: Build and push test image
         uses: docker/build-push-action@v6
