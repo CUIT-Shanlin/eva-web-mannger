@@ -14,8 +14,8 @@ env:
   NPM_REGISTRY: https://registry.npmmirror.com
   DIST_ARTIFACT_NAME: frontend-dist
   PORTAINER_UPDATE_TEST_URL: ${{ secrets.PORTAINER_UPDATE_TEST_URL }}
-  PROD_IMAGE: ${{ format('ghcr.io/{0}/eva-management-frontend', github.repository_owner) }}
-  TEST_IMAGE: ${{ format('ghcr.io/{0}/eva-management-frontend-test', github.repository_owner) }}
+  PROD_IMAGE: 'ghcr.io/cuit-shanlin/eva-management-frontend'
+  TEST_IMAGE: 'ghcr.io/cuit-shanlin/eva-management-frontend-test'
 
 jobs:
   build:
@@ -112,7 +112,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: 'ghcr.io'
-          username: ${{ github.actor }}
+          username: 'LystranG'
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push test image
