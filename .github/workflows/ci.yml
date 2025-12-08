@@ -23,7 +23,7 @@ env:
 jobs:
   build:
     name: Build Artifact
-    runs-on: ubuntu-latest
+    runs-on: shanlin
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,12 +55,9 @@ jobs:
 
   publish-prod:
     name: Publish Production Image
-    runs-on: ubuntu-latest
+    runs-on: shanlin
     needs: build
     if: github.ref == 'refs/heads/master'
-    env:
-      PROD_VERSION_TAG: ${{ format('{0}:{1}', env.PROD_IMAGE, env.EVA_VERSION) }}
-      PROD_LATEST_TAG: ${{ format('{0}:latest', env.PROD_IMAGE) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -88,20 +85,17 @@ jobs:
         with:
           context: .
           push: true
-          cache-from: type=registry,ref=${{ env.PROD_LATEST_TAG }}
+          cache-from: type=registry,ref=${{ env.PROD_IMAGE }}:latest
           cache-to: type=inline
           tags: |
-            ${{ env.PROD_VERSION_TAG }}
-            ${{ env.PROD_LATEST_TAG }}
+            ${{ env.PROD_IMAGE }}:${{ env.EVA_VERSION }}
+            ${{ env.PROD_IMAGE }}:latest
 
   publish-test:
     name: Publish Test Image
-    runs-on: ubuntu-latest
+    runs-on: shanlin
     needs: build
     if: github.ref == 'refs/heads/master-test'
-    env:
-      TEST_VERSION_TAG: ${{ format('{0}:{1}', env.TEST_IMAGE, env.EVA_TEST_VERSION) }}
-      TEST_LATEST_TAG: ${{ format('{0}:latest', env.TEST_IMAGE) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -129,15 +123,15 @@ jobs:
         with:
           context: .
           push: true
-          cache-from: type=registry,ref=${{ env.TEST_LATEST_TAG }}
+          cache-from: type=registry,ref=${{ env.TEST_IMAGE }}:latest
           cache-to: type=inline
           tags: |
-            ${{ env.TEST_VERSION_TAG }}
-            ${{ env.TEST_LATEST_TAG }}
+            ${{ env.TEST_IMAGE }}:${{ env.EVA_TEST_VERSION }}
+            ${{ env.TEST_IMAGE }}:latest
 
   # recreate-prod:
   #   name: Trigger Portainer Update (Prod)
-  #   runs-on: ubuntu-latest
+  #   runs-on: shanlin
   #   needs: publish-prod
   #   if: github.ref == 'refs/heads/master'
   #   steps:
@@ -151,7 +145,7 @@ jobs:
 
   recreate-test:
     name: Trigger Portainer Update (Test)
-    runs-on: ubuntu-latest
+    runs-on: shanlin
     needs:
       - build
       - publish-test
