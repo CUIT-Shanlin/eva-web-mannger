@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 env:
-  EVA_VERSION: "1.92-SNAPSHOT"
-  EVA_TEST_VERSION: "1.91"
+  EVA_VERSION: "1.93-SNAPSHOT"
+  EVA_TEST_VERSION: "1.92"
   NODE_VERSION: "18.20"
   NPM_REGISTRY: https://registry.npmmirror.com
   DIST_ARTIFACT_NAME: frontend-dist
@@ -20,7 +20,7 @@ env:
 jobs:
   build:
     name: Build Artifact
-    runs-on: shanlin
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,7 +52,7 @@ jobs:
 
   publish-prod:
     name: Publish Production Image
-    runs-on: shanlin
+    runs-on: ubuntu-latest
     needs: build
     if: github.ref == 'refs/heads/master'
     permissions:
@@ -93,7 +93,7 @@ jobs:
 
   publish-test:
     name: Publish Test Image
-    runs-on: shanlin
+    runs-on: ubuntu-latest
     needs: build
     if: github.ref == 'refs/heads/master-test'
     steps:
@@ -145,7 +145,7 @@ jobs:
 
   recreate-test:
     name: Trigger Portainer Update (Test)
-    runs-on: shanlin
+    runs-on: ubuntu-latest
     needs:
       - build
       - publish-test
